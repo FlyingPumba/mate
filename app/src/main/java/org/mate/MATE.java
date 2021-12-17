@@ -26,20 +26,20 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 public class MATE {
 
     // TODO: make singleton
-    public MATE() {
+    public MATE(String packageName, Integer serverPort) {
 
         // should resolve android.os.FileUriExposedException
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        Integer serverPort = null;
-        try (FileInputStream fis = InstrumentationRegistry.getTargetContext().openFileInput("port");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
-            serverPort = Integer.valueOf(reader.readLine());
+        // Integer serverPort = null;
+        // try (FileInputStream fis = InstrumentationRegistry.getTargetContext().openFileInput("port");
+        //      BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
+        //     serverPort = Integer.valueOf(reader.readLine());
             MATE.log_acc("Using server port: " + serverPort);
-        } catch (IOException e) {
-            MATE.log_acc("Couldn't read server port, fall back to default port!");
-        }
+        // } catch (IOException e) {
+        //     MATE.log_acc("Couldn't read server port, fall back to default port!");
+        // }
 
         EnvironmentManager environmentManager;
         try {
@@ -64,7 +64,7 @@ public class MATE {
         MATE.log_acc("TIMEOUT: " + Properties.TIMEOUT());
         Registry.registerTimeout(Properties.TIMEOUT() * 60 * 1000);
 
-        Registry.registerPackageName(InstrumentationRegistry.getArguments().getString("packageName"));
+        Registry.registerPackageName(packageName);
         MATE.log_acc("Package name: " + Registry.getPackageName());
 
         final UiDevice device = UiDevice.getInstance(getInstrumentation());

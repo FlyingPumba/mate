@@ -8,6 +8,7 @@ import org.mate.exploration.genetic.algorithm.Algorithm;
 import org.mate.exploration.genetic.builder.GeneticAlgorithmBuilder;
 import org.mate.exploration.genetic.chromosome_factory.ChromosomeFactory;
 import org.mate.exploration.genetic.core.IGeneticAlgorithm;
+import org.mate.exploration.genetic.fitness.FitnessFunction;
 import org.mate.exploration.genetic.termination.TerminationCondition;
 import org.mate.model.TestCase;
 
@@ -23,7 +24,8 @@ public class ExecuteMATERandomSearchGA {
         final IGeneticAlgorithm<TestCase> randomSearchGA = new GeneticAlgorithmBuilder()
                 .withAlgorithm(Algorithm.RANDOM_SEARCH)
                 .withChromosomeFactory(ChromosomeFactory.ANDROID_RANDOM_CHROMOSOME_FACTORY)
-                .withFitnessFunction(Properties.FITNESS_FUNCTION())
+                // .withFitnessFunction(Properties.FITNESS_FUNCTION())
+                .withFitnessFunction(FitnessFunction.LINE_COVERAGE)
                 .withTerminationCondition(TerminationCondition.CONDITIONAL_TERMINATION)
                 .withMaxNumEvents(Properties.MAX_NUMBER_EVENTS())
                 .build();
