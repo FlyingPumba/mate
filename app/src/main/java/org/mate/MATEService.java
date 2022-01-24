@@ -9,12 +9,14 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MATEService extends Service {
@@ -23,30 +25,13 @@ public class MATEService extends Service {
     boolean allowRebind; // indicates whether onRebind should be used
     private NotificationManager notificationManager;
 
+    private DeathCallback clientDeathCallback;
+
     @Override
     public void onCreate() {
+        // android.os.Debug.waitForDebugger();
         // The service is being created
         Log.i("MATE_SERVICE", "onCreate");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("MATE_SERVICE", "onStartCommand");
-
-        // The service is starting, due to a call to startService()
-        if (intent == null) {
-            Log.i("MATE_SERVICE", "MATE Service starting but intent was not provided");
-            return START_NOT_STICKY;
-        } else if (!intent.hasExtra("packageName")) {
-            Log.i("MATE_SERVICE", "MATE Service starting but package name was not provided");
-            return START_NOT_STICKY;
-        }
-
-        String packageName = intent.getStringExtra("packageName");
-        Log.i("MATE_SERVICE", "MATE Service starting for package name: " + packageName);
-
-        // start service
-        startService(intent);
 
         // fire up a notification so the system lets us start the service as foreground
         if (notificationManager == null) {
@@ -80,6 +65,23 @@ public class MATEService extends Service {
 
         Notification notification = builder.build();
         startForeground(1337, notification);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("MATE_SERVICE", "onStartCommand");
+
+        // The service is starting, due to a call to startService()
+        if (intent == null) {
+            Log.i("MATE_SERVICE", "MATE Service starting but intent was not provided");
+            return START_NOT_STICKY;
+        } else if (!intent.hasExtra("packageName")) {
+            Log.i("MATE_SERVICE", "MATE Service starting but package name was not provided");
+            return START_NOT_STICKY;
+        }
+
+        String packageName = intent.getStringExtra("packageName");
+        Log.i("MATE_SERVICE", "MATE Service starting for package name: " + packageName);
 
         // MATE.log_acc("Starting Random Search GA ....");
         //
@@ -98,13 +100,26 @@ public class MATEService extends Service {
 
         if (representationLayer == null) {
             Log.i("MATE_SERVICE", "Unable to start MATE Service yet. Representation layer has not been registered");
+            return START_NOT_STICKY;
         }
 
         try {
             representationLayer.getAvailableActions();
+            Log.i("MATE_SERVICE", "Called getAvailableACtions on representation layer");
         } catch (RemoteException e) {
             Log.i("MATE_SERVICE", "Error getting available actions: " + e.toString());
         }
+
+        Handler handler = new Handler();
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                Log.i("MATE_SERVICE", "I'M WORKING!");
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        handler.postDelayed(r, 1000);
 
         // If we get killed, after returning from here, restart
         return START_NOT_STICKY;
@@ -124,14 +139,47 @@ public class MATEService extends Service {
 
     private final IMATEServiceInterface.Stub binder = new IMATEServiceInterface.Stub() {
         @Override
-        public void registerRepresentationLayer(IRepresentationLayerInterface representationLayer) throws RemoteException {
+        public void registerRepresentationLayer(IRepresentationLayerInterface representationLayer, IBinder deathListener) throws RemoteException {
             Log.i("MATE_SERVICE", "registerRepresentationLayer called");
             MATEService.this.representationLayer = representationLayer;
+            registerDeathListener(deathListener);
         }
 
         @Override
         public void reportAvailableActions(List<String> actions) throws RemoteException {
-            Log.i("MATE_SERVICE", "reportAvailableActions called");
+            Log.i("MATE_SERVICE", "reportAvailableActions called. Received actions: " + Arrays.toString(actions.toArray()));
         }
     };
+
+    private void onClientDeath() {
+        clientDeathCallback = null;
+        Log.i("MATE_SERVICE", "Client just died");
+    }
+
+    private void registerDeathListener(IBinder token) {
+        try {
+            if (clientDeathCallback == null) {
+                clientDeathCallback = new DeathCallback(token);
+                //This is where the magic happens
+                token.linkToDeath(clientDeathCallback, 0);
+                Log.i("MATE_SERVICE", "Client death callback registered successfully");
+            }
+        } catch (RemoteException e) {
+            Log.i("MATE_SERVICE", "An error ocurred registering death listener " + e.getMessage());
+        }
+    }
+
+    private final class DeathCallback implements IBinder.DeathRecipient {
+        private IBinder mBinder;
+
+        DeathCallback(IBinder binder) {
+            mBinder = binder;
+        }
+
+        @Override
+        public void binderDied() {
+            mBinder.unlinkToDeath(this,0);
+            onClientDeath();
+        }
+    }
 }
