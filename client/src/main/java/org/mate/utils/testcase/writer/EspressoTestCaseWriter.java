@@ -12,8 +12,13 @@ import java.io.File;
  */
 public class EspressoTestCaseWriter extends TestCaseWriter {
 
+    private String testCaseName;
+
     public EspressoTestCaseWriter(TestCase testCase) throws IllegalArgumentException {
         super(testCase);
+
+        // set initial values for writing test case
+        this.testCaseName = String.format("EspressoTestCase_%d", this.writeCounter);
     }
 
     @Override
@@ -47,9 +52,17 @@ public class EspressoTestCaseWriter extends TestCaseWriter {
         return converter.getCode();
     }
 
+    /**
+     * Change the name to use when writing test case.
+     * @param value the new test case name
+     */
+    public void setTestCaseName(String value) {
+        this.testCaseName = value;
+    }
+
     @Override
     public String getTestCaseName() {
-        return String.format("EspressoTestCase_%d", this.writeCounter);
+        return testCaseName;
     }
 
     @Override

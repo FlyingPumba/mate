@@ -8,19 +8,24 @@ import org.mate.exploration.Algorithm;
 import org.mate.interaction.DeviceMgr;
 import org.mate.interaction.EnvironmentManager;
 import org.mate.interaction.UIAbstractionLayer;
+import org.mate.model.TestCase;
 import org.mate.service.MATEService;
 import org.mate.commons.utils.MersenneTwister;
 import org.mate.utils.TimeoutRun;
+import org.mate.utils.assertions.TestCaseAssertionsGenerator;
+import org.mate.utils.assertions.TestCaseWithAssertions;
 import org.mate.utils.coverage.Coverage;
 import org.mate.utils.coverage.CoverageUtils;
 import org.mate.commons.utils.manifest.Manifest;
 import org.mate.utils.manifest.ManifestParser;
+import org.mate.utils.testcase.writer.EspressoTestCaseWriter;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Random;
 
 public class MATE {
@@ -147,6 +152,23 @@ public class MATE {
 
             if (Properties.COVERAGE() != Coverage.NO_COVERAGE) {
                 CoverageUtils.logFinalCoverage();
+            }
+
+            if (Properties.GENERATE_ASSERTIONS()) {
+                // Generate assertions for the final population (if available)
+                List<TestCase> lastPopulation = Registry.getLastPopulation();
+                if (lastPopulation == null) {
+                    MATELog.log_error("Unable to generate assertions for NULL last population");
+                } else {
+                    // Reset write counter for Espresso Test Case writer, so we don't double the
+                    // the test cases being dumped.
+                    EspressoTestCaseWriter.resetWriteCounter();
+
+                    for (TestCase testCase : lastPopulation) {
+                        TestCaseWithAssertions testCaseWithAssertions = TestCaseAssertionsGenerator.generate(testCase);
+                        testCaseWithAssertions.writeAsEspressoTestIfPossible();
+                    }
+                }
             }
 
             if (Properties.GRAPH_TYPE() != null) {

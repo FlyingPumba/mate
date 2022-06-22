@@ -7,9 +7,11 @@ import org.mate.commons.utils.manifest.Manifest;
 import org.mate.interaction.DeviceMgr;
 import org.mate.interaction.EnvironmentManager;
 import org.mate.interaction.UIAbstractionLayer;
+import org.mate.model.TestCase;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Random;
 
 public class Registry {
@@ -57,6 +59,11 @@ public class Registry {
      * The name of the main activity.
      */
     private static String mainActivity;
+
+    /**
+     * The last population generated during exploration.
+     */
+    private static List<TestCase> lastPopulation;
 
     public static void registerReplayMode() {
         replayMode = true;
@@ -200,5 +207,13 @@ public class Registry {
 
     public static void unregisterMainActivity() {
         Registry.mainActivity = null;
+    }
+
+    public static void registerLastPopulation(List<TestCase> population) {
+        Registry.lastPopulation = population;
+    }
+
+    public static List<TestCase> getLastPopulation() {
+        return Registry.lastPopulation;
     }
 }

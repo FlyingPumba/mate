@@ -32,46 +32,46 @@ public class TestCase {
      * A random generated id that uniquely identifies the test case.
      * Also used as the string representation.
      */
-    private String id;
+    protected String id;
 
     /**
      * The states (ids) in the order they were visited.
      */
-    private final List<String> stateSequence;
+    protected final List<String> stateSequence;
 
     /**
      * The actions that has been executed by this test case.
      */
-    private final List<Action> actionSequence;
+    protected final List<Action> actionSequence;
 
     /**
      * The visited activities in the order they appeared.
      */
-    private final List<String> activitySequence;
+    protected final List<String> activitySequence;
 
     /**
      * Whether a crash has been triggered by an action of the test case.
      */
-    private boolean crashDetected;
+    protected boolean crashDetected;
 
     /**
      * The desired size of the test case, i.e. the desired length
      * of the test case. This doesn't enforce any size restriction yet.
      */
-    private Optional<Integer> desiredSize = Optional.none();
+    protected Optional<Integer> desiredSize = Optional.none();
 
     /**
      * The stack trace that has been triggered by a potential crash.
      * Only recorded when {@link org.mate.Properties#RECORD_STACK_TRACE()} is defined.
      */
-    private StackTrace crashStackTrace = null;
+    protected StackTrace crashStackTrace = null;
 
     /**
      * Should be used for the creation of dummy test cases.
      * This suppresses the log that indicates a new test case
      * for the AndroidAnalysis framework.
      */
-    private TestCase() {
+    protected TestCase() {
         setId("dummy");
         crashDetected = false;
         stateSequence = new ArrayList<>();
@@ -128,27 +128,7 @@ public class TestCase {
         if (Properties.RECORD_TEST_CASE()) {
             TestCaseSerializer.serializeTestCase(this);
 
-            try {
-                // Try to dump this test case as an Espresso test case.
-                // If this test case is not composed entirely of Espresso actions (e.g., it uses
-                // UiActions), then the EspressoTestCaseWriter throws an IllegalArgumentException
-                // and does nothing.
-                EspressoTestCaseWriter espressoTestWriter = new EspressoTestCaseWriter(this);
-                boolean success = espressoTestWriter.writeToDefaultFolder();
-                if (!success) {
-                    MATELog.log_warn("Unable to write Espresso test case to internal storage");
-                }
-            } catch (IllegalArgumentException e) {
-                // do nothing, EspressoTestCaseWriter is not suitable for this test case.
-            } catch (Exception e) {
-                MATELog.log_warn("An exception happened while writing Espresso test case to " +
-                        "internal storage: " + e.getMessage());
-
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                MATELog.log_warn(sw.toString());
-            }
+            writeAsEspressoTestIfPossible();
         }
 
         // record stats about a test case, in particular about intent based actions
@@ -157,6 +137,32 @@ public class TestCase {
         }
 
         // TODO: log the test case actions in a proper format
+    }
+
+    /**
+     * Try to dump this test case as an Espresso test case.
+     * If this test case is not composed entirely of Espresso actions (e.g., it uses UiActions),
+     * then the EspressoTestCaseWriter throws an IllegalArgumentException, and this method does
+     * nothing.
+     */
+    public void writeAsEspressoTestIfPossible() {
+        try {
+            EspressoTestCaseWriter espressoTestWriter = new EspressoTestCaseWriter(this);
+            boolean success = espressoTestWriter.writeToDefaultFolder();
+            if (!success) {
+                MATELog.log_warn("Unable to write Espresso test case to internal storage");
+            }
+        } catch (IllegalArgumentException e) {
+            // do nothing, EspressoTestCaseWriter is not suitable for this test case.
+        } catch (Exception e) {
+            MATELog.log_warn("An exception happened while writing Espresso test case to " +
+                    "internal storage: " + e.getMessage());
+
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            MATELog.log_warn(sw.toString());
+        }
     }
 
     /**

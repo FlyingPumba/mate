@@ -281,7 +281,11 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
      * Writes the Espresso actions collected so far into the current In-Progress String test case.
      */
     private void writeTestBody() {
-        for (EspressoAction action : this.actions) {
+        List<EspressoAction> espressoActions = this.actions;
+        for (int i = 0, espressoActionsSize = espressoActions.size(); i < espressoActionsSize; i++) {
+            // TODO (Ivan): write assertions as well if Test Case has assertions
+
+            EspressoAction action = espressoActions.get(i);
             writeExpressionLine(action.getCode());
         }
     }

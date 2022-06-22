@@ -114,6 +114,16 @@ public class Properties {
         return propertyOr(false);
     }
 
+    /**
+     * Whether we should try to generate assertions for the final population after exploration.
+     *
+     * @return Returns {@code true} if we should generate assertions for the final population
+     *         after exploration, otherwise {@code false} is returned.
+     */
+    public static boolean GENERATE_ASSERTIONS() {
+        return propertyOr(false);
+    }
+
     /*
      * Misc properties
      */
