@@ -40,4 +40,7 @@ interface IRepresentationLayerInterface {
 
     // Espresso actions
     List<EspressoAction> getCurrentScreenEspressoActions();
+
+    // UI state
+    Map getUIAttributes();
 }

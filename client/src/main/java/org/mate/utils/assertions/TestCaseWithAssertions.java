@@ -7,6 +7,7 @@ import org.mate.utils.testcase.writer.EspressoTestCaseWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class TestCaseWithAssertions extends TestCase {
      * assertions at index 1 are the assertions before the second action, etc.
      * The assertions at index N+1 are the assertions after the last action.
      */
-    Map<Integer, List<String>> assertions = new HashMap<>();
+    private Map<Integer, List<String>> assertions = new HashMap<>();
 
     private TestCaseWithAssertions(String id) {
         super(id);
@@ -70,5 +71,22 @@ public class TestCaseWithAssertions extends TestCase {
             e.printStackTrace(pw);
             MATELog.log_warn(sw.toString());
         }
+    }
+
+    /**
+     * Save the assertions to be run before the test case begins.
+     * @param assertionsBeforeTest a list of assertions.
+     */
+    public void setAssertionsBeforeTest(List<String> assertionsBeforeTest) {
+        this.assertions.put(0, Collections.unmodifiableList(assertionsBeforeTest));
+    }
+
+    /**
+     * Save the assertions to be run after an action is executed.
+     * @param actionIndex the index of the action to execute.
+     * @param assertionsAfterAction a list of assertions.
+     */
+    public void setAssertionsAfterAction(int actionIndex, List<String> assertionsAfterAction) {
+        this.assertions.put(actionIndex + 1, Collections.unmodifiableList(assertionsAfterAction));
     }
 }

@@ -7,6 +7,7 @@ import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.ui.WidgetAction;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the interface for a screen state,
@@ -22,6 +23,7 @@ public interface IScreenState {
     List<WidgetAction> getWidgetActions();
     List<MotifAction> getMotifActions();
     List<EspressoAction> getEspressoActions();
+    Map<String, Map<String, String>> getUIAttributes();
     String getActivityName();
     String getPackageName();
     ScreenStateType getType();

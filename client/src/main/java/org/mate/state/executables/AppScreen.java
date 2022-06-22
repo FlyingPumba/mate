@@ -12,7 +12,9 @@ import org.mate.service.MATEService;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -167,5 +169,15 @@ public class AppScreen {
     @Override
     public String toString() {
         return "AppScreen{activity: " + activityName + ", widgets: " + widgets.size() + "}";
+    }
+
+    public Map<String, Map<String, String>> getUIAttributes() {
+        try {
+            return (Map<String, Map<String, String>>) MATEService.getRepresentationLayer().getUIAttributes();
+        } catch (RemoteException | AUTCrashException e) {
+            MATELog.log_warn("Unable to fetch UI attributes after AUT has crashed");
+        }
+
+        return new HashMap<>();
     }
 }

@@ -21,7 +21,9 @@ import org.mate.representation.test.BuildConfig;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles commands requested by the MATE Service (e.g., fetch current available actions).
@@ -160,6 +162,11 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     @Override
     public List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
         return new EspressoScreenParser().getActions();
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
+        return new HashMap<>();
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.mate.state.ScreenStateType;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,6 +75,11 @@ public class FSMModel implements IGUIModel {
 
         @Override
         public List<EspressoAction> getEspressoActions() {
+            throw new UnsupportedOperationException("Do not call this method!");
+        }
+
+        @Override
+        public Map<String, Map<String, String>> getUIAttributes() {
             throw new UnsupportedOperationException("Do not call this method!");
         }
 
