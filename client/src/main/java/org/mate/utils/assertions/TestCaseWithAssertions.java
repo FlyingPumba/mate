@@ -16,6 +16,8 @@ public class TestCaseWithAssertions extends TestCase {
 
     /**
      * Assertions for each line in the original Test Case.
+     * If the test case has N actions, then we have N+1 points in which we can add multiple
+     * assertions to the test.
      * The assertions at index 0 are the assertions before the first action of the Test Case, the
      * assertions at index 1 are the assertions before the second action, etc.
      * The assertions at index N+1 are the assertions after the last action.

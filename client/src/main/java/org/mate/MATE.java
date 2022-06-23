@@ -4,19 +4,22 @@ import android.content.Context;
 import android.os.StrictMode;
 
 import org.mate.commons.utils.MATELog;
+import org.mate.commons.utils.MersenneTwister;
+import org.mate.commons.utils.manifest.Manifest;
 import org.mate.exploration.Algorithm;
+import org.mate.exploration.genetic.chromosome.IChromosome;
+import org.mate.exploration.genetic.core.GeneticAlgorithm;
 import org.mate.interaction.DeviceMgr;
 import org.mate.interaction.EnvironmentManager;
 import org.mate.interaction.UIAbstractionLayer;
 import org.mate.model.TestCase;
+import org.mate.model.TestSuite;
 import org.mate.service.MATEService;
-import org.mate.commons.utils.MersenneTwister;
 import org.mate.utils.TimeoutRun;
 import org.mate.utils.assertions.TestCaseAssertionsGenerator;
 import org.mate.utils.assertions.TestCaseWithAssertions;
 import org.mate.utils.coverage.Coverage;
 import org.mate.utils.coverage.CoverageUtils;
-import org.mate.commons.utils.manifest.Manifest;
 import org.mate.utils.manifest.ManifestParser;
 import org.mate.utils.testcase.writer.EspressoTestCaseWriter;
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -154,20 +158,38 @@ public class MATE {
                 CoverageUtils.logFinalCoverage();
             }
 
-            if (Properties.GENERATE_ASSERTIONS()) {
-                // Generate assertions for the final population (if available)
-                List<TestCase> lastPopulation = Registry.getLastPopulation();
-                if (lastPopulation == null) {
-                    MATELog.log_error("Unable to generate assertions for NULL last population");
-                } else {
-                    // Reset write counter for Espresso Test Case writer, so we don't double the
-                    // the test cases being dumped.
-                    EspressoTestCaseWriter.resetWriteCounter();
+            if (Properties.GENERATE_ASSERTIONS() && algorithm instanceof GeneticAlgorithm) {
+                // Generate assertions for the final "current population" of the Genetic Algorithm.
 
-                    for (TestCase testCase : lastPopulation) {
-                        TestCaseWithAssertions testCaseWithAssertions = TestCaseAssertionsGenerator.generate(testCase);
-                        testCaseWithAssertions.writeAsEspressoTestIfPossible();
+                GeneticAlgorithm geneticAlgorithm = (GeneticAlgorithm) algorithm;
+
+                List<TestCase> lastPopulation = new ArrayList<>();
+                List<IChromosome<?>> currentPopulation = geneticAlgorithm.getCurrentPopulation();
+
+                for (IChromosome<?> chromosome : currentPopulation) {
+                    if (chromosome.getValue() instanceof TestCase) {
+                        // Genetic Algorithm was using test cases as chromosomes.
+                        // Add the test case to the last population list.
+                        lastPopulation.add((TestCase) chromosome.getValue());
+                    } else if (chromosome.getValue() instanceof TestSuite) {
+                        // Genetic Algorithm was using test suites as chromosomes.
+                        // Add all test cases in test suite to the last population list.
+                        TestSuite suite = (TestSuite) chromosome.getValue();
+                        lastPopulation.addAll(suite.getTestCases());
+                    } else {
+                        // Genetic Algorithm was using chromosomes that are neither a TestCase
+                        // nor a TestSuite, skip them.
                     }
+                }
+
+                // Reset write counter for Espresso Test Case writer, so we don't double the
+                // the test cases being dumped.
+                EspressoTestCaseWriter.resetWriteCounter();
+
+                for (TestCase testCase : lastPopulation) {
+                    TestCaseAssertionsGenerator generator = new TestCaseAssertionsGenerator(testCase);
+                    TestCaseWithAssertions testCaseWithAssertions = generator.generate();
+                    testCaseWithAssertions.writeAsEspressoTestIfPossible();
                 }
             }
 
