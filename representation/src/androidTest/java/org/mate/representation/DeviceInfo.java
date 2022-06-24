@@ -5,6 +5,7 @@ import android.app.UiAutomation;
 import android.content.Context;
 import android.os.Build;
 import android.view.accessibility.AccessibilityWindowInfo;
+import android.view.View;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiDevice;
@@ -16,6 +17,7 @@ import org.mate.commons.utils.MATELog;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 
 /**
  * This class is responsible for providing basic information about the Device.
@@ -250,5 +252,51 @@ public class DeviceInfo {
         this.executeShellCommand("settings put global window_animation_scale 0");
         this.executeShellCommand("settings put global transition_animation_scale 0");
         this.executeShellCommand("settings put global animator_duration_scale 0");
+    }
+
+    /**
+     * Allows access to Non-SDK interfaces using reflection.
+     * Following instructions from the official documentation:
+     * https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces#how_can_i_enable_access_to_non-sdk_interfaces
+     */
+    public void allowAccessToNonSDKInterfaces() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // We are using Android 10 (API 29).
+            this.executeShellCommand("settings put global hidden_api_policy 0");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // We are using Android 9 (API 28).
+            this.executeShellCommand("settings put global hidden_api_policy_pre_p_apps 0");
+            this.executeShellCommand("settings put global hidden_api_policy_p_apps 0");
+        }
+    }
+
+    /**
+     * Set debug mode for view attributes.
+     * When set to true, all the views created afterwards will save its attribute data to a field
+     * called "mAttributes".
+     */
+    public void setDebugModeForViewAttributes() {
+        String debugViewAttributesFieldName = "";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // the field was renamed after Android 10 (API 29).
+            debugViewAttributesFieldName = "sDebugViewAttributes";
+        } else {
+            debugViewAttributesFieldName = "mDebugViewAttributes";
+        }
+
+        try {
+            // Set the static field in the View class to true.
+            Class viewClass = View.class;
+
+            Field debugViewAttributesField = viewClass.getDeclaredField(debugViewAttributesFieldName);
+
+            debugViewAttributesField.setAccessible(true);
+            debugViewAttributesField.set(null, true);
+        } catch (Exception e) {
+            MATELog.log_error("An exception occurred while setting debug mode for view attributes: " + e.getMessage());
+        }
     }
 }

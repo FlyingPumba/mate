@@ -131,7 +131,13 @@ public class TestCaseAssertionsGenerator {
                 String oldValue = oldAttributes.get(attrKey);
                 String newValue = newAttributes.get(attrKey);
 
-                if (!oldValue.equals(newValue)) {
+                if (oldValue == null && newValue != null) {
+                  // Null value became non-null
+                    // TODO (Ivan): add assertion
+                } else if (oldValue != null && newValue == null) {
+                    // Non-null value became null
+                    // TODO (Ivan): add assertion
+                } else if (!oldValue.equals(newValue)) {
                     // an attibute's value has changed
                     // TODO (Ivan): add assertion
                 }

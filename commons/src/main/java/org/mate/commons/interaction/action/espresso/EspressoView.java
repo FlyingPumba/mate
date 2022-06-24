@@ -1,13 +1,25 @@
 package org.mate.commons.interaction.action.espresso;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
+import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import org.mate.commons.interaction.action.espresso.layout_inspector.common.Resource;
+import org.mate.commons.interaction.action.espresso.layout_inspector.property.LayoutParamsTypeTree;
+import org.mate.commons.interaction.action.espresso.layout_inspector.property.Property;
+import org.mate.commons.interaction.action.espresso.layout_inspector.property.ViewNode;
+import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
+import org.mate.commons.interaction.action.espresso.layout_inspector.property.ViewTypeTree;
 import org.mate.commons.utils.MATELog;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,11 +30,9 @@ import java.util.UUID;
 public class EspressoView {
 
     /**
-     * An auto-generated random UUID, used to compare different instances of EspressoView.
-     * Note that this value will be different for different instances constructed with the same
-     * View.
+     * An ad-hoc ID that is unique for this View in the current activity.
      */
-    private final UUID randomUUID;
+    private String uniqueId;
 
     /**
      * The View instance that we are wrapping.
@@ -35,9 +45,40 @@ public class EspressoView {
     private final String activityName;
 
     public EspressoView(View view, String activityName) {
-        this.randomUUID = UUID.randomUUID();
         this.view = view;
         this.activityName = activityName;
+    }
+
+    /**
+     * Generate a unique ID for the wrapped View.
+     * @param viewTree the EspressoViewTree that contains this EspressoView.
+     */
+    public void generateUniqueId(EspressoViewTree viewTree) {
+        if (viewTree.getNodesById(getId()).size() > 1) {
+            // If there are multiple views with the same ID, we need to find another unique ID.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // On API 29+ we can use the View.getUniqueDrawingId() method to obtain a unique
+                // ID that is used by the drawing system.
+                uniqueId = String.valueOf(view.getUniqueDrawingId());
+            } else {
+                uniqueId = UUID.randomUUID().toString();
+            }
+
+        } else {
+            // Otherwise, we can use the ID of the View.
+            uniqueId = getId().toString();
+        }
+
+        // Add activity name as prefix of unique id, so we can identify the activity in which the
+        // view is found.
+        uniqueId = activityName + "." + uniqueId;
+    }
+
+    /**
+     * @return An ad-hoc ID that is unique for this View in the current activity.
+     */
+    public String getUniqueId() {
+        return uniqueId;
     }
 
     /**
@@ -60,12 +101,12 @@ public class EspressoView {
         if (o == null || getClass() != o.getClass()) return false;
 
         EspressoView that = (EspressoView) o;
-        return randomUUID.equals(that.randomUUID);
+        return uniqueId.equals(that.uniqueId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(randomUUID);
+        return Objects.hash(uniqueId);
     }
 
     /**
@@ -190,5 +231,90 @@ public class EspressoView {
      */
     private static boolean isViewIdGenerated(int id) {
         return (id & 0xFF000000) == 0 && (id & 0x00FFFFFF) != 0;
+    }
+
+    /**
+     * Returns the attributes of the wrapped view that are found in the instance itself.
+     * @return a map of attributes.
+     */
+    public Map<String, String> getBasicViewAttributes() {
+        Map<String, String> attributes = new HashMap<>();
+
+        // Get the "mAttributes" field of the wrapped view using reflection
+        // If it fails, we just return an empty map.
+        try {
+            @SuppressLint("SoonBlockedPrivateApi")
+            Field mAttributesField = View.class.getDeclaredField("mAttributes");
+
+            mAttributesField.setAccessible(true);
+            String[] mAttributesFieldValue = (String[]) mAttributesField.get(view);
+
+            if (mAttributesFieldValue != null) {
+                // Turn array of attributes into a map.
+                for (int i = 0; i < mAttributesFieldValue.length; i += 2) {
+                    attributes.put(mAttributesFieldValue[i], mAttributesFieldValue[i + 1]);
+                }
+            }
+        } catch (Exception e) {
+            MATELog.log_error("Unable to get mAttributes field of View");
+        }
+
+        return attributes;
+    }
+
+    /**
+     * Returns a very extensive list of attributes for the wrapped view.
+     * This code is inspired by the code in the Android Studio's Layout Inspector.
+     * However, it requires a minimum API level of 29.
+     * @return a map of attributes.
+     */
+    public Map<String, String> getLayoutInspectorAttributes() {
+        Map<String, String> attributes = new HashMap<>();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            ViewTypeTree typeTree = new ViewTypeTree();
+            LayoutParamsTypeTree layoutTypeTree = new LayoutParamsTypeTree();
+            ViewNode<View> node =
+                    new ViewNode<>(
+                            typeTree.typeOf(view), layoutTypeTree.typeOf(view.getLayoutParams()));
+            node.readProperties(view);
+
+            Resource layout = node.getLayoutResource(view);
+
+            List<Property> viewProperties = node.getViewProperties();
+            for (Property property : viewProperties) {
+                attributes.put(property.getPropertyType().getName(),
+                        String.valueOf(property.getValue()));
+            }
+
+            List<Property> layoutProperties = node.getLayoutProperties();
+            for (Property property : layoutProperties) {
+                attributes.put(property.getPropertyType().getName(),
+                        String.valueOf(property.getValue()));
+            }
+        }
+
+        return attributes;
+    }
+
+    /**
+     * Returns a combined map with the basic attributes and the layout inspector attributes.
+     * @return a map of attributes.
+     */
+    public Map<String, String> getAllAttributes() {
+        Map<String, String> attributes = new HashMap<>();
+
+        attributes.putAll(getBasicViewAttributes());
+        attributes.putAll(getLayoutInspectorAttributes());
+
+        if (!attributes.containsKey("text")) {
+            attributes.put("text", getText());
+        }
+
+        if (!attributes.containsKey("contentDescription")) {
+            attributes.put("contentDescription", getContentDescription());
+        }
+
+        return attributes;
     }
 }

@@ -1,5 +1,6 @@
 package org.mate.utils.assertions;
 
+import org.mate.Properties;
 import org.mate.commons.utils.MATELog;
 import org.mate.model.TestCase;
 import org.mate.utils.testcase.writer.EspressoTestCaseWriter;
@@ -42,7 +43,10 @@ public class TestCaseWithAssertions extends TestCase {
         this.activitySequence.addAll(testCase.getActivitySequence());
         this.crashDetected = testCase.hasCrashDetected();
         this.desiredSize = testCase.getDesiredSize();
-        this.crashStackTrace = testCase.getCrashStackTrace();
+
+        if (Properties.RECORD_STACK_TRACE()) {
+            this.crashStackTrace = testCase.getCrashStackTrace();
+        }
 
         // Load empty assertions for all indexes
         for (int i = 0; i < this.actionSequence.size() + 1; i++) {

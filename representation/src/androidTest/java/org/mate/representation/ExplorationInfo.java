@@ -7,17 +7,23 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
+import org.mate.commons.interaction.action.espresso.EspressoView;
+import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
+import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.utils.MATELog;
 import org.mate.commons.utils.MersenneTwister;
 import org.mate.commons.utils.Randomness;
 import org.mate.commons.utils.Utils;
+import org.mate.representation.state.espresso.EspressoScreenParser;
 import org.mate.representation.test.BuildConfig;
 import org.mate.representation.util.MATERepLog;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -323,5 +329,25 @@ public class ExplorationInfo {
         intent.setComponent(new ComponentName(getTargetPackageName(),
                 "de.uni_passau.fim.auermich.tracer.Tracer"));
         DeviceInfo.getInstance().getAUTContext().sendBroadcast(intent);
+    }
+
+    public Map<String, Map<String, String>> getUIAttributes() {
+        EspressoScreenParser parser = new EspressoScreenParser();
+        EspressoViewTree viewTree = parser.getViewTree();
+
+        Map<String, Map<String, String>> uiAttributes = new HashMap<>();
+
+        List<EspressoViewTreeNode> nodes = viewTree.getAllNodes();
+        for (EspressoViewTreeNode node : nodes) {
+            EspressoView espressoView = node.getEspressoView();
+
+            String uniqueId = espressoView.getUniqueId();
+
+            Map<String, String> attributes = new HashMap<>(espressoView.getAllAttributes());
+
+            uiAttributes.put(uniqueId, attributes);
+        }
+
+        return uiAttributes;
     }
 }

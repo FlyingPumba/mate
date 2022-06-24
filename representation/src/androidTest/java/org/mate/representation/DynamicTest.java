@@ -39,6 +39,10 @@ public class DynamicTest {
      */
     @Before
     public void setup() throws Exception {
+        // Perform basic setup before starting the AUT.
+        DeviceInfo.getInstance().allowAccessToNonSDKInterfaces();
+        DeviceInfo.getInstance().setDebugModeForViewAttributes();
+
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         instrumentation.setInTouchMode(true);
 

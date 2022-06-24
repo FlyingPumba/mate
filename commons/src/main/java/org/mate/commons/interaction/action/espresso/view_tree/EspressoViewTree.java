@@ -4,8 +4,12 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import org.mate.commons.interaction.action.espresso.EspressoView;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class representing the UI hierarchy of a specific screen.
@@ -23,12 +27,40 @@ public class EspressoViewTree {
     @Nullable
     private EspressoViewTreeNode root;
 
+    /**
+     * A map of nodes by View ID.
+     * This is useful for quickly finding out if a View's ID is unique or not.
+     */
+    private Map<Integer, List<EspressoViewTreeNode>> nodesByViewId = new HashMap<>();
+
     public EspressoViewTree() {
         // empty tree
     }
 
     public EspressoViewTree(View root, String activityName) {
         this.root = new EspressoViewTreeNode(root, activityName);
+        setUniqueIdForViews();
+    }
+
+    /**
+     * Set a unique ID for each node in the tree at construction.
+     */
+    private void setUniqueIdForViews() {
+        // Save the nodes associated with each View ID.
+        for (EspressoViewTreeNode node : getAllNodes()) {
+            Integer viewId = node.getEspressoView().getId();
+
+            if (!nodesByViewId.containsKey(viewId)) {
+                nodesByViewId.put(viewId, new ArrayList<>());
+            }
+
+            nodesByViewId.get(viewId).add(node);
+        }
+
+        // Generate the unique IDs for all nodes
+        for (EspressoViewTreeNode node : getAllNodes()) {
+            node.getEspressoView().generateUniqueId(this);
+        }
     }
 
     /**
@@ -69,5 +101,14 @@ public class EspressoViewTree {
         }
 
         return null;
+    }
+
+    /**
+     * Find the nodes in the tree corresponding to a view ID.
+     * @param viewId to find.
+     * @return a list of nodes.
+     */
+    public List<EspressoViewTreeNode> getNodesById(Integer viewId) {
+        return nodesByViewId.get(viewId);
     }
 }

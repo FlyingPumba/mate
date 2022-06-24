@@ -13,9 +13,9 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.IBinder;
 import android.os.RemoteException;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import org.mate.MATE;

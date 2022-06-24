@@ -166,7 +166,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
-        return new HashMap<>();
+        return ExplorationInfo.getInstance().getUIAttributes();
     }
 
     @Override

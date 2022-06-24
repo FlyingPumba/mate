@@ -159,6 +159,7 @@ public class MATE {
             }
 
             if (Properties.GENERATE_ASSERTIONS() && algorithm instanceof GeneticAlgorithm) {
+                MATELog.log_acc("Generating assertions");
                 // Generate assertions for the final "current population" of the Genetic Algorithm.
 
                 GeneticAlgorithm geneticAlgorithm = (GeneticAlgorithm) algorithm;

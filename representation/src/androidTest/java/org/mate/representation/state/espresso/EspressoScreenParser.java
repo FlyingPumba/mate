@@ -36,29 +36,36 @@ public class EspressoScreenParser {
     /**
      * A list of discovered EspressoActions on the current AUT's screen.
      */
-    private final List<EspressoAction> espressoActions;
+    private List<EspressoAction> espressoActions;
 
     /**
      * The Instrumentation provided by the DeviceInfo class.
      */
     private final Instrumentation instrumentation;
+    private final EspressoViewTree viewTree;
 
     public EspressoScreenParser() {
-        espressoActions = new ArrayList<>();
         instrumentation = DeviceInfo.getInstance().getInstrumentation();
+        viewTree = fetchViewTree();
+    }
 
-        EspressoViewTree viewTree = fetchViewTree();
-        parseEspressoActions(viewTree);
-
-        for (EspressoAction action : espressoActions) {
-            MATELog.log("Espresso action: " + action.getCode());
-        }
+    public EspressoViewTree getViewTree() {
+        return viewTree;
     }
 
     /**
      * @return A list of discovered EspressoActions on the current AUT's screen.
      */
     public List<EspressoAction> getActions() {
+        if (espressoActions == null) {
+            espressoActions = new ArrayList<>();
+            parseEspressoActions(viewTree);
+
+            for (EspressoAction action : espressoActions) {
+                MATELog.log("Espresso action: " + action.getCode());
+            }
+        }
+
         return espressoActions;
     }
 
