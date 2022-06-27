@@ -3,7 +3,7 @@ package org.mate.utils.assertions;
 import org.mate.Registry;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.assertions.EspressoAssertionsFactory;
-import org.mate.commons.interaction.action.espresso.assertions.EspressoViewAssertion;
+import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.interaction.UIAbstractionLayer;
 import org.mate.model.TestCase;
@@ -11,6 +11,8 @@ import org.mate.model.TestCase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class TestCaseAssertionsGenerator {
 
@@ -65,7 +67,7 @@ public class TestCaseAssertionsGenerator {
                 uiAbstractionLayer.getLastScreenState().getUIAttributes();
         Map<String, EspressoViewMatcher> viewMatchers =
                 uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers();
-        List<EspressoViewAssertion> assertionsBeforeTest = generateAssertions(uiAttributes, viewMatchers);
+        List<EspressoAssertion> assertionsBeforeTest = generateAssertions(uiAttributes, viewMatchers);
         testCaseWithAssertions.setAssertionsBeforeTest(assertionsBeforeTest);
 
         List<Action> actionSequence = testCase.getActionSequence();
@@ -76,7 +78,7 @@ public class TestCaseAssertionsGenerator {
 
             uiAttributes = uiAbstractionLayer.getLastScreenState().getUIAttributes();
             viewMatchers = uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers();
-            List<EspressoViewAssertion> assertionsAfterAction = generateAssertions(uiAttributes, viewMatchers);
+            List<EspressoAssertion> assertionsAfterAction = generateAssertions(uiAttributes, viewMatchers);
             testCaseWithAssertions.setAssertionsAfterAction(i, assertionsAfterAction);
         }
 
@@ -89,7 +91,7 @@ public class TestCaseAssertionsGenerator {
      * @param viewMatchers
      * @return a list of assertions.
      */
-    private List<EspressoViewAssertion> generateAssertions(
+    private List<EspressoAssertion> generateAssertions(
             Map<String, Map<String, String>> uiAttributes,
             Map<String, EspressoViewMatcher> viewMatchers) {
         if (lastUIAttributes == null) {
@@ -101,13 +103,13 @@ public class TestCaseAssertionsGenerator {
             return new ArrayList<>();
         }
 
-        List<EspressoViewAssertion> assertions = new ArrayList<>();
+        List<EspressoAssertion> assertions = new ArrayList<>();
 
         // has any view in last UI disappeared?
         for (String viewUniqueID : lastUIAttributes.keySet()) {
             if (!uiAttributes.containsKey(viewUniqueID)) {
                 // a view from last UI is gone
-                assertions.add(EspressoAssertionsFactory.viewIsGone(viewUniqueID,
+                addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewUniqueID,
                         lastUIAttributes.get(viewUniqueID), lastViewMatchers.get(viewUniqueID)));
             }
         }
@@ -116,7 +118,7 @@ public class TestCaseAssertionsGenerator {
         for (String viewUniqueID : uiAttributes.keySet()) {
             if (!lastUIAttributes.containsKey(viewUniqueID)) {
                 // a view that was not in last UI has appeared
-                assertions.add(EspressoAssertionsFactory.viewHasAppeared(viewUniqueID,
+                addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewUniqueID,
                         uiAttributes.get(viewUniqueID), viewMatchers.get(viewUniqueID)));
             }
         }
@@ -141,20 +143,31 @@ public class TestCaseAssertionsGenerator {
 
                 if (oldValue == null && newValue != null) {
                     // Null value became non-null
-                    assertions.add(EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
                             oldValue, newValue, viewMatchers.get(viewUniqueID)));
                 } else if (oldValue != null && newValue == null) {
                     // Non-null value became null
-                    assertions.add(EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
                             oldValue, newValue, viewMatchers.get(viewUniqueID)));
                 } else if (!oldValue.equals(newValue)) {
                     // an attibute's value has changed
-                    assertions.add(EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
                             oldValue, newValue, viewMatchers.get(viewUniqueID)));
                 }
             }
         }
 
         return assertions;
+    }
+
+    /**
+     * Add assertion if not null.
+     * @param assertions the list of assertions.
+     * @param assertion the assertion to add.
+     */
+    private void addIfNonNull(List<EspressoAssertion> assertions, @Nullable EspressoAssertion assertion) {
+        if (assertion != null) {
+            assertions.add(assertion);
+        }
     }
 }

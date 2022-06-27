@@ -5,9 +5,11 @@ import android.os.Parcelable;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import org.mate.commons.interaction.action.espresso.matchers.base.IsDisplayedMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithClassNameMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithContentDescriptionMatcher;
+import org.mate.commons.interaction.action.espresso.matchers.base.WithEffectiveVisibilityMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithHintMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithIdMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithResourceNameMatcher;
@@ -104,6 +106,10 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new WithTextMatcher(source);
             case WITH_HINT:
                 return new WithHintMatcher(source);
+            case IS_DISPLAYED:
+                return new IsDisplayedMatcher(source);
+            case WITH_EFFECTIVE_VISIBILITY:
+                return new WithEffectiveVisibilityMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:
