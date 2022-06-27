@@ -1,6 +1,7 @@
 package org.mate.utils.assertions;
 
 import org.mate.Properties;
+import org.mate.commons.interaction.action.espresso.assertions.EspressoViewAssertion;
 import org.mate.commons.utils.MATELog;
 import org.mate.model.TestCase;
 import org.mate.utils.testcase.writer.EspressoTestCaseWriter;
@@ -23,7 +24,7 @@ public class TestCaseWithAssertions extends TestCase {
      * assertions at index 1 are the assertions before the second action, etc.
      * The assertions at index N+1 are the assertions after the last action.
      */
-    private Map<Integer, List<String>> assertions = new HashMap<>();
+    private Map<Integer, List<EspressoViewAssertion>> assertions = new HashMap<>();
 
     private TestCaseWithAssertions(String id) {
         super(id);
@@ -83,7 +84,7 @@ public class TestCaseWithAssertions extends TestCase {
      * Save the assertions to be run before the test case begins.
      * @param assertionsBeforeTest a list of assertions.
      */
-    public void setAssertionsBeforeTest(List<String> assertionsBeforeTest) {
+    public void setAssertionsBeforeTest(List<EspressoViewAssertion> assertionsBeforeTest) {
         this.assertions.put(0, Collections.unmodifiableList(assertionsBeforeTest));
     }
 
@@ -92,7 +93,7 @@ public class TestCaseWithAssertions extends TestCase {
      * @param actionIndex the index of the action to execute.
      * @param assertionsAfterAction a list of assertions.
      */
-    public void setAssertionsAfterAction(int actionIndex, List<String> assertionsAfterAction) {
+    public void setAssertionsAfterAction(int actionIndex, List<EspressoViewAssertion> assertionsAfterAction) {
         this.assertions.put(actionIndex + 1, Collections.unmodifiableList(assertionsAfterAction));
     }
 }
