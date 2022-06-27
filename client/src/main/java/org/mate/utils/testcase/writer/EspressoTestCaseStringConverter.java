@@ -1,11 +1,16 @@
 package org.mate.utils.testcase.writer;
 
+import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.utils.AbstractCodeProducer;
+import org.mate.model.TestCase;
+import org.mate.utils.assertions.TestCaseWithAssertions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -46,6 +51,11 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
      * The Espresso actions to write into the final String.
      */
     private final List<EspressoAction> actions;
+
+    /**
+     * The Espresso assertions to write before each action into the final String.
+     */
+    private Map<Integer, List<EspressoAssertion>> assertions;
 
     /**
      * The Java classes to include in the imports of the final String.
@@ -101,12 +111,35 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         addDefaultImports();
     }
 
+    public void parseTestCase(TestCase testCase) {
+        for (Action action : testCase.getActionSequence()) {
+            EspressoAction espressoAction = (EspressoAction) action;
+            addAction(espressoAction);
+        }
+
+        if (testCase instanceof TestCaseWithAssertions) {
+            TestCaseWithAssertions testCaseWithAssertions = (TestCaseWithAssertions) testCase;
+            addAssertions(testCaseWithAssertions.getAssertions());
+        }
+    }
+
+    private void addAssertions(Map<Integer, List<EspressoAssertion>> assertions) {
+        this.assertions = assertions;
+
+        for (List<EspressoAssertion> aux : assertions.values()) {
+            for (EspressoAssertion assertion : aux) {
+                this.classImports.addAll(assertion.getNeededClassImports());
+                this.staticImports.addAll(assertion.getNeededStaticImports());
+            }
+        }
+    }
+
     /**
      * Adds an Espresso action String representation into the final test case's body.
      * The class and static imports of the Espresso action are included as well.
      * @param espressoAction the action to add.
      */
-    public void addAction(EspressoAction espressoAction) {
+    private void addAction(EspressoAction espressoAction) {
         this.actions.add(espressoAction);
         this.classImports.addAll(espressoAction.getNeededClassImports());
         this.staticImports.addAll(espressoAction.getNeededStaticImports());
@@ -282,11 +315,26 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
      */
     private void writeTestBody() {
         List<EspressoAction> espressoActions = this.actions;
-        for (int i = 0, espressoActionsSize = espressoActions.size(); i < espressoActionsSize; i++) {
-            // TODO (Ivan): write assertions as well if Test Case has assertions
+        for (int i = 0; i < espressoActions.size(); i++) {
+            writeAssertionsAtIndex(i);
 
             EspressoAction action = espressoActions.get(i);
             writeExpressionLine(action.getCode());
+        }
+
+        writeAssertionsAtIndex(espressoActions.size());
+    }
+
+    /**
+     * Writes the Espresso assertions at the given index.
+     * @param index
+     */
+    private void writeAssertionsAtIndex(int index) {
+        if (assertions != null && assertions.containsKey(index)) {
+            List<EspressoAssertion> aux = assertions.get(index);
+            for (EspressoAssertion assertion : aux) {
+                writeExpressionLine(assertion.getCode());
+            }
         }
     }
 

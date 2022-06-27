@@ -44,10 +44,7 @@ public class EspressoTestCaseWriter extends TestCaseWriter {
                         getTestCaseName(),
                         "testMethod");
 
-        for (Action action : testCase.getActionSequence()) {
-            EspressoAction espressoAction = (EspressoAction) action;
-            converter.addAction(espressoAction);
-        }
+        converter.parseTestCase(testCase);
 
         return converter.getCode();
     }

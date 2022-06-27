@@ -96,4 +96,8 @@ public class TestCaseWithAssertions extends TestCase {
     public void setAssertionsAfterAction(int actionIndex, List<EspressoAssertion> assertionsAfterAction) {
         this.assertions.put(actionIndex + 1, Collections.unmodifiableList(assertionsAfterAction));
     }
+
+    public Map<Integer, List<EspressoAssertion>> getAssertions() {
+        return Collections.unmodifiableMap(assertions);
+    }
 }
