@@ -3,6 +3,7 @@ package org.mate.model.fsm;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.VirtualStartAction;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
 import org.mate.commons.interaction.action.ui.Widget;
@@ -80,6 +81,11 @@ public class FSMModel implements IGUIModel {
 
         @Override
         public Map<String, Map<String, String>> getUIAttributes() {
+            throw new UnsupportedOperationException("Do not call this method!");
+        }
+
+        @Override
+        public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
             throw new UnsupportedOperationException("Do not call this method!");
         }
 

@@ -24,7 +24,9 @@ import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNo
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 
@@ -37,6 +39,11 @@ public class EspressoScreenParser {
      * A list of discovered EspressoActions on the current AUT's screen.
      */
     private List<EspressoAction> espressoActions;
+
+    /**
+     * A list of discovered EspressoMatchers on the current AUT's screen.
+     */
+    private Map<String, EspressoViewMatcher> viewMatchers;
 
     /**
      * The Instrumentation provided by the DeviceInfo class.
@@ -57,8 +64,12 @@ public class EspressoScreenParser {
      * @return A list of discovered EspressoActions on the current AUT's screen.
      */
     public List<EspressoAction> getActions() {
+        if (viewMatchers == null) {
+            // Parse ViewMatchers from the current screen if we haven't parsed them yet.
+            parseViewMatchers(viewTree);
+        }
+
         if (espressoActions == null) {
-            espressoActions = new ArrayList<>();
             parseEspressoActions(viewTree);
 
             for (EspressoAction action : espressoActions) {
@@ -88,6 +99,26 @@ public class EspressoScreenParser {
         return new EspressoViewTree(rootView, activity.getClass().getName());
     }
 
+    private void parseViewMatchers(EspressoViewTree viewTree) {
+        if (viewMatchers == null) {
+            viewMatchers = new HashMap<>();
+        }
+
+        for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
+            RelativeMatcherCombination matcherCombination = RelativeMatcherCombination.
+                    buildUnequivocalCombination(node, viewTree);
+
+            if (matcherCombination == null) {
+                // we weren't able to generate a unequivocal matcher combination for this view, skip
+                // it.
+                continue;
+            }
+
+            EspressoViewMatcher viewMatcher = matcherCombination.getEspressoViewMatcher();
+            viewMatchers.put(node.getEspressoView().getUniqueId(), viewMatcher);
+        }
+    }
+
     /**
      * Parses the Espresso actions available in a given UI hierarchy.
      * An Espresso action is found when we find a View for which we can execute a ViewAction, and we
@@ -104,6 +135,10 @@ public class EspressoScreenParser {
     private void parseEspressoActions(EspressoViewTree viewTree) {
         long startTime = System.nanoTime();
 
+        if (espressoActions == null) {
+            espressoActions = new ArrayList<>();
+        }
+
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
             EspressoViewActionsParser viewActionsParser =
                     new EspressoViewActionsParser(node.getEspressoView());
@@ -114,16 +149,12 @@ public class EspressoScreenParser {
                 continue;
             }
 
-            RelativeMatcherCombination matcherCombination = RelativeMatcherCombination.
-                    buildUnequivocalCombination(node, viewTree);
-
-            if (matcherCombination == null) {
+            EspressoViewMatcher espressoViewMatcher = this.viewMatchers.get(node.getEspressoView().getUniqueId());
+            if (espressoViewMatcher == null) {
                 // we weren't able to generate a unequivocal matcher combination for this view, skip
                 // it.
                 continue;
             }
-
-            EspressoViewMatcher espressoViewMatcher = matcherCombination.getEspressoViewMatcher();
 
             // Create and save the EspressoAction instances
             for (EspressoViewAction espressoViewAction : espressoViewActions) {
@@ -266,5 +297,13 @@ public class EspressoScreenParser {
     private boolean isTopmostRoot(Root topMostRoot, Root newRoot) {
         return newRoot.getWindowLayoutParams().get().type
                 > topMostRoot.getWindowLayoutParams().get().type;
+    }
+
+    public Map<String, EspressoViewMatcher> getMatchers() {
+        if (viewMatchers == null) {
+            parseViewMatchers(viewTree);
+        }
+
+        return viewMatchers;
     }
 }

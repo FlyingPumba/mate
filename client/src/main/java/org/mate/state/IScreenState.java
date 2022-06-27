@@ -1,6 +1,7 @@
 package org.mate.state;
 
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
 import org.mate.commons.interaction.action.ui.Widget;
@@ -24,6 +25,7 @@ public interface IScreenState {
     List<MotifAction> getMotifActions();
     List<EspressoAction> getEspressoActions();
     Map<String, Map<String, String>> getUIAttributes();
+    Map<String, EspressoViewMatcher> getEspressoViewMatchers();
     String getActivityName();
     String getPackageName();
     ScreenStateType getType();

@@ -4,6 +4,7 @@ import android.os.RemoteException;
 
 import org.mate.commons.exceptions.AUTCrashException;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.ActionType;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
@@ -114,6 +115,11 @@ public class ActionsScreenState extends AbstractScreenState {
     @Override
     public Map<String, Map<String, String>> getUIAttributes() {
         return appScreen.getUIAttributes();
+    }
+
+    @Override
+    public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
+        return appScreen.getEspressoViewMatchers();
     }
 
     /**

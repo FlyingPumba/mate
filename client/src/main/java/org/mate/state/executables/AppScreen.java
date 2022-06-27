@@ -5,6 +5,7 @@ import android.os.RemoteException;
 import androidx.annotation.NonNull;
 
 import org.mate.commons.exceptions.AUTCrashException;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.utils.MATELog;
 import org.mate.interaction.DeviceMgr;
@@ -171,11 +172,31 @@ public class AppScreen {
         return "AppScreen{activity: " + activityName + ", widgets: " + widgets.size() + "}";
     }
 
+    /**
+     * Returns the UI attributes in current screen.
+     * @return a map of UI attributes. The keys is the View's unique ID. The value is the View's
+     * attributes.
+     */
     public Map<String, Map<String, String>> getUIAttributes() {
         try {
             return (Map<String, Map<String, String>>) MATEService.getRepresentationLayer().getUIAttributes();
         } catch (RemoteException | AUTCrashException e) {
             MATELog.log_warn("Unable to fetch UI attributes after AUT has crashed");
+        }
+
+        return new HashMap<>();
+    }
+
+    /**
+     * Returns the Espresso ViewMatchers in current screen.
+     * @return a map of Espresso ViewMatchers. The keys is the View's unique ID. The value is the
+     * View's Espresso ViewMatchers.
+     */
+    public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
+        try {
+            return (Map<String, EspressoViewMatcher>) MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers();
+        } catch (RemoteException | AUTCrashException e) {
+            MATELog.log_warn("Unable to fetch Espresso View Matchers after AUT has crashed");
         }
 
         return new HashMap<>();

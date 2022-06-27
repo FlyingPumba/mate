@@ -4,6 +4,7 @@ package org.mate.commons;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 
 interface IRepresentationLayerInterface {
     // Representation Layer status & config
@@ -38,8 +39,9 @@ interface IRepresentationLayerInterface {
     // Widget actions
     List<Widget> getCurrentScreenWidgets();
 
-    // Espresso actions
+    // Espresso support
     List<EspressoAction> getCurrentScreenEspressoActions();
+    Map getCurrentScreenEspressoMatchers();
 
     // UI state
     Map getUIAttributes();

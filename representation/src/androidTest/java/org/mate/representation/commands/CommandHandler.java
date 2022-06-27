@@ -7,6 +7,7 @@ import org.mate.commons.IMATEServiceInterface;
 import org.mate.commons.IRepresentationLayerInterface;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.utils.MATELog;
 import org.mate.representation.DeviceInfo;
@@ -20,8 +21,6 @@ import org.mate.representation.test.BuildConfig;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,8 @@ import java.util.Map;
  * Handles commands requested by the MATE Service (e.g., fetch current available actions).
  */
 public class CommandHandler extends IRepresentationLayerInterface.Stub {
+
+    private EspressoScreenParser espressoScreenParser;
 
     public CommandHandler() {}
 
@@ -128,6 +129,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
         try {
             boolean success = executor.perform(action);
+
+            resetScreenParsers();
+
             return success;
         } catch (Exception e) {
             MATELog.log_error(
@@ -140,6 +144,16 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             MATELog.log_error(sw.toString());
 
             return false;
+        }
+    }
+
+    /**
+     * Reset screen parsers after executing an action, and thus invalidating the screen
+     * information that we had.
+     */
+    private void resetScreenParsers() {
+        if (espressoScreenParser != null) {
+            espressoScreenParser = null;
         }
     }
 
@@ -161,7 +175,20 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
-        return new EspressoScreenParser().getActions();
+        if (espressoScreenParser == null) {
+            espressoScreenParser = new EspressoScreenParser();
+        }
+
+        return espressoScreenParser.getActions();
+    }
+
+    @Override
+    public Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers() throws RemoteException {
+        if (espressoScreenParser == null) {
+            espressoScreenParser = new EspressoScreenParser();
+        }
+
+        return espressoScreenParser.getMatchers();
     }
 
     @Override
