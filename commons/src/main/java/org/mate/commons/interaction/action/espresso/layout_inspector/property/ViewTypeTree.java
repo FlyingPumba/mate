@@ -64,7 +64,7 @@ public class ViewTypeTree {
         InspectionCompanion<View> inspectionCompanion = loadInspectionCompanion(viewClass);
         @SuppressWarnings("unchecked")
         ViewType<? extends View> superType =
-                !viewClass.getCanonicalName().equals("android.view.View")
+                !"android.view.View".equals(viewClass.getCanonicalName())
                         ? innerTypeOf((Class<? extends View>) viewClass.getSuperclass())
                         : null;
         List<InspectionCompanion<View>> companions = new ArrayList<>();
