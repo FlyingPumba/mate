@@ -149,7 +149,7 @@ public class TestCaseAssertionsGenerator {
                     // Non-null value became null
                     addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
                             oldValue, newValue, viewMatchers.get(viewUniqueID)));
-                } else if (!oldValue.equals(newValue)) {
+                } else if (oldValue != null && newValue != null && !oldValue.equals(newValue)) {
                     // an attibute's value has changed
                     addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
                             oldValue, newValue, viewMatchers.get(viewUniqueID)));
