@@ -320,6 +320,8 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
 
             EspressoAction action = espressoActions.get(i);
             writeExpressionLine(action.getCode());
+
+            writeEmptyLine();
         }
 
         writeAssertionsAtIndex(espressoActions.size());
@@ -335,6 +337,8 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
             for (EspressoAssertion assertion : aux) {
                 writeExpressionLine(assertion.getCode());
             }
+
+            writeEmptyLine();
         }
     }
 
