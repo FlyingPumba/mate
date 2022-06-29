@@ -376,6 +376,7 @@ public class MATEService extends Service implements IBinder.DeathRecipient {
         final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
 
         if (intent == null) {
+            log("MATE Service did not find launch intent for package name " + packageName);
             return false;
         }
 
@@ -384,7 +385,8 @@ public class MATEService extends Service implements IBinder.DeathRecipient {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         } catch (Exception e) {
             e.printStackTrace();
-            MATELog.log("EXCEPTION CLEARING ACTIVITY FLAG");
+            MATELog.log("MATE Service found an exception adding CLEAR flag to intent for package " +
+                    "name " + packageName + ": " + e.getMessage());
             return false;
         }
 
