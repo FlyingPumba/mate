@@ -59,91 +59,156 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void setRandomSeed(long seed) throws RemoteException {
-        ExplorationInfo.getInstance().setRandomSeed(seed);
+        try {
+            ExplorationInfo.getInstance().setRandomSeed(seed);
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
     }
 
     @Override
     public int getDisplayWidth() throws RemoteException {
-        return DeviceInfo.getInstance().getDisplayWidth();
-    }
-
-    @Override
-    public int getDisplayHeight() throws RemoteException {
-        return DeviceInfo.getInstance().getDisplayHeight();
-    }
-
-    @Override
-    public boolean grantRuntimePermission(String permission) throws RemoteException {
-        return DeviceInfo.getInstance().grantRuntimePermission(permission);
-    }
-
-    @Override
-    public void disableAnimations() throws RemoteException {
-        DeviceInfo.getInstance().disableAnimations();
-    }
-
-    @Override
-    public boolean isCrashDialogPresent() throws RemoteException {
-        return DeviceInfo.getInstance().isCrashDialogPresent();
-    }
-
-    @Override
-    public String getTargetPackageFilesDir() throws RemoteException {
-        return DeviceInfo.getInstance().getTargetPackageFilesDir();
-    }
-
-    @Override
-    public void sendBroadcastToTracer() throws RemoteException {
-        ExplorationInfo.getInstance().sendBroadcastToTracer();
-    }
-
-    @Override
-    public String getCurrentPackageName() throws RemoteException {
-        return ExplorationInfo.getInstance().getCurrentPackageName();
-    }
-
-    @Override
-    public String getCurrentActivityName() throws RemoteException {
-        return ExplorationInfo.getInstance().getCurrentActivityName();
-    }
-
-    @Override
-    public List<String> getTargetPackageActivityNames() throws RemoteException {
-        return ExplorationInfo.getInstance().getTargetPackageActivityNames();
-    }
-
-    @Override
-    public String executeShellCommand(String command) throws RemoteException {
-        return DeviceInfo.getInstance().executeShellCommand(command);
-    }
-
-    @Override
-    public boolean executeAction(Action action) throws RemoteException {
-        if (action == null) {
-            MATELog.log_error("Trying to execute null action");
-            throw new IllegalStateException("executeAction method on representation layer was " +
-                    "called for a null action");
+        try {
+            return DeviceInfo.getInstance().getDisplayWidth();
+        } catch (Exception e){
+            logException(e);
+            throw e;
         }
 
-        ActionExecutor executor = ActionExecutorFactory.getExecutor(action);
 
+    }   @Override
+    public int getDisplayHeight() throws RemoteException {
         try {
-            boolean success = executor.perform(action);
+            return DeviceInfo.getInstance().getDisplayHeight();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
 
-            resetScreenParsers();
 
-            return success;
-        } catch (Exception e) {
-            MATELog.log_error(
-                    "An exception occurred executing action on representation layer: " +
-                    e.getMessage());
+    }   @Override
+    public boolean grantRuntimePermission(String permission) throws RemoteException {
+        try {
+            return DeviceInfo.getInstance().grantRuntimePermission(permission);
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
 
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            MATELog.log_error(sw.toString());
 
-            return false;
+    }   @Override
+    public void disableAnimations() throws RemoteException {
+        try {
+            DeviceInfo.getInstance().disableAnimations();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public boolean isCrashDialogPresent() throws RemoteException {
+        try {
+            return DeviceInfo.getInstance().isCrashDialogPresent();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public String getTargetPackageFilesDir() throws RemoteException {
+        try {
+            return DeviceInfo.getInstance().getTargetPackageFilesDir();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public void sendBroadcastToTracer() throws RemoteException {
+        try {
+            ExplorationInfo.getInstance().sendBroadcastToTracer();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public String getCurrentPackageName() throws RemoteException {
+        try {
+            return ExplorationInfo.getInstance().getCurrentPackageName();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public String getCurrentActivityName() throws RemoteException {
+        try {
+            return ExplorationInfo.getInstance().getCurrentActivityName();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public List<String> getTargetPackageActivityNames() throws RemoteException {
+        try {
+            return ExplorationInfo.getInstance().getTargetPackageActivityNames();
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public String executeShellCommand(String command) throws RemoteException {
+        try {
+            return DeviceInfo.getInstance().executeShellCommand(command);
+        } catch (Exception e){
+            logException(e);
+            throw e;
+        }
+
+
+    }   @Override
+    public boolean executeAction(Action action) throws RemoteException {
+        try {
+            if (action == null) {
+                MATELog.log_error("Trying to execute null action");
+                throw new IllegalStateException("executeAction method on representation layer was " +
+                        "called for a null action");
+            }
+
+            ActionExecutor executor = ActionExecutorFactory.getExecutor(action);
+
+            try {
+                boolean success = executor.perform(action);
+
+                resetScreenParsers();
+
+                return success;
+            } catch (Exception e) {
+                MATELog.log_error(
+                        "An exception occurred executing action on representation layer: " +
+                        e.getMessage());
+
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                MATELog.log_error(sw.toString());
+
+                return false;
+            }
+        } catch (Exception e){
+            logException(e);
+            throw e;
         }
     }
 
@@ -162,51 +227,84 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
         try {
             return new WidgetScreenParser().getWidgets();
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw, true);
-            e.printStackTrace(pw);
-            String stackTrace = sw.toString();
-
-            MATELog.log_error(String.format("Exception occurred: %s", stackTrace));
-
+            logException(e);
             throw e;
         }
     }
 
     @Override
     public List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
-        if (espressoScreenParser == null) {
-            espressoScreenParser = new EspressoScreenParser();
-        }
+        try {
+            if (espressoScreenParser == null) {
+                espressoScreenParser = new EspressoScreenParser();
+            }
 
-        return espressoScreenParser.getActions();
+            return espressoScreenParser.getActions();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
     }
 
     @Override
     public Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers() throws RemoteException {
-        if (espressoScreenParser == null) {
-            espressoScreenParser = new EspressoScreenParser();
-        }
+        try {
+            if (espressoScreenParser == null) {
+                espressoScreenParser = new EspressoScreenParser();
+            }
 
-        return espressoScreenParser.getMatchers();
+            return espressoScreenParser.getMatchers();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
     }
 
     @Override
     public Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
-        return ExplorationInfo.getInstance().getUIAttributes();
+        try {
+            return ExplorationInfo.getInstance().getUIAttributes();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
     }
 
     @Override
     public void setReplayMode() throws RemoteException {
-        ExplorationInfo.getInstance().setReplayMode();
+        try {
+            ExplorationInfo.getInstance().setReplayMode();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
     }
 
     @Override
     public void setWidgetBasedActions() throws RemoteException {
-        ExplorationInfo.getInstance().setWidgetBasedActions();
+        try {
+            ExplorationInfo.getInstance().setWidgetBasedActions();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
     }
 
     public void setMateService(IMATEServiceInterface mateService) {
         // do nothing, for now
+    }
+
+    /**
+     * Log an exception that happened in the Representation Layour
+     * @param e the exception to log.
+     */
+    private void logException(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+
+        MATELog.log_error(String.format("Exception occurred in Representation Layer: %s",
+                stackTrace));
     }
 }
