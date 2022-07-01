@@ -17,11 +17,14 @@ import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeIt
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.interaction.action.espresso.view_tree.PathWithNodes;
 import org.mate.commons.interaction.action.espresso.view_tree.PathInTree;
+import org.mate.commons.utils.MATELog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a combination of relative matchers.
@@ -75,7 +78,7 @@ public class RelativeMatcherCombination {
      */
     private List<EspressoViewTreeNode> nodesWithSameHashAsTarget;
 
-    public RelativeMatcherCombination(EspressoViewTreeNode targetNode,
+    private RelativeMatcherCombination(EspressoViewTreeNode targetNode,
                                       EspressoViewTree viewTree) {
         this.targetNode = targetNode;
         this.viewTree = viewTree;
@@ -86,7 +89,7 @@ public class RelativeMatcherCombination {
 
     private RelativeMatcherCombination(EspressoViewTreeNode targetNode,
                                        EspressoViewTree viewTree,
-                                       HashSet<RelativeMatcher> initialMatchers) {
+                                       Set<RelativeMatcher> initialMatchers) {
         this(targetNode, viewTree);
         for (RelativeMatcher matcher : initialMatchers) {
             this.addMatcher(matcher);
@@ -171,6 +174,9 @@ public class RelativeMatcherCombination {
         EspressoView espressoViewAfterPath = nodeAfterPath.getEspressoView();
 
         switch (matcher.getType()) {
+            case IS_ROOT:
+                hash.append(nodeAfterPath.hasParent());
+                break;
             case WITH_ID:
                 hash.append(espressoViewAfterPath.getId());
                 break;
@@ -226,6 +232,14 @@ public class RelativeMatcherCombination {
     public static @Nullable
     RelativeMatcherCombination buildUnequivocalCombination(EspressoViewTreeNode targetNode,
                                                            EspressoViewTree viewTree) {
+        if (!targetNode.hasParent()) {
+            // A node without parent in a tree is, by definition, the root node.
+            // Use a special matcher for that case
+            Set<RelativeMatcher> matchers = new HashSet<>(Collections.singletonList(
+                    new RelativeMatcher(new PathInTree(),
+                            EspressoViewMatcherType.IS_ROOT)));
+            return new RelativeMatcherCombination(targetNode, viewTree, matchers);
+        }
 
         long startTime = System.nanoTime();
 
@@ -258,17 +272,17 @@ public class RelativeMatcherCombination {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
 
-        // String debugMsg = String.format(
-        //         "Matcher combination generation took %d ms (for %d other views). ",
-        //         duration,
-        //         viewTree.getAllNodes().size());
-        // debugMsg += String.format("Result has %d matchers ", matcherCombination.getMatchers().size());
-        // if (matcherCombination.isUnique()) {
-        //     debugMsg += "and is unique.";
-        // } else {
-        //     debugMsg += "and is not unique.";
-        // }
-        // MATELog.log_debug(debugMsg);
+        String debugMsg = String.format(
+                "Matcher combination generation took %d ms (for %d other views). ",
+                duration,
+                viewTree.getAllNodes().size());
+        debugMsg += String.format("Result has %d matchers ", matcherCombination.getMatchers().size());
+        if (matcherCombination.isUnequivocal()) {
+            debugMsg += "and is unequivocal.";
+        } else {
+            debugMsg += "and is not unequivocal.";
+        }
+        MATELog.log_debug(debugMsg);
 
         if (matcherCombination.isUnequivocal()) {
             return matcherCombination;

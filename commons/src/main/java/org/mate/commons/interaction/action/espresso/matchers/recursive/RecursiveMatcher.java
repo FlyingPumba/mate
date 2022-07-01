@@ -2,6 +2,7 @@ package org.mate.commons.interaction.action.espresso.matchers.recursive;
 
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithClassNameMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithIdMatcher;
@@ -53,6 +54,9 @@ public abstract class RecursiveMatcher extends EspressoViewMatcher {
             EspressoViewMatcher newMatcher = null;
 
             switch (relativeMatcher.getType()) {
+                case IS_ROOT:
+                    newMatcher = new IsRootMatcher();
+                    break;
                 case WITH_RESOURCE_NAME:
                     newMatcher = new WithResourceNameMatcher(node.getEspressoView().getResourceName());
                     break;
