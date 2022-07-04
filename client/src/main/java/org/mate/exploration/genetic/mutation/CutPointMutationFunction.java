@@ -1,8 +1,12 @@
 package org.mate.exploration.genetic.mutation;
 
+import static org.mate.exploration.genetic.chromosome_factory.ChromosomeFactory.ESPRESSO_RANDOM_CHROMOSOME_FACTORY;
+
 import org.mate.Properties;
 import org.mate.Registry;
+import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.ui.UIAction;
+import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.utils.MATELog;
 import org.mate.commons.utils.Randomness;
 import org.mate.exploration.genetic.chromosome.Chromosome;
@@ -13,9 +17,11 @@ import org.mate.model.fsm.surrogate.SurrogateModel;
 import org.mate.utils.FitnessUtils;
 import org.mate.utils.coverage.CoverageUtils;
 
+import java.util.List;
+
 /**
  * Provides a cut point mutation function for {@link TestCase}s. Only applicable in combination
- * with {@link UIAction}s.
+ * with {@link UIAction}s or {@link EspressoAction}s.
  */
 public class CutPointMutationFunction implements IMutationFunction<TestCase> {
 
@@ -36,6 +42,11 @@ public class CutPointMutationFunction implements IMutationFunction<TestCase> {
     private boolean isTestSuiteExecution = false;
 
     /**
+     * Whether to use Espresso actions instead of UiActions or not.
+     */
+    private boolean useEspressoActions = false;
+
+    /**
      * Initialises the cut point mutation function.
      *
      * @param maxNumEvents The maximal number of actions per test case.
@@ -43,6 +54,8 @@ public class CutPointMutationFunction implements IMutationFunction<TestCase> {
     public CutPointMutationFunction(int maxNumEvents) {
         this.uiAbstractionLayer = Registry.getUiAbstractionLayer();
         this.maxNumEvents = maxNumEvents;
+
+        useEspressoActions = ESPRESSO_RANDOM_CHROMOSOME_FACTORY.equals(Properties.CHROMOSOME_FACTORY());
     }
 
     // TODO: might be replaceable with chromosome factory property in the future
@@ -74,13 +87,9 @@ public class CutPointMutationFunction implements IMutationFunction<TestCase> {
 
         try {
             for (int i = 0; i < maxNumEvents; i++) {
-                UIAction newAction;
-                if (i < cutPoint) {
-                    newAction = (UIAction) chromosome.getValue().getActionSequence().get(i);
-                } else {
-                    newAction = Randomness.randomElement(uiAbstractionLayer.getExecutableUiActions());
-                }
-                if (!uiAbstractionLayer.getExecutableUiActions().contains(newAction)
+                Action newAction = chooseNextAction(chromosome, cutPoint, i);
+
+                if (!getAvailableActions().contains(newAction)
                         || !mutant.updateTestCase(newAction, i)) {
                     break;
                 }
@@ -108,6 +117,37 @@ public class CutPointMutationFunction implements IMutationFunction<TestCase> {
         }
 
         return mutatedChromosome;
+    }
+
+    /**
+     * Returns the available actions for the current screen.
+     * It will return the Espresso actions if we deal with an Espresso execution, otherwise it will
+     * return the UiActions.
+     * @return The available actions for the current screen.
+     */
+    private List<? extends Action> getAvailableActions() {
+        if (useEspressoActions) {
+            return uiAbstractionLayer.getExecutableEspressoActions();
+        } else {
+            return uiAbstractionLayer.getExecutableUiActions();
+        }
+    }
+
+    /**
+     * Chooses a new action to be added to the test case.
+     * @param chromosome The chromosome to be mutated.
+     * @param cutPoint The cut point.
+     * @param i The index of the action to be added.
+     * @return Returns the new action.
+     */
+    private Action chooseNextAction(IChromosome<TestCase> chromosome, int cutPoint, int i) {
+        Action newAction;
+        if (i < cutPoint) {
+            newAction = chromosome.getValue().getActionSequence().get(i);
+        } else {
+            newAction = Randomness.randomElement(getAvailableActions());
+        }
+        return newAction;
     }
 
     /**
