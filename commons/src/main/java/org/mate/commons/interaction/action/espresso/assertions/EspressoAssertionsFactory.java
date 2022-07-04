@@ -22,7 +22,7 @@ public class EspressoAssertionsFactory {
      */
     public static @Nullable EspressoAssertion viewIsGone(String viewUniqueID,
                                                Map<String, String> attributes,
-                                               @Nullable EspressoViewMatcher viewMatcher) {
+                                               EspressoViewMatcher viewMatcher) {
         return new EspressoAssertion(viewMatcher, new DoesNotExistAssertion());
     }
 
@@ -35,7 +35,7 @@ public class EspressoAssertionsFactory {
      */
     public static @Nullable EspressoAssertion viewHasAppeared(String viewUniqueID,
                                                     Map<String, String> attributes,
-                                                    @Nullable EspressoViewMatcher viewMatcher) {
+                                                    EspressoViewMatcher viewMatcher) {
         return new EspressoAssertion(viewMatcher, new MatchesAssertion(new IsDisplayedMatcher()));
     }
 
@@ -51,7 +51,7 @@ public class EspressoAssertionsFactory {
     public static @Nullable EspressoAssertion viewHasChanged(String viewUniqueID, String attrKey,
                                                    @Nullable String oldValue,
                                                    @Nullable String newValue,
-                                                   @Nullable EspressoViewMatcher viewMatcher) {
+                                                   EspressoViewMatcher viewMatcher) {
         switch (attrKey) {
             case "visibility":
                 return new EspressoAssertion(viewMatcher,

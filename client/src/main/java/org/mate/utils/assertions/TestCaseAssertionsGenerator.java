@@ -109,8 +109,15 @@ public class TestCaseAssertionsGenerator {
         for (String viewUniqueID : lastUIAttributes.keySet()) {
             if (!uiAttributes.containsKey(viewUniqueID)) {
                 // a view from last UI is gone
+
+                EspressoViewMatcher viewMatcher = lastViewMatchers.get(viewUniqueID);
+                if (viewMatcher == null) {
+                    // we don't have a ViewMatcher for this view, so we can't generate an assertion.
+                    continue;
+                }
+
                 addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewUniqueID,
-                        lastUIAttributes.get(viewUniqueID), lastViewMatchers.get(viewUniqueID)));
+                        lastUIAttributes.get(viewUniqueID), viewMatcher));
             }
         }
 
@@ -118,14 +125,27 @@ public class TestCaseAssertionsGenerator {
         for (String viewUniqueID : uiAttributes.keySet()) {
             if (!lastUIAttributes.containsKey(viewUniqueID)) {
                 // a view that was not in last UI has appeared
+
+                EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
+                if (viewMatcher == null) {
+                    // we don't have a ViewMatcher for this view, so we can't generate an assertion.
+                    continue;
+                }
+
                 addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewUniqueID,
-                        uiAttributes.get(viewUniqueID), viewMatchers.get(viewUniqueID)));
+                        uiAttributes.get(viewUniqueID), viewMatcher));
             }
         }
 
         // has any view appearing in both last and new UI changed an attribute's value?
         for (String viewUniqueID : uiAttributes.keySet()) {
             if (!lastUIAttributes.containsKey(viewUniqueID)) {
+                continue;
+            }
+
+            EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
+            if (viewMatcher == null) {
+                // we don't have a ViewMatcher for this view, so we can't generate an assertion.
                 continue;
             }
 
@@ -144,15 +164,15 @@ public class TestCaseAssertionsGenerator {
                 if (oldValue == null && newValue != null) {
                     // Null value became non-null
                     addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatchers.get(viewUniqueID)));
+                            oldValue, newValue, viewMatcher));
                 } else if (oldValue != null && newValue == null) {
                     // Non-null value became null
                     addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatchers.get(viewUniqueID)));
+                            oldValue, newValue, viewMatcher));
                 } else if (oldValue != null && newValue != null && !oldValue.equals(newValue)) {
                     // an attibute's value has changed
                     addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatchers.get(viewUniqueID)));
+                            oldValue, newValue, viewMatcher));
                 }
             }
         }
