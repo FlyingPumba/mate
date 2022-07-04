@@ -66,7 +66,7 @@ public class TestCaseAssertionsGenerator {
         Map<String, Map<String, String>> uiAttributes =
                 uiAbstractionLayer.getLastScreenState().getUIAttributes();
         Map<String, EspressoViewMatcher> viewMatchers =
-                uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers();
+                uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
         List<EspressoAssertion> assertionsBeforeTest = generateAssertions(uiAttributes, viewMatchers);
         testCaseWithAssertions.setAssertionsBeforeTest(assertionsBeforeTest);
 
@@ -77,7 +77,7 @@ public class TestCaseAssertionsGenerator {
             uiAbstractionLayer.executeAction(action);
 
             uiAttributes = uiAbstractionLayer.getLastScreenState().getUIAttributes();
-            viewMatchers = uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers();
+            viewMatchers = uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
             List<EspressoAssertion> assertionsAfterAction = generateAssertions(uiAttributes, viewMatchers);
             testCaseWithAssertions.setAssertionsAfterAction(i, assertionsAfterAction);
         }

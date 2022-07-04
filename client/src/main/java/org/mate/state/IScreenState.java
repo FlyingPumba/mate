@@ -25,7 +25,7 @@ public interface IScreenState {
     List<MotifAction> getMotifActions();
     List<EspressoAction> getEspressoActions();
     Map<String, Map<String, String>> getUIAttributes();
-    Map<String, EspressoViewMatcher> getEspressoViewMatchers();
+    Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews);
     String getActivityName();
     String getPackageName();
     ScreenStateType getType();

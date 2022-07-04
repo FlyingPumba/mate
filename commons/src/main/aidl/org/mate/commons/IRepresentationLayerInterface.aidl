@@ -41,7 +41,7 @@ interface IRepresentationLayerInterface {
 
     // Espresso support
     List<EspressoAction> getCurrentScreenEspressoActions();
-    Map getCurrentScreenEspressoMatchers();
+    Map getCurrentScreenEspressoMatchers(boolean includeAndroidViews);
 
     // UI state
     Map getUIAttributes();

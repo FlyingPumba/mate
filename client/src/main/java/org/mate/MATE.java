@@ -159,13 +159,14 @@ public class MATE {
             }
 
             if (Properties.GENERATE_ASSERTIONS() && algorithm instanceof GeneticAlgorithm) {
-                MATELog.log_acc("Generating assertions");
                 // Generate assertions for the final "current population" of the Genetic Algorithm.
 
                 GeneticAlgorithm geneticAlgorithm = (GeneticAlgorithm) algorithm;
 
                 List<TestCase> lastPopulation = new ArrayList<>();
                 List<IChromosome<?>> currentPopulation = geneticAlgorithm.getCurrentPopulation();
+
+                MATELog.log_acc("Generating assertions for final population of size " + currentPopulation.size());
 
                 for (IChromosome<?> chromosome : currentPopulation) {
                     if (chromosome.getValue() instanceof TestCase) {

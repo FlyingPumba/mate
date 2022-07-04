@@ -247,13 +247,13 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     }
 
     @Override
-    public Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers() throws RemoteException {
+    public Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers(boolean includeAndroidViews) throws RemoteException {
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
             }
 
-            return espressoScreenParser.getMatchers();
+            return espressoScreenParser.getMatchers(includeAndroidViews);
         } catch (Exception e) {
             logException(e);
             throw e;

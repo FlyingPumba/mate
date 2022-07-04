@@ -85,7 +85,7 @@ public class FSMModel implements IGUIModel {
         }
 
         @Override
-        public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
+        public Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
             throw new UnsupportedOperationException("Do not call this method!");
         }
 

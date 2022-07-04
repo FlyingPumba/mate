@@ -118,8 +118,8 @@ public class ActionsScreenState extends AbstractScreenState {
     }
 
     @Override
-    public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
-        return appScreen.getEspressoViewMatchers();
+    public Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
+        return appScreen.getEspressoViewMatchers(includeAndroidViews);
     }
 
     /**

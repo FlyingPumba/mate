@@ -41,7 +41,7 @@ public enum EspressoViewMatcherType {
         } else if (this == WITH_CONTENT_DESCRIPTION) {
             return node.getEspressoView().getContentDescription() != null;
         } else if (this == WITH_RESOURCE_NAME) {
-            return node.getEspressoView().getResourceName() != null;
+            return node.getEspressoView().getResourceEntryName() != null;
         } else if (this == HAS_DESCENDANT || this == WITH_CHILD) {
             return node.getChildren().size() > 0;
         } else if (this == IS_DESCENDANT_OF_A || this == WITH_PARENT) {

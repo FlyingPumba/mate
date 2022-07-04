@@ -184,7 +184,7 @@ public class RelativeMatcherCombination {
                 hash.append(espressoViewAfterPath.getClassName());
                 break;
             case WITH_RESOURCE_NAME:
-                hash.append(espressoViewAfterPath.getResourceName());
+                hash.append(espressoViewAfterPath.getFullResourceName());
                 break;
             case WITH_TEXT:
                 hash.append(espressoViewAfterPath.getText());

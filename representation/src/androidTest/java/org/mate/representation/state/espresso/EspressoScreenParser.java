@@ -66,7 +66,7 @@ public class EspressoScreenParser {
     public List<EspressoAction> getActions() {
         if (viewMatchers == null) {
             // Parse ViewMatchers from the current screen if we haven't parsed them yet.
-            parseViewMatchers(viewTree);
+            parseViewMatchers(viewTree, true);
         }
 
         if (espressoActions == null) {
@@ -99,12 +99,16 @@ public class EspressoScreenParser {
         return new EspressoViewTree(rootView, activity.getClass().getName());
     }
 
-    private void parseViewMatchers(EspressoViewTree viewTree) {
+    private void parseViewMatchers(EspressoViewTree viewTree, boolean includeAndroidViews) {
         if (viewMatchers == null) {
             viewMatchers = new HashMap<>();
         }
 
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
+            if (!includeAndroidViews && node.getEspressoView().isAndroidView()) {
+                continue;
+            }
+
             RelativeMatcherCombination matcherCombination = RelativeMatcherCombination.
                     buildUnequivocalCombination(node, viewTree);
 
@@ -299,9 +303,9 @@ public class EspressoScreenParser {
                 > topMostRoot.getWindowLayoutParams().get().type;
     }
 
-    public Map<String, EspressoViewMatcher> getMatchers() {
+    public Map<String, EspressoViewMatcher> getMatchers(boolean includeAndroidViews) {
         if (viewMatchers == null) {
-            parseViewMatchers(viewTree);
+            parseViewMatchers(viewTree, includeAndroidViews);
         }
 
         return viewMatchers;

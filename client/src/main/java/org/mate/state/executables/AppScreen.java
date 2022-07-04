@@ -192,9 +192,9 @@ public class AppScreen {
      * @return a map of Espresso ViewMatchers. The keys is the View's unique ID. The value is the
      * View's Espresso ViewMatchers.
      */
-    public Map<String, EspressoViewMatcher> getEspressoViewMatchers() {
+    public Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
         try {
-            return (Map<String, EspressoViewMatcher>) MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers();
+            return (Map<String, EspressoViewMatcher>) MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers(includeAndroidViews);
         } catch (RemoteException | AUTCrashException e) {
             MATELog.log_warn("Unable to fetch Espresso View Matchers after AUT has crashed");
         }

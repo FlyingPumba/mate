@@ -58,7 +58,7 @@ public abstract class RecursiveMatcher extends EspressoViewMatcher {
                     newMatcher = new IsRootMatcher();
                     break;
                 case WITH_RESOURCE_NAME:
-                    newMatcher = new WithResourceNameMatcher(node.getEspressoView().getResourceName());
+                    newMatcher = new WithResourceNameMatcher(node.getEspressoView().getResourceEntryName());
                     break;
                 case WITH_ID:
                     newMatcher = new WithIdMatcher(node.getEspressoView().getId());
