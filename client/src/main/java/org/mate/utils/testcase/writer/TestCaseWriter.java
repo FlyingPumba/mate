@@ -27,13 +27,6 @@ public abstract class TestCaseWriter {
     }
 
     /**
-     * Set write counter back to zero.
-     */
-    public static void resetWriteCounter() {
-        writeCounter = 0;
-    }
-
-    /**
      * Returns a boolean indicating whether this TestWriter is suitable or not for the provided
      * test case.
      */

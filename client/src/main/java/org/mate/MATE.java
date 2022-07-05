@@ -184,10 +184,6 @@ public class MATE {
                     }
                 }
 
-                // Reset write counter for Espresso Test Case writer, so we don't double the
-                // the test cases being dumped.
-                EspressoTestCaseWriter.resetWriteCounter();
-
                 for (TestCase testCase : lastPopulation) {
                     TestCaseAssertionsGenerator generator = new TestCaseAssertionsGenerator(testCase);
                     TestCaseWithAssertions testCaseWithAssertions = generator.generate();
