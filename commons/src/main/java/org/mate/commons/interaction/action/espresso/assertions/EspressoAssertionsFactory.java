@@ -5,6 +5,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.IsDisplayedMatcher;
+import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.WithEffectiveVisibilityMatcher;
 
 import java.util.Map;
@@ -12,6 +13,8 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class EspressoAssertionsFactory {
+
+    private static final IsRootMatcher isRootMatcher = new IsRootMatcher();
 
     /**
      * Asserts that a view has disappeared from the screen.
@@ -23,6 +26,11 @@ public class EspressoAssertionsFactory {
     public static @Nullable EspressoAssertion viewIsGone(String viewUniqueID,
                                                Map<String, String> attributes,
                                                EspressoViewMatcher viewMatcher) {
+        if (isRootMatcher.getCode().equals(viewMatcher.getCode())) {
+            // We don't want to assert that the root view is gone
+            return null;
+        }
+
         return new EspressoAssertion(viewMatcher, new DoesNotExistAssertion());
     }
 
@@ -36,6 +44,11 @@ public class EspressoAssertionsFactory {
     public static @Nullable EspressoAssertion viewHasAppeared(String viewUniqueID,
                                                     Map<String, String> attributes,
                                                     EspressoViewMatcher viewMatcher) {
+        if (isRootMatcher.getCode().equals(viewMatcher.getCode())) {
+            // We don't want to assert that the root view has appeared
+            return null;
+        }
+
         return new EspressoAssertion(viewMatcher, new MatchesAssertion(new IsDisplayedMatcher()));
     }
 
