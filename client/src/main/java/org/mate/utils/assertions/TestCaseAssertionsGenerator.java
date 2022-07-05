@@ -22,6 +22,16 @@ public class TestCaseAssertionsGenerator {
     private final TestCase testCase;
 
     /**
+     * The UI abstraction layer to use durint test cases re-execution.
+     */
+    private final UIAbstractionLayer uiAbstractionLayer;
+
+    /**
+     * The AUT's package name.
+     */
+    private final String targetPackageName;
+
+    /**
      * The last UI attributes fetched.
      */
     private Map<String, Map<String, String>> lastUIAttributes;
@@ -33,6 +43,8 @@ public class TestCaseAssertionsGenerator {
 
     public TestCaseAssertionsGenerator(TestCase testCase) {
         this.testCase = testCase;
+        this.uiAbstractionLayer = Registry.getUiAbstractionLayer();
+        this.targetPackageName = Registry.getPackageName();
     }
 
     /**
@@ -60,25 +72,26 @@ public class TestCaseAssertionsGenerator {
     public TestCaseWithAssertions generate() {
         TestCaseWithAssertions testCaseWithAssertions = new TestCaseWithAssertions(testCase);
 
-        UIAbstractionLayer uiAbstractionLayer = Registry.getUiAbstractionLayer();
         uiAbstractionLayer.resetApp();
 
-        Map<String, Map<String, String>> uiAttributes =
-                uiAbstractionLayer.getLastScreenState().getUIAttributes();
-        Map<String, EspressoViewMatcher> viewMatchers =
-                uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
-        List<EspressoAssertion> assertionsBeforeTest = generateAssertions(uiAttributes, viewMatchers);
+        List<EspressoAssertion> assertionsBeforeTest = generateAssertions();
         testCaseWithAssertions.setAssertionsBeforeTest(assertionsBeforeTest);
 
         List<Action> actionSequence = testCase.getActionSequence();
+        List<String> activitySequence = testCase.getActivitySequence();
+
         for (int i = 0, actionSequenceSize = actionSequence.size(); i < actionSequenceSize; i++) {
             Action action = actionSequence.get(i);
+            String activity = activitySequence.get(i);
 
             uiAbstractionLayer.executeAction(action);
 
-            uiAttributes = uiAbstractionLayer.getLastScreenState().getUIAttributes();
-            viewMatchers = uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
-            List<EspressoAssertion> assertionsAfterAction = generateAssertions(uiAttributes, viewMatchers);
+            if (!activity.startsWith(targetPackageName)) {
+                // this action takes us out of the AUT, so we skip generating assertions for it.
+                continue;
+            }
+
+            List<EspressoAssertion> assertionsAfterAction = generateAssertions();
             testCaseWithAssertions.setAssertionsAfterAction(i, assertionsAfterAction);
         }
 
@@ -91,9 +104,12 @@ public class TestCaseAssertionsGenerator {
      * @param viewMatchers
      * @return a list of assertions.
      */
-    private List<EspressoAssertion> generateAssertions(
-            Map<String, Map<String, String>> uiAttributes,
-            Map<String, EspressoViewMatcher> viewMatchers) {
+    private List<EspressoAssertion> generateAssertions() {
+        Map<String, Map<String, String>> uiAttributes =
+                uiAbstractionLayer.getLastScreenState().getUIAttributes();
+        Map<String, EspressoViewMatcher> viewMatchers =
+                uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
+
         if (lastUIAttributes == null) {
             // save the first UI attributes
             lastUIAttributes = uiAttributes;
