@@ -5,6 +5,7 @@ import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.assertions.EspressoAssertionsFactory;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
+import org.mate.commons.utils.MATELog;
 import org.mate.interaction.UIAbstractionLayer;
 import org.mate.model.TestCase;
 
@@ -108,6 +109,13 @@ public class TestCaseAssertionsGenerator {
                 uiAbstractionLayer.getLastScreenState().getUIAttributes();
         Map<String, EspressoViewMatcher> viewMatchers =
                 uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
+
+        if (uiAttributes == null || viewMatchers == null) {
+            // An error occurred while fetching the information from current screen, skip
+            // assertions for this line.
+            MATELog.log_debug("Skiping assertions for current screen state: missing information.");
+            return new ArrayList<>();
+        }
 
         if (lastUIAttributes == null) {
             // save the first UI attributes

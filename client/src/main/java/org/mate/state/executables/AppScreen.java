@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.mate.commons.exceptions.AUTCrashException;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
@@ -178,14 +179,17 @@ public class AppScreen {
      * @return a map of UI attributes. The keys is the View's unique ID. The value is the View's
      * attributes.
      */
-    public Map<String, Map<String, String>> getUIAttributes() {
-        try {
-            return (Map<String, Map<String, String>>) MATEService.getRepresentationLayer().getUIAttributes();
-        } catch (RemoteException | AUTCrashException e) {
-            MATELog.log_warn("Unable to fetch UI attributes after AUT has crashed");
+    public @Nullable Map<String, Map<String, String>> getUIAttributes() {
+        Map<String, Map<String, String>> uiAttributes = null;
+        for (int i = 0; i < 3 && uiAttributes == null; i++) {
+            try {
+                uiAttributes = MATEService.getRepresentationLayer().getUIAttributes();
+            } catch (RemoteException | AUTCrashException e) {
+                MATELog.log_warn("Unable to fetch UI attributes after AUT has crashed");
+            }
         }
 
-        return new HashMap<>();
+        return uiAttributes;
     }
 
     /**
@@ -193,14 +197,17 @@ public class AppScreen {
      * @return a map of Espresso ViewMatchers. The keys is the View's unique ID. The value is the
      * View's Espresso ViewMatchers.
      */
-    public Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
-        try {
-            return (Map<String, EspressoViewMatcher>) MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers(includeAndroidViews);
-        } catch (RemoteException | AUTCrashException e) {
-            MATELog.log_warn("Unable to fetch Espresso View Matchers after AUT has crashed");
+    public @Nullable Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
+        Map<String, EspressoViewMatcher> matchers = null;
+        for (int i = 0; i < 3 && matchers == null; i++) {
+            try {
+                matchers = MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers(includeAndroidViews);
+            } catch (RemoteException | AUTCrashException e) {
+                MATELog.log_warn("Unable to fetch Espresso View Matchers after AUT has crashed");
+            }
         }
 
-        return new HashMap<>();
+        return matchers;
     }
 
     public int getTopWindowType() {

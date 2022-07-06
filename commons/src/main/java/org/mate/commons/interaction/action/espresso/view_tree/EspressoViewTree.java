@@ -38,10 +38,6 @@ public class EspressoViewTree {
      */
     private Map<Integer, List<EspressoViewTreeNode>> nodesByViewId = new HashMap<>();
 
-    public EspressoViewTree() {
-        // empty tree
-    }
-
     public EspressoViewTree(Root windowRoot, String activityName) {
         this.windowRoot = windowRoot;
         this.rootNode = new EspressoViewTreeNode(windowRoot.getDecorView(), activityName);

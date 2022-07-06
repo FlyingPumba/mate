@@ -7,6 +7,8 @@ import android.app.Instrumentation;
 import android.os.Looper;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.base.ActiveRootLister;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -49,7 +51,11 @@ public class EspressoScreenParser {
      * The Instrumentation provided by the DeviceInfo class.
      */
     private final Instrumentation instrumentation;
-    private final EspressoViewTree viewTree;
+
+    /**
+     * The parsed Espresso view tree, or null if it was not available.
+     */
+    private final @Nullable EspressoViewTree viewTree;
 
     public EspressoScreenParser() {
         instrumentation = DeviceInfo.getInstance().getInstrumentation();
@@ -59,7 +65,12 @@ public class EspressoScreenParser {
     /**
      * @return A list of discovered EspressoActions on the current AUT's screen.
      */
-    public List<EspressoAction> getActions() {
+    public @Nullable List<EspressoAction> getActions() {
+        if (viewTree == null) {
+            MATELog.log_debug("No view tree found, unable to get actions");
+            return null;
+        }
+
         if (viewMatchers == null) {
             // Parse ViewMatchers from the current screen if we haven't parsed them yet.
             parseViewMatchers(viewTree, true);
@@ -80,7 +91,7 @@ public class EspressoScreenParser {
      * Fetches all views on the current screen.
      * @return a ViewTree representing the current UI hierarchy.
      */
-    private EspressoViewTree fetchViewTree() {
+    private @Nullable EspressoViewTree fetchViewTree() {
         Pair<Root, Activity> result = getRoot();
 
         Root root = result.first;
@@ -89,13 +100,13 @@ public class EspressoScreenParser {
         if (root == null) {
             MATELog.log_error("Unable to find root view on a resumed activity to get available " +
                     "Espresso actions");
-            return new EspressoViewTree();
+            return null;
         }
 
         return new EspressoViewTree(root, activity.getClass().getName());
     }
 
-    private void parseViewMatchers(EspressoViewTree viewTree, boolean includeAndroidViews) {
+    private void parseViewMatchers(@NonNull EspressoViewTree viewTree, boolean includeAndroidViews) {
         if (viewMatchers == null) {
             viewMatchers = new HashMap<>();
         }
@@ -132,7 +143,7 @@ public class EspressoScreenParser {
      *
      * @param viewTree the UI hierarchy to parse.
      */
-    private void parseEspressoActions(EspressoViewTree viewTree) {
+    private void parseEspressoActions(@NonNull EspressoViewTree viewTree) {
         long startTime = System.nanoTime();
 
         if (espressoActions == null) {
@@ -207,6 +218,7 @@ public class EspressoScreenParser {
 
             if (resumedActivities.size() == 0) {
                 // No activity is found in resumed state, we probably left the AUT.
+                MATELog.log_debug("No resumed activities found, unable to get root view");
                 return;
             }
 
@@ -216,6 +228,7 @@ public class EspressoScreenParser {
                     activity.getPackageName())) {
                 // The resumed activity is for a different package name than the one we are
                 // targeting. Exit this function as if we haven't found a root view.
+                MATELog.log_debug("Resumed activity is for a different package");
                 return;
             }
 
@@ -241,6 +254,8 @@ public class EspressoScreenParser {
                 // We have more than one root in the current window, we need to decide which one
                 // to use.
                 root[0] = getRootFromMultipleRoots(roots);
+            } else {
+                MATELog.log_error("Roots oracle returned no roots");
             }
         });
 
@@ -304,7 +319,12 @@ public class EspressoScreenParser {
                 > topMostRoot.getWindowLayoutParams().get().type;
     }
 
-    public Map<String, EspressoViewMatcher> getMatchers(boolean includeAndroidViews) {
+    public @Nullable Map<String, EspressoViewMatcher> getMatchers(boolean includeAndroidViews) {
+        if (viewTree == null) {
+            MATELog.log_debug("No view tree found, unable to get matchers");
+            return null;
+        }
+
         if (viewMatchers == null) {
             parseViewMatchers(viewTree, includeAndroidViews);
         }
@@ -312,7 +332,12 @@ public class EspressoScreenParser {
         return viewMatchers;
     }
 
-    public Map<String, Map<String, String>> getUIAttributes() {
+    public @Nullable Map<String, Map<String, String>> getUIAttributes() {
+        if (viewTree == null) {
+            MATELog.log_debug("No view tree found, unable to get UI attributes");
+            return null;
+        }
+
         Map<String, Map<String, String>> uiAttributes = new HashMap<>();
 
         List<EspressoViewTreeNode> nodes = viewTree.getAllNodes();
@@ -330,9 +355,14 @@ public class EspressoScreenParser {
     }
 
     public int getTopWindowType() {
+        if (viewTree == null) {
+            MATELog.log_debug("No view tree found, unable to get top window type");
+            return -1;
+        }
+
         Root root = viewTree.getWindowRoot();
         if (root == null) {
-            return 0;
+            return -1;
         }
 
         return root.getWindowLayoutParams().get().type;

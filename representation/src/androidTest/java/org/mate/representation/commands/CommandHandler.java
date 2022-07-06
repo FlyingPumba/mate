@@ -3,6 +3,8 @@ package org.mate.representation.commands;
 import android.os.Debug;
 import android.os.RemoteException;
 
+import androidx.annotation.Nullable;
+
 import org.mate.commons.IMATEServiceInterface;
 import org.mate.commons.IRepresentationLayerInterface;
 import org.mate.commons.interaction.action.Action;
@@ -247,7 +249,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     }
 
     @Override
-    public List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
+    public @Nullable List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
@@ -261,7 +263,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     }
 
     @Override
-    public Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers(boolean includeAndroidViews) throws RemoteException {
+    public @Nullable Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers(boolean includeAndroidViews) throws RemoteException {
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
@@ -275,7 +277,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     }
 
     @Override
-    public Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
+    public @Nullable Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
