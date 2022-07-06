@@ -1,7 +1,5 @@
 package org.mate.commons.interaction.action.espresso.assertions;
 
-import androidx.test.espresso.matcher.ViewMatchers;
-
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.matchers.base.IsDisplayedMatcher;
@@ -50,7 +48,7 @@ public class EspressoAssertionsFactory {
         }
 
         if (!attributes.containsKey("width") || !attributes.containsKey("height") ||
-                !"0".equals(attributes.get("width")) || !"0".equals(attributes.get("height"))) {
+                "0".equals(attributes.get("width")) || "0".equals(attributes.get("height"))) {
             // We don't want to assert that the view has appeared if it has no size
             return null;
         }
