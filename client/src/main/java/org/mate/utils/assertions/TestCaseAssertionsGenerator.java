@@ -2,8 +2,8 @@ package org.mate.utils.assertions;
 
 import org.mate.Registry;
 import org.mate.commons.interaction.action.Action;
-import org.mate.commons.interaction.action.espresso.assertions.EspressoAssertionsFactory;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
+import org.mate.commons.interaction.action.espresso.assertions.EspressoAssertionsFactory;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.interaction.UIAbstractionLayer;
 import org.mate.model.TestCase;
@@ -78,11 +78,10 @@ public class TestCaseAssertionsGenerator {
         testCaseWithAssertions.setAssertionsBeforeTest(assertionsBeforeTest);
 
         List<Action> actionSequence = testCase.getActionSequence();
-        List<String> activitySequence = testCase.getActivitySequence();
 
         for (int i = 0, actionSequenceSize = actionSequence.size(); i < actionSequenceSize; i++) {
             Action action = actionSequence.get(i);
-            String activity = activitySequence.get(i);
+            String activity = testCase.getActivityAfterAction(i);
 
             uiAbstractionLayer.executeAction(action);
 
@@ -122,15 +121,10 @@ public class TestCaseAssertionsGenerator {
         List<EspressoAssertion> assertions = new ArrayList<>();
 
         // has any view in last UI disappeared?
-        for (String viewUniqueID : lastUIAttributes.keySet()) {
-            if (!uiAttributes.containsKey(viewUniqueID)) {
+        for (String viewUniqueID : lastViewMatchers.keySet()) {
+            if (!viewMatchers.containsKey(viewUniqueID)) {
                 // a view from last UI is gone
-
                 EspressoViewMatcher viewMatcher = lastViewMatchers.get(viewUniqueID);
-                if (viewMatcher == null) {
-                    // we don't have a ViewMatcher for this view, so we can't generate an assertion.
-                    continue;
-                }
 
                 addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewUniqueID,
                         lastUIAttributes.get(viewUniqueID), viewMatcher));
@@ -138,15 +132,10 @@ public class TestCaseAssertionsGenerator {
         }
 
         // has any view in new UI appeared?
-        for (String viewUniqueID : uiAttributes.keySet()) {
-            if (!lastUIAttributes.containsKey(viewUniqueID)) {
-                // a view that was not in last UI has appeared
-
+        for (String viewUniqueID : viewMatchers.keySet()) {
+            if (!lastViewMatchers.containsKey(viewUniqueID)) {
+                // a view has appeared on the new UI.
                 EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
-                if (viewMatcher == null) {
-                    // we don't have a ViewMatcher for this view, so we can't generate an assertion.
-                    continue;
-                }
 
                 addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewUniqueID,
                         uiAttributes.get(viewUniqueID), viewMatcher));
@@ -154,16 +143,12 @@ public class TestCaseAssertionsGenerator {
         }
 
         // has any view appearing in both last and new UI changed an attribute's value?
-        for (String viewUniqueID : uiAttributes.keySet()) {
-            if (!lastUIAttributes.containsKey(viewUniqueID)) {
+        for (String viewUniqueID : viewMatchers.keySet()) {
+            if (!lastViewMatchers.containsKey(viewUniqueID)) {
                 continue;
             }
 
             EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
-            if (viewMatcher == null) {
-                // we don't have a ViewMatcher for this view, so we can't generate an assertion.
-                continue;
-            }
 
             Map<String, String> oldAttributes = lastUIAttributes.get(viewUniqueID);
             Map<String, String> newAttributes = uiAttributes.get(viewUniqueID);
