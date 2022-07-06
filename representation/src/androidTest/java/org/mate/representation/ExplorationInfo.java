@@ -330,24 +330,4 @@ public class ExplorationInfo {
                 "de.uni_passau.fim.auermich.tracer.Tracer"));
         DeviceInfo.getInstance().getAUTContext().sendBroadcast(intent);
     }
-
-    public Map<String, Map<String, String>> getUIAttributes() {
-        EspressoScreenParser parser = new EspressoScreenParser();
-        EspressoViewTree viewTree = parser.getViewTree();
-
-        Map<String, Map<String, String>> uiAttributes = new HashMap<>();
-
-        List<EspressoViewTreeNode> nodes = viewTree.getAllNodes();
-        for (EspressoViewTreeNode node : nodes) {
-            EspressoView espressoView = node.getEspressoView();
-
-            String uniqueId = espressoView.getUniqueId();
-
-            Map<String, String> attributes = new HashMap<>(espressoView.getAllAttributes());
-
-            uiAttributes.put(uniqueId, attributes);
-        }
-
-        return uiAttributes;
-    }
 }

@@ -75,9 +75,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public int getDisplayHeight() throws RemoteException {
         try {
             return DeviceInfo.getInstance().getDisplayHeight();
@@ -85,9 +85,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public boolean grantRuntimePermission(String permission) throws RemoteException {
         try {
             return DeviceInfo.getInstance().grantRuntimePermission(permission);
@@ -95,9 +95,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public void disableAnimations() throws RemoteException {
         try {
             DeviceInfo.getInstance().disableAnimations();
@@ -105,9 +105,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public boolean isCrashDialogPresent() throws RemoteException {
         try {
             return DeviceInfo.getInstance().isCrashDialogPresent();
@@ -115,9 +115,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public String getTargetPackageFilesDir() throws RemoteException {
         try {
             return DeviceInfo.getInstance().getTargetPackageFilesDir();
@@ -125,9 +125,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public void sendBroadcastToTracer() throws RemoteException {
         try {
             ExplorationInfo.getInstance().sendBroadcastToTracer();
@@ -135,9 +135,23 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
+    @Override
+    public int getTopWindowType() throws RemoteException {
+        try {
+            if (espressoScreenParser == null) {
+                espressoScreenParser = new EspressoScreenParser();
+            }
 
-    }   @Override
+            return espressoScreenParser.getTopWindowType();
+        } catch (Exception e) {
+            logException(e);
+            throw e;
+        }
+    }
+
+    @Override
     public String getCurrentPackageName() throws RemoteException {
         try {
             return ExplorationInfo.getInstance().getCurrentPackageName();
@@ -145,9 +159,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public String getCurrentActivityName() throws RemoteException {
         try {
             return ExplorationInfo.getInstance().getCurrentActivityName();
@@ -155,9 +169,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public List<String> getTargetPackageActivityNames() throws RemoteException {
         try {
             return ExplorationInfo.getInstance().getTargetPackageActivityNames();
@@ -165,9 +179,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public String executeShellCommand(String command) throws RemoteException {
         try {
             return DeviceInfo.getInstance().executeShellCommand(command);
@@ -175,9 +189,9 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
             logException(e);
             throw e;
         }
+    }
 
-
-    }   @Override
+    @Override
     public boolean executeAction(Action action) throws RemoteException {
         try {
             if (action == null) {
@@ -263,7 +277,11 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     @Override
     public Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
         try {
-            return ExplorationInfo.getInstance().getUIAttributes();
+            if (espressoScreenParser == null) {
+                espressoScreenParser = new EspressoScreenParser();
+            }
+
+            return espressoScreenParser.getUIAttributes();
         } catch (Exception e) {
             logException(e);
             throw e;

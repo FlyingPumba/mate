@@ -49,6 +49,18 @@ public class EspressoAssertionsFactory {
             return null;
         }
 
+        if (!attributes.containsKey("width") || !attributes.containsKey("height") ||
+                !"0".equals(attributes.get("width")) || !"0".equals(attributes.get("height"))) {
+            // We don't want to assert that the view has appeared if it has no size
+            return null;
+        }
+
+        if (!attributes.containsKey("visibility")||
+                !"visible".equals(attributes.get("visibility"))) {
+            // We don't want to assert that the view has appeared if it is not actually visible
+            return null;
+        }
+
         return new EspressoAssertion(viewMatcher, new MatchesAssertion(new IsDisplayedMatcher()));
     }
 

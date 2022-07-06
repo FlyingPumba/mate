@@ -3,8 +3,7 @@ package org.mate.commons.interaction.action.espresso.view_tree;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-
-import org.mate.commons.interaction.action.espresso.EspressoView;
+import androidx.test.espresso.Root;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +21,16 @@ import java.util.Map;
 public class EspressoViewTree {
 
     /**
+     * The root of the Window that hosted this ViewTree.
+     */
+    @Nullable
+    private Root windowRoot;
+
+    /**
      * The root node in the tree.
      */
     @Nullable
-    private EspressoViewTreeNode root;
+    private EspressoViewTreeNode rootNode;
 
     /**
      * A map of nodes by View ID.
@@ -37,9 +42,21 @@ public class EspressoViewTree {
         // empty tree
     }
 
-    public EspressoViewTree(View root, String activityName) {
-        this.root = new EspressoViewTreeNode(root, activityName);
+    public EspressoViewTree(Root windowRoot, String activityName) {
+        this.windowRoot = windowRoot;
+        this.rootNode = new EspressoViewTreeNode(windowRoot.getDecorView(), activityName);
+
         setUniqueIdForViews();
+    }
+
+    @Nullable
+    public EspressoViewTreeNode getRootNode() {
+        return rootNode;
+    }
+
+    @Nullable
+    public Root getWindowRoot() {
+        return windowRoot;
     }
 
     /**
@@ -67,11 +84,11 @@ public class EspressoViewTree {
      * @return all nodes in the tree.
      */
     public List<EspressoViewTreeNode> getAllNodes() {
-        if (root == null) {
+        if (rootNode == null) {
             return new ArrayList<>();
         }
 
-        return root.getAllNodesInSubtree();
+        return rootNode.getAllNodesInSubtree();
     }
 
     /**

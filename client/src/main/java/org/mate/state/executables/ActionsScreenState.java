@@ -48,7 +48,8 @@ public class ActionsScreenState extends AbstractScreenState {
      * @param appScreen The given app screen.
      */
     public ActionsScreenState(AppScreen appScreen) {
-        super(appScreen.getPackageName(), appScreen.getActivityName(), appScreen.getWidgets());
+        super(appScreen.getPackageName(), appScreen.getActivityName(), appScreen.getWidgets(),
+                appScreen.getTopWindowType());
         this.appScreen = appScreen;
         this.actions = null;
         this.espressoActions = null;

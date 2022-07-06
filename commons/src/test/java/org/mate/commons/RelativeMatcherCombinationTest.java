@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.test.espresso.Root;
+
 import org.junit.Test;
 import org.mate.commons.interaction.action.espresso.matchers_combination.RelativeMatcherCombination;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
@@ -18,6 +20,7 @@ import org.mate.commons.interaction.action.espresso.view_tree.PathStepType;
 import org.mate.commons.mock.MockEditText;
 import org.mate.commons.mock.MockTextView;
 import org.mate.commons.mock.MockViewGroup;
+import org.mate.commons.mock.MockWindowRoot;
 
 public class RelativeMatcherCombinationTest {
     @Test
@@ -25,8 +28,9 @@ public class RelativeMatcherCombinationTest {
         TextView tv1 = new MockTextView().withId(32).getView();
         TextView tv2 = new MockTextView().withId(42).getView();
         ViewGroup vg = new MockViewGroup().withChild(tv1).withChild(tv2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -44,8 +48,9 @@ public class RelativeMatcherCombinationTest {
         TextView tv1 = new MockTextView().withId(32).withText("Hi").getView();
         TextView tv2 = new MockTextView().withId(32).withText("Bye").getView();
         ViewGroup vg = new MockViewGroup().withChild(tv1).withChild(tv2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -63,8 +68,9 @@ public class RelativeMatcherCombinationTest {
         TextView tv1 = new MockTextView().withId(32).withContentDescription("Hi").getView();
         TextView tv2 = new MockTextView().withId(32).withContentDescription("Bye").getView();
         ViewGroup vg = new MockViewGroup().withChild(tv1).withChild(tv2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -82,8 +88,9 @@ public class RelativeMatcherCombinationTest {
         TextView tv = new MockTextView().withId(32).getView();
         EditText et = new MockEditText().withId(32).getView();
         ViewGroup vg = new MockViewGroup().withChild(tv).withChild(et).getView();
+        Root root = new MockWindowRoot().withDecorView(vg).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -105,8 +112,9 @@ public class RelativeMatcherCombinationTest {
         ViewGroup vg2 = new MockViewGroup().withId(42).withChild(tv2).getView();
 
         ViewGroup vg3 = new MockViewGroup().withChild(vg1).withChild(vg2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg3).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg3, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -129,8 +137,9 @@ public class RelativeMatcherCombinationTest {
         ViewGroup vg2 = new MockViewGroup().withChild(tv2).getView();
 
         ViewGroup vg3 = new MockViewGroup().withChild(vg1).withChild(vg2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg3).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg3, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(
@@ -155,8 +164,9 @@ public class RelativeMatcherCombinationTest {
         ViewGroup vg2 = new MockViewGroup().withChild(tv3).withChild(tv4).getView();
 
         ViewGroup vg3 = new MockViewGroup().withChild(vg1).withChild(vg2).getView();
+        Root root = new MockWindowRoot().withDecorView(vg3).getRoot();
 
-        EspressoViewTree viewTree = new EspressoViewTree(vg3, "com.activity.name");
+        EspressoViewTree viewTree = new EspressoViewTree(root, "com.activity.name");
 
         RelativeMatcherCombination matcherCombination =
                 RelativeMatcherCombination.buildUnequivocalCombination(

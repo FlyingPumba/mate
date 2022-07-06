@@ -24,6 +24,11 @@ public abstract class AbstractScreenState implements IScreenState {
     protected final String packageName;
 
     /**
+     * The type of the top window being shown in the screen.
+     */
+    private int topWindowType;
+
+    /**
      * The list of widgets that are associated with the screen state.
      */
     protected final List<Widget> widgets;
@@ -40,7 +45,11 @@ public abstract class AbstractScreenState implements IScreenState {
      * @param activityName The activity name that corresponds to the screen state.
      * @param widgets The list of widgets part of the screen state.
      */
-    public AbstractScreenState(String packageName, String activityName, List<Widget> widgets) {
+    public AbstractScreenState(String packageName,
+                               String activityName,
+                               List<Widget> widgets,
+                               int topWindowType) {
+        this.topWindowType = topWindowType;
         this.widgets = widgets;
         this.packageName = packageName;
         this.activityName = activityName;
@@ -113,7 +122,8 @@ public abstract class AbstractScreenState implements IScreenState {
             AbstractScreenState other = (AbstractScreenState) o;
             return Objects.equals(this.packageName, other.packageName)
                     && Objects.equals(this.activityName, other.activityName)
-                    && Objects.equals(widgets, other.widgets);
+                    && Objects.equals(widgets, other.widgets)
+                    && Objects.equals(topWindowType, other.topWindowType);
         }
     }
 
@@ -124,7 +134,7 @@ public abstract class AbstractScreenState implements IScreenState {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(activityName, packageName, widgets);
+        return Objects.hash(activityName, packageName, widgets, topWindowType);
     }
 
     /**

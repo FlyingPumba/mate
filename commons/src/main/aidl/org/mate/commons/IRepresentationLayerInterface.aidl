@@ -28,6 +28,7 @@ interface IRepresentationLayerInterface {
     void sendBroadcastToTracer();
 
     // Activities info
+    int getTopWindowType();
     String getCurrentPackageName();
     String getCurrentActivityName();
     List<String> getTargetPackageActivityNames();

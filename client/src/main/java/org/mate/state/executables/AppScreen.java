@@ -2,6 +2,7 @@ package org.mate.state.executables;
 
 import android.graphics.Rect;
 import android.os.RemoteException;
+
 import androidx.annotation.NonNull;
 
 import org.mate.commons.exceptions.AUTCrashException;
@@ -200,5 +201,15 @@ public class AppScreen {
         }
 
         return new HashMap<>();
+    }
+
+    public int getTopWindowType() {
+        try {
+            return MATEService.getRepresentationLayer().getTopWindowType();
+        } catch (RemoteException | AUTCrashException e) {
+            MATELog.log_warn("Unable to fetch top window type after AUT has crashed");
+        }
+
+        return 0;
     }
 }

@@ -288,6 +288,11 @@ public class EspressoView {
     public Map<String, String> getBasicViewAttributes() {
         Map<String, String> attributes = new HashMap<>();
 
+        attributes.put("x", String.valueOf(view.getX()));
+        attributes.put("y", String.valueOf(view.getY()));
+        attributes.put("width", String.valueOf(view.getWidth()));
+        attributes.put("height", String.valueOf(view.getHeight()));
+
         // Get the "mAttributes" field of the wrapped view using reflection
         // If it fails, we just return an empty map.
         try {

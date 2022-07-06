@@ -1,10 +1,11 @@
 package org.mate.representation.state.espresso;
 
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.os.Looper;
 import android.util.Pair;
-import android.view.View;
 
 import androidx.test.espresso.Root;
 import androidx.test.espresso.base.ActiveRootLister;
@@ -12,14 +13,15 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.EspressoView;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
 import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.utils.MATELog;
-import org.mate.representation.DeviceInfo;
-import org.mate.representation.ExplorationInfo;
 import org.mate.commons.interaction.action.espresso.matchers_combination.RelativeMatcherCombination;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
+import org.mate.commons.utils.MATELog;
+import org.mate.representation.DeviceInfo;
+import org.mate.representation.ExplorationInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -27,8 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 
 /**
  * Parses the Espresso actions on the current screen.
@@ -56,10 +56,6 @@ public class EspressoScreenParser {
         viewTree = fetchViewTree();
     }
 
-    public EspressoViewTree getViewTree() {
-        return viewTree;
-    }
-
     /**
      * @return A list of discovered EspressoActions on the current AUT's screen.
      */
@@ -85,18 +81,18 @@ public class EspressoScreenParser {
      * @return a ViewTree representing the current UI hierarchy.
      */
     private EspressoViewTree fetchViewTree() {
-        Pair<View, Activity> result = getRootView();
+        Pair<Root, Activity> result = getRoot();
 
-        View rootView = result.first;
+        Root root = result.first;
         Activity activity = result.second;
 
-        if (rootView == null) {
+        if (root == null) {
             MATELog.log_error("Unable to find root view on a resumed activity to get available " +
                     "Espresso actions");
             return new EspressoViewTree();
         }
 
-        return new EspressoViewTree(rootView, activity.getClass().getName());
+        return new EspressoViewTree(root, activity.getClass().getName());
     }
 
     private void parseViewMatchers(EspressoViewTree viewTree, boolean includeAndroidViews) {
@@ -175,7 +171,7 @@ public class EspressoScreenParser {
     }
 
     /**
-     * Fetches the root View of the current Activity in Resumed state.
+     * Fetches the root of the current Activity in Resumed state.
      *
      * This method's implementation is inspired by code from the Android test open source project.
      * In particular, we will use reflection to access the {@link androidx.test.espresso.base.RootsOracle#listActiveRoots}
@@ -200,8 +196,8 @@ public class EspressoScreenParser {
      *
      * @return a tuple of root View and Activity.
      */
-    private Pair<View, Activity> getRootView() {
-        final View[] rootView = {null};
+    private Pair<Root, Activity> getRoot() {
+        final Root[] root = {null};
         final Activity[] resumedActivity = {null};
 
         instrumentation.runOnMainSync(() -> {
@@ -244,11 +240,11 @@ public class EspressoScreenParser {
             if (roots != null && roots.size() > 0) {
                 // We have more than one root in the current window, we need to decide which one
                 // to use.
-                rootView[0] = getRootFromMultipleRoots(roots).getDecorView();
+                root[0] = getRootFromMultipleRoots(roots);
             }
         });
 
-        return new Pair<>(rootView[0], resumedActivity[0]);
+        return new Pair<>(root[0], resumedActivity[0]);
     }
 
     /**
@@ -275,18 +271,23 @@ public class EspressoScreenParser {
      * @param roots the roots found in current window.
      */
     private Root getRootFromMultipleRoots(List<Root> roots) {
-        Root topMostRoot = roots.get(0);
-        // String packageName = topMostRoot.getWindowLayoutParams().get().packageName;
-        if (roots.size() > 1) {
-            for (Root currentRoot : roots) {
-                if (isDialog().matches(currentRoot)) {
-                    return currentRoot;
-                }
-                if (isTopmostRoot(topMostRoot, currentRoot)) {
-                    topMostRoot = currentRoot;
-                }
+        Root topMostRoot = null;
+
+        for (int i = 0; i < roots.size(); i++) {
+            Root currentRoot = roots.get(i);
+
+            boolean isDialogWindow = isDialog().matches(currentRoot);
+            if (isDialogWindow) {
+                return currentRoot;
+            }
+
+            if (topMostRoot == null) {
+                topMostRoot = currentRoot;
+            } else if (isTopmostRoot(topMostRoot, currentRoot)) {
+                topMostRoot = currentRoot;
             }
         }
+
         return topMostRoot;
     }
 
@@ -309,5 +310,31 @@ public class EspressoScreenParser {
         }
 
         return viewMatchers;
+    }
+
+    public Map<String, Map<String, String>> getUIAttributes() {
+        Map<String, Map<String, String>> uiAttributes = new HashMap<>();
+
+        List<EspressoViewTreeNode> nodes = viewTree.getAllNodes();
+        for (EspressoViewTreeNode node : nodes) {
+            EspressoView espressoView = node.getEspressoView();
+
+            String uniqueId = espressoView.getUniqueId();
+
+            Map<String, String> attributes = new HashMap<>(espressoView.getAllAttributes());
+
+            uiAttributes.put(uniqueId, attributes);
+        }
+
+        return uiAttributes;
+    }
+
+    public int getTopWindowType() {
+        Root root = viewTree.getWindowRoot();
+        if (root == null) {
+            return 0;
+        }
+
+        return root.getWindowLayoutParams().get().type;
     }
 }
