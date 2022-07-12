@@ -1,17 +1,17 @@
 package org.mate.commons.interaction.action.espresso.matchers_combination;
 
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_CLASS_NAME;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_CONTENT_DESCRIPTION;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_ID;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_RESOURCE_NAME;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_TEXT;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_CLASS_NAME;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_CONTENT_DESCRIPTION;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_ID;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_RESOURCE_NAME;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_TEXT;
 
 import androidx.annotation.Nullable;
 
 import org.mate.commons.interaction.action.espresso.EspressoView;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.AllOfMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.AllOfMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeIterator;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;

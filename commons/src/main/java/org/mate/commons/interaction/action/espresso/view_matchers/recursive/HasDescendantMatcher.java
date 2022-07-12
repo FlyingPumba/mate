@@ -1,13 +1,13 @@
-package org.mate.commons.interaction.action.espresso.matchers.recursive;
+package org.mate.commons.interaction.action.espresso.view_matchers.recursive;
 
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 
 import android.os.Parcel;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,23 +15,23 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that are descendant of a view matching
+ * Implements an Espresso Matcher for targeting the views that have a descendant view matching
  * ALL matchers in a list.
- * Note that the target view may not be a direct descendant of the view matching the conditions.
- * E.g., the target view may be a children of a children.
+ * Note that the descendant view may not be a direct descendant of the target view. E.g., it may
+ * be a children of the children of the target view.
  */
-public class IsDescendantOfAMatcher extends RecursiveMatcher {
+public class HasDescendantMatcher extends RecursiveMatcher {
 
     /**
      * Auxiliary matcher to group all conditions.
      */
     private AllOfMatcher allOfMatcher;
 
-    public IsDescendantOfAMatcher() {
+    public HasDescendantMatcher() {
         this(new ArrayList<>());
     }
 
-    public IsDescendantOfAMatcher(List<EspressoViewMatcher> matchers) {
+    public HasDescendantMatcher(List<EspressoViewMatcher> matchers) {
         super(EspressoViewMatcherType.HAS_DESCENDANT);
         this.matchers = matchers;
         allOfMatcher = new AllOfMatcher(matchers);
@@ -45,12 +45,12 @@ public class IsDescendantOfAMatcher extends RecursiveMatcher {
 
     @Override
     public String getCode() {
-        return String.format("isDescendantOfA(%s)", allOfMatcher.getCode());
+        return String.format("hasDescendant(%s)", allOfMatcher.getCode());
     }
 
     @Override
     public Matcher<View> getViewMatcher() {
-        return isDescendantOfA(allOfMatcher.getViewMatcher());
+        return hasDescendant(allOfMatcher.getViewMatcher());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class IsDescendantOfAMatcher extends RecursiveMatcher {
     @Override
     public Set<String> getNeededStaticImports() {
         HashSet<String> imports = new HashSet<>();
-        imports.add("androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA");
+        imports.add("androidx.test.espresso.matcher.ViewMatchers.hasDescendant");
         imports.addAll(allOfMatcher.getNeededStaticImports());
         return imports;
     }
@@ -77,23 +77,23 @@ public class IsDescendantOfAMatcher extends RecursiveMatcher {
         dest.writeTypedList(this.matchers);
     }
 
-    public IsDescendantOfAMatcher(Parcel in) {
+    public HasDescendantMatcher(Parcel in) {
         this(in.createTypedArrayList(EspressoViewMatcher.CREATOR));
     }
 
-    public static final Creator<IsDescendantOfAMatcher> CREATOR = new Creator<IsDescendantOfAMatcher>() {
+    public static final Creator<HasDescendantMatcher> CREATOR = new Creator<HasDescendantMatcher>() {
         @Override
-        public IsDescendantOfAMatcher createFromParcel(Parcel source) {
+        public HasDescendantMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (IsDescendantOfAMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (HasDescendantMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public IsDescendantOfAMatcher[] newArray(int size) {
-            return new IsDescendantOfAMatcher[size];
+        public HasDescendantMatcher[] newArray(int size) {
+            return new HasDescendantMatcher[size];
         }
     };
 }

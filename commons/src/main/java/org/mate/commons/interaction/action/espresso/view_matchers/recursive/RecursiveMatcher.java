@@ -1,13 +1,13 @@
-package org.mate.commons.interaction.action.espresso.matchers.recursive;
+package org.mate.commons.interaction.action.espresso.view_matchers.recursive;
 
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
-import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithClassNameMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithContentDescriptionMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithIdMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithResourceNameMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithTextMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithClassNameMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithContentDescriptionMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithIdMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithResourceNameMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 import org.mate.commons.interaction.action.espresso.matchers_combination.RelativeMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.interaction.action.espresso.view_tree.PathStep;
@@ -55,7 +55,7 @@ public abstract class RecursiveMatcher extends EspressoViewMatcher {
 
             switch (relativeMatcher.getType()) {
                 case IS_ROOT:
-                    newMatcher = new IsRootMatcher();
+                    newMatcher = new IsRootViewMatcher();
                     break;
                 case WITH_RESOURCE_NAME:
                     newMatcher = new WithResourceNameMatcher(node.getEspressoView().getResourceEntryName());

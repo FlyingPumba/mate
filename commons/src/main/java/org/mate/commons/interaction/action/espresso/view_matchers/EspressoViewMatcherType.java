@@ -1,4 +1,4 @@
-package org.mate.commons.interaction.action.espresso.matchers;
+package org.mate.commons.interaction.action.espresso.view_matchers;
 
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 
@@ -17,6 +17,7 @@ public enum EspressoViewMatcherType {
     WITH_RESOURCE_NAME,
     IS_DISPLAYED,
     WITH_EFFECTIVE_VISIBILITY,
+    IS_FOCUSED,
 
     // Recursive matchers: they use another matchers inside, and can NOT be used by themselves.
     ALL_OF,

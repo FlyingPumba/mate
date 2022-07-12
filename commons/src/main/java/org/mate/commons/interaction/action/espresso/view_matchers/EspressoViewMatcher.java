@@ -1,25 +1,25 @@
-package org.mate.commons.interaction.action.espresso.matchers;
+package org.mate.commons.interaction.action.espresso.view_matchers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.IsDisplayedMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithClassNameMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithContentDescriptionMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithEffectiveVisibilityMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithHintMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithIdMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithResourceNameMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithTextMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.AllOfMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.AnyOfMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.HasDescendantMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.IsDescendantOfAMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.WithChildMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.WithParentMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithClassNameMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithContentDescriptionMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithHintMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithIdMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithResourceNameMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.AllOfMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.AnyOfMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.HasDescendantMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.IsDescendantOfAMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.WithChildMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.WithParentMatcher;
 import org.mate.commons.utils.AbstractCodeProducer;
 
 /**
@@ -93,7 +93,7 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
 
         switch (type) {
             case IS_ROOT:
-                return new IsRootMatcher(source);
+                return new IsRootViewMatcher(source);
             case WITH_CLASS_NAME:
                 return new WithClassNameMatcher(source);
             case WITH_CONTENT_DESCRIPTION:

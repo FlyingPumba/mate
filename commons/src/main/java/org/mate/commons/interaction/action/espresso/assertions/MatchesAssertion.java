@@ -4,7 +4,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import androidx.test.espresso.ViewAssertion;
 
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 
 import java.util.HashSet;
 import java.util.Set;

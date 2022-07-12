@@ -1,34 +1,34 @@
-package org.mate.commons.interaction.action.espresso.matchers.base;
+package org.mate.commons.interaction.action.espresso.view_matchers.base;
 
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 import android.os.Parcel;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that are at the root of the UI hierarchy.
+ * Implements an Espresso Matcher for targeting the views that are at displayed in the screen.
  */
-public class IsRootMatcher extends EspressoViewMatcher {
+public class IsDisplayedMatcher extends EspressoViewMatcher {
 
-    public IsRootMatcher() {
-        super(EspressoViewMatcherType.IS_ROOT);
+    public IsDisplayedMatcher() {
+        super(EspressoViewMatcherType.IS_DISPLAYED);
     }
 
     @Override
     public String getCode() {
-        return "isRoot()";
+        return "isDisplayed()";
     }
 
     @Override
     public Matcher<View> getViewMatcher() {
-        return isRoot();
+        return isDisplayed();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class IsRootMatcher extends EspressoViewMatcher {
     @Override
     public Set<String> getNeededStaticImports() {
         HashSet<String> imports = new HashSet<>();
-        imports.add("androidx.test.espresso.matcher.ViewMatchers.isRoot");
+        imports.add("androidx.test.espresso.matcher.ViewMatchers.isDisplayed");
         return imports;
     }
 
@@ -53,23 +53,23 @@ public class IsRootMatcher extends EspressoViewMatcher {
         super.writeToParcel(dest, flags);
     }
 
-    public IsRootMatcher(Parcel in) {
+    public IsDisplayedMatcher(Parcel in) {
         this();
     }
 
-    public static final Creator<IsRootMatcher> CREATOR = new Creator<IsRootMatcher>() {
+    public static final Creator<IsDisplayedMatcher> CREATOR = new Creator<IsDisplayedMatcher>() {
         @Override
-        public IsRootMatcher createFromParcel(Parcel source) {
+        public IsDisplayedMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (IsRootMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (IsDisplayedMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public IsRootMatcher[] newArray(int size) {
-            return new IsRootMatcher[size];
+        public IsDisplayedMatcher[] newArray(int size) {
+            return new IsDisplayedMatcher[size];
         }
     };
 }

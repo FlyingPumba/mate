@@ -1,6 +1,6 @@
 package org.mate.commons.interaction.action.espresso.matchers_combination;
 
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 import org.mate.commons.interaction.action.espresso.view_tree.PathInTree;
 
 /**

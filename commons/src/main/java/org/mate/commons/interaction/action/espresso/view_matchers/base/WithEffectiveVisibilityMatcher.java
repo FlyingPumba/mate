@@ -1,4 +1,4 @@
-package org.mate.commons.interaction.action.espresso.matchers.base;
+package org.mate.commons.interaction.action.espresso.view_matchers.base;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 
@@ -10,14 +10,14 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.espresso.matcher.ViewMatchers.Visibility;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that are at displayed in the screen.
+ * Implements an Espresso Matcher for targeting the views that have certain visibility.
  */
 public class WithEffectiveVisibilityMatcher extends EspressoViewMatcher {
 

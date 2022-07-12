@@ -1,4 +1,4 @@
-package org.mate.commons.interaction.action.espresso.matchers.base;
+package org.mate.commons.interaction.action.espresso.view_matchers.base;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withResourceName;
 
@@ -6,8 +6,8 @@ import android.os.Parcel;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.HashSet;
 import java.util.Set;

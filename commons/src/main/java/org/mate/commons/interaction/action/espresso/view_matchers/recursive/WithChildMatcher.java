@@ -1,13 +1,13 @@
-package org.mate.commons.interaction.action.espresso.matchers.recursive;
+package org.mate.commons.interaction.action.espresso.view_matchers.recursive;
 
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.withChild;
 
 import android.os.Parcel;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,24 +15,22 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that have a descendant view matching
- * ALL matchers in a list.
- * Note that the descendant view may not be a direct descendant of the target view. E.g., it may
- * be a children of the children of the target view.
+ * Implements an Espresso Matcher for targeting the views that have a direct descendant (children)
+ * view matching ALL matchers in a list.
  */
-public class HasDescendantMatcher extends RecursiveMatcher {
+public class WithChildMatcher extends RecursiveMatcher {
 
     /**
      * Auxiliary matcher to group all conditions.
      */
     private AllOfMatcher allOfMatcher;
 
-    public HasDescendantMatcher() {
+    public WithChildMatcher() {
         this(new ArrayList<>());
     }
 
-    public HasDescendantMatcher(List<EspressoViewMatcher> matchers) {
-        super(EspressoViewMatcherType.HAS_DESCENDANT);
+    public WithChildMatcher(List<EspressoViewMatcher> matchers) {
+        super(EspressoViewMatcherType.WITH_CHILD);
         this.matchers = matchers;
         allOfMatcher = new AllOfMatcher(matchers);
     }
@@ -45,12 +43,12 @@ public class HasDescendantMatcher extends RecursiveMatcher {
 
     @Override
     public String getCode() {
-        return String.format("hasDescendant(%s)", allOfMatcher.getCode());
+        return String.format("withChild(%s)", allOfMatcher.getCode());
     }
 
     @Override
     public Matcher<View> getViewMatcher() {
-        return hasDescendant(allOfMatcher.getViewMatcher());
+        return withChild(allOfMatcher.getViewMatcher());
     }
 
     @Override
@@ -61,7 +59,7 @@ public class HasDescendantMatcher extends RecursiveMatcher {
     @Override
     public Set<String> getNeededStaticImports() {
         HashSet<String> imports = new HashSet<>();
-        imports.add("androidx.test.espresso.matcher.ViewMatchers.hasDescendant");
+        imports.add("androidx.test.espresso.matcher.ViewMatchers.withChild");
         imports.addAll(allOfMatcher.getNeededStaticImports());
         return imports;
     }
@@ -77,23 +75,23 @@ public class HasDescendantMatcher extends RecursiveMatcher {
         dest.writeTypedList(this.matchers);
     }
 
-    public HasDescendantMatcher(Parcel in) {
+    public WithChildMatcher(Parcel in) {
         this(in.createTypedArrayList(EspressoViewMatcher.CREATOR));
     }
 
-    public static final Creator<HasDescendantMatcher> CREATOR = new Creator<HasDescendantMatcher>() {
+    public static final Creator<WithChildMatcher> CREATOR = new Creator<WithChildMatcher>() {
         @Override
-        public HasDescendantMatcher createFromParcel(Parcel source) {
+        public WithChildMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (HasDescendantMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (WithChildMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public HasDescendantMatcher[] newArray(int size) {
-            return new HasDescendantMatcher[size];
+        public WithChildMatcher[] newArray(int size) {
+            return new WithChildMatcher[size];
         }
     };
 }

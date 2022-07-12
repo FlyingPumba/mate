@@ -2,10 +2,10 @@ package org.mate.commons;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_CLASS_NAME;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_CONTENT_DESCRIPTION;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_ID;
-import static org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType.WITH_TEXT;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_CLASS_NAME;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_CONTENT_DESCRIPTION;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_ID;
+import static org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType.WITH_TEXT;
 
 import android.view.ViewGroup;
 import android.widget.EditText;

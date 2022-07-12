@@ -1,13 +1,13 @@
-package org.mate.commons.interaction.action.espresso.matchers.recursive;
+package org.mate.commons.interaction.action.espresso.view_matchers.recursive;
 
-import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.allOf;
 
 import android.os.Parcel;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcherType;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcherType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that match against ANY matcher in a list.
+ * Implements an Espresso Matcher for targeting the views that match against ALL matchers in a list.
  */
-public class AnyOfMatcher extends RecursiveMatcher {
+public class AllOfMatcher extends RecursiveMatcher {
 
-    public AnyOfMatcher() {
+    public AllOfMatcher() {
         this(new ArrayList<>());
     }
 
-    public AnyOfMatcher(List<EspressoViewMatcher> matchers) {
-        super(EspressoViewMatcherType.ANY_OF);
+    public AllOfMatcher(List<EspressoViewMatcher> matchers) {
+        super(EspressoViewMatcherType.ALL_OF);
         this.matchers = matchers;
     }
 
@@ -45,7 +45,7 @@ public class AnyOfMatcher extends RecursiveMatcher {
         viewMatchers.deleteCharAt(viewMatchers.length() - 1);
         viewMatchers.deleteCharAt(viewMatchers.length() - 1);
 
-        return String.format("anyOf(%s)", viewMatchers.toString());
+        return String.format("allOf(%s)", viewMatchers.toString());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class AnyOfMatcher extends RecursiveMatcher {
             viewMatchers[i] = matchers.get(i).getViewMatcher();
         }
 
-        return anyOf(viewMatchers);
+        return allOf(viewMatchers);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AnyOfMatcher extends RecursiveMatcher {
         if (matchers.size() > 1) {
             // if this recursive matcher is being used for just one matcher, we will delete the
             // intermediate matcher all together, and thus we won't need the import.
-            imports.add("org.hamcrest.Matchers.anyOf");
+            imports.add("org.hamcrest.Matchers.allOf");
         }
 
         for (EspressoViewMatcher matcher : matchers) {
@@ -103,23 +103,23 @@ public class AnyOfMatcher extends RecursiveMatcher {
         dest.writeTypedList(this.matchers);
     }
 
-    public AnyOfMatcher(Parcel in) {
+    public AllOfMatcher(Parcel in) {
         this(in.createTypedArrayList(EspressoViewMatcher.CREATOR));
     }
 
-    public static final Creator<AnyOfMatcher> CREATOR = new Creator<AnyOfMatcher>() {
+    public static final Creator<AllOfMatcher> CREATOR = new Creator<AllOfMatcher>() {
         @Override
-        public AnyOfMatcher createFromParcel(Parcel source) {
+        public AllOfMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (AnyOfMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (AllOfMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public AnyOfMatcher[] newArray(int size) {
-            return new AnyOfMatcher[size];
+        public AllOfMatcher[] newArray(int size) {
+            return new AllOfMatcher[size];
         }
     };
 }

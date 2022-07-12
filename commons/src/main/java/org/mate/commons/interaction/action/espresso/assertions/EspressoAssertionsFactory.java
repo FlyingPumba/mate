@@ -1,18 +1,20 @@
 package org.mate.commons.interaction.action.espresso.assertions;
 
+import androidx.annotation.Nullable;
+
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.IsDisplayedMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.IsRootMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.base.WithEffectiveVisibilityMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsFocusedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 public class EspressoAssertionsFactory {
 
-    private static final IsRootMatcher isRootMatcher = new IsRootMatcher();
+    private static final IsRootViewMatcher IS_ROOT_VIEW_MATCHER = new IsRootViewMatcher();
 
     /**
      * Asserts that a view has disappeared from the screen.

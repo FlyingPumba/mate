@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.test.espresso.Root;
 
 import org.junit.Test;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.matchers.recursive.AllOfMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.recursive.AllOfMatcher;
 import org.mate.commons.interaction.action.espresso.matchers_combination.RelativeMatcherCombination;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 import org.mate.commons.mock.MockEditText;
