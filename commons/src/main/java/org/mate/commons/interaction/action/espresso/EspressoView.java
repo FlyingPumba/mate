@@ -364,13 +364,8 @@ public class EspressoView {
         attributes.putAll(getLayoutInspectorAttributes());
         attributes.putAll(getBasicViewAttributes());
 
-        if (!attributes.containsKey("text")) {
-            attributes.put("text", getText());
-        }
-
-        if (!attributes.containsKey("contentDescription")) {
-            attributes.put("contentDescription", getContentDescription());
-        }
+        attributes.put("text", getText());
+        attributes.put("contentDescription", getContentDescription());
 
         // Add a special "is_displayed" UI attribute.
         // This can only be computed with certainty if we have the view and can access the

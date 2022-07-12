@@ -91,4 +91,9 @@ public class EspressoAssertion implements CodeProducer {
 
         return imports;
     }
+
+    @Override
+    public String toString() {
+        return this.getCode();
+    }
 }

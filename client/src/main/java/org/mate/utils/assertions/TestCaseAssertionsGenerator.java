@@ -85,6 +85,7 @@ public class TestCaseAssertionsGenerator {
             Action action = actionSequence.get(i);
             String activity = testCase.getActivityAfterAction(i);
 
+            MATELog.log_debug("Executing action: " + action.toString());
             uiAbstractionLayer.executeAction(action);
 
             if (!activity.startsWith(targetPackageName)) {
@@ -127,8 +128,9 @@ public class TestCaseAssertionsGenerator {
         List<EspressoAssertion> assertions = new ArrayList<>();
 
         // has any view in last UI disappeared?
-        for (Map.Entry<String, EspressoViewMatcher> entry :
-                espressoScreen.getDisappearingViewMatchers(lastEspressoScreen).entrySet()) {
+        Map<String, EspressoViewMatcher> disappearingViews = espressoScreen
+                .getDisappearingViewMatchers(lastEspressoScreen);
+        for (Map.Entry<String, EspressoViewMatcher> entry : disappearingViews.entrySet()) {
 
             String viewUniqueId = entry.getKey();
             EspressoViewMatcher viewMatcher = entry.getValue();
@@ -138,8 +140,9 @@ public class TestCaseAssertionsGenerator {
         }
 
         // has any view in new UI appeared?
-        for (Map.Entry<String, EspressoViewMatcher> entry :
-                espressoScreen.getAppearingViewMatchers(lastEspressoScreen).entrySet()) {
+        Map<String, EspressoViewMatcher> appearingViews = espressoScreen.
+                getAppearingViewMatchers(lastEspressoScreen);
+        for (Map.Entry<String, EspressoViewMatcher> entry : appearingViews.entrySet()) {
 
             String viewUniqueId = entry.getKey();
             EspressoViewMatcher viewMatcher = entry.getValue();
@@ -150,8 +153,8 @@ public class TestCaseAssertionsGenerator {
         }
 
         // has any view appearing in both last and new UI changed an attribute's value?
-        for (Map.Entry<String, EspressoViewMatcher> entry :
-                espressoScreen.getCommonViewMatchers(lastEspressoScreen).entrySet()) {
+        Map<String, EspressoViewMatcher> commonViews = espressoScreen.getCommonViewMatchers(lastEspressoScreen);
+        for (Map.Entry<String, EspressoViewMatcher> entry : commonViews.entrySet()) {
 
             String viewUniqueId = entry.getKey();
             EspressoViewMatcher viewMatcher = entry.getValue();
@@ -204,6 +207,7 @@ public class TestCaseAssertionsGenerator {
      */
     private void addIfNonNull(List<EspressoAssertion> assertions, @Nullable EspressoAssertion assertion) {
         if (assertion != null) {
+            MATELog.log_debug("Added assertion: " + assertion.toString());
             assertions.add(assertion);
         }
     }
