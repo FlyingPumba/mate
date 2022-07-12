@@ -3,11 +3,11 @@ package org.mate.model.fsm;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.VirtualStartAction;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.ui.WidgetAction;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 import org.mate.commons.utils.MATELog;
 import org.mate.model.Edge;
 import org.mate.model.IGUIModel;
@@ -16,7 +16,6 @@ import org.mate.state.ScreenStateType;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,12 +79,7 @@ public class FSMModel implements IGUIModel {
         }
 
         @Override
-        public Map<String, Map<String, String>> getUIAttributes() {
-            throw new UnsupportedOperationException("Do not call this method!");
-        }
-
-        @Override
-        public Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
+        public EspressoScreenSummary getEspressoScreenSummary() {
             throw new UnsupportedOperationException("Do not call this method!");
         }
 

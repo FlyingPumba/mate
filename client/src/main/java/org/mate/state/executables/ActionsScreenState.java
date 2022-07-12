@@ -6,12 +6,12 @@ import androidx.annotation.Nullable;
 
 import org.mate.commons.exceptions.AUTCrashException;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.ActionType;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.ui.WidgetAction;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 import org.mate.commons.utils.MATELog;
 import org.mate.service.MATEService;
 import org.mate.state.ScreenStateType;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -108,7 +107,6 @@ public class ActionsScreenState extends AbstractScreenState {
                 this.espressoActions = MATEService.getRepresentationLayer().getCurrentScreenEspressoActions();
             } catch (RemoteException | AUTCrashException e) {
                 MATELog.log_warn("Unable to fetch Espresso actions after AUT has crashed");
-
             }
         }
 
@@ -121,13 +119,8 @@ public class ActionsScreenState extends AbstractScreenState {
     }
 
     @Override
-    public @Nullable Map<String, Map<String, String>> getUIAttributes() {
-        return appScreen.getUIAttributes();
-    }
-
-    @Override
-    public @Nullable Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
-        return appScreen.getEspressoViewMatchers(includeAndroidViews);
+    public @Nullable EspressoScreenSummary getEspressoScreenSummary() {
+        return appScreen.getEspressoScreenSummary();
     }
 
     /**

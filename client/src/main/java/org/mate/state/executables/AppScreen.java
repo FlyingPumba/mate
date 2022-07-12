@@ -7,17 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mate.commons.exceptions.AUTCrashException;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.Widget;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 import org.mate.commons.utils.MATELog;
 import org.mate.interaction.DeviceMgr;
 import org.mate.service.MATEService;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -174,47 +172,23 @@ public class AppScreen {
         return "AppScreen{activity: " + activityName + ", widgets: " + widgets.size() + "}";
     }
 
-    /**
-     * Returns the UI attributes in current screen.
-     * @return a map of UI attributes. The keys is the View's unique ID. The value is the View's
-     * attributes.
-     */
-    public @Nullable Map<String, Map<String, String>> getUIAttributes() {
-        Map<String, Map<String, String>> uiAttributes = null;
-        for (int i = 0; i < 3 && uiAttributes == null; i++) {
+    public @Nullable EspressoScreenSummary getEspressoScreenSummary() {
+        EspressoScreenSummary screenSummary = null;
+        for (int i = 0; i < 3 && screenSummary == null; i++) {
             try {
-                uiAttributes = MATEService.getRepresentationLayer().getUIAttributes();
-            } catch (RemoteException | AUTCrashException e) {
-                MATELog.log_warn("Unable to fetch UI attributes after AUT has crashed");
-            }
-        }
-
-        return uiAttributes;
-    }
-
-    /**
-     * Returns the Espresso ViewMatchers in current screen.
-     * @return a map of Espresso ViewMatchers. The keys is the View's unique ID. The value is the
-     * View's Espresso ViewMatchers.
-     */
-    public @Nullable Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews) {
-        Map<String, EspressoViewMatcher> matchers = null;
-        for (int i = 0; i < 3 && matchers == null; i++) {
-            try {
-                matchers = MATEService.getRepresentationLayer().getCurrentScreenEspressoMatchers(includeAndroidViews);
+                screenSummary = MATEService.getRepresentationLayer().getCurrentEspressoScreenSummary();
             } catch (RemoteException | AUTCrashException e) {
                 MATELog.log_warn("Unable to fetch Espresso View Matchers after AUT has crashed");
             }
         }
 
-        return matchers;
+        return screenSummary;
     }
 
     public int getTopWindowType() {
-        try {
-            return MATEService.getRepresentationLayer().getTopWindowType();
-        } catch (RemoteException | AUTCrashException e) {
-            MATELog.log_warn("Unable to fetch top window type after AUT has crashed");
+        EspressoScreenSummary espressoScreenSummary = getEspressoScreenSummary();
+        if (espressoScreenSummary != null) {
+            return espressoScreenSummary.getTopWindowType();
         }
 
         return 0;

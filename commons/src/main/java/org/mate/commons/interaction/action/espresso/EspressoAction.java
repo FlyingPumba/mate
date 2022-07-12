@@ -6,15 +6,19 @@ import android.os.Parcel;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
 
 import org.hamcrest.Matcher;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.utils.CodeProducer;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -39,10 +43,24 @@ public class EspressoAction extends Action implements CodeProducer {
      */
     private EspressoViewMatcher espressoViewMatcher;
 
+    /**
+     * The root matcher to indicate Espresso on which Root to find the target view.
+     */
+    private @Nullable
+    EspressoRootMatcher espressoRootMatcher;
+
     public EspressoAction(EspressoViewAction espressoViewAction,
-                          EspressoViewMatcher espressoViewMatcher) {
+                          EspressoViewMatcher espressoViewMatcher,
+                          @Nullable EspressoRootMatcher espressoRootMatcher) {
         this.espressoViewAction = espressoViewAction;
         this.espressoViewMatcher = espressoViewMatcher;
+
+        this.espressoRootMatcher = null;
+
+        // Use a root matcher only if the ViewAction allows it.
+        if (espressoViewAction.allowsRootMatcher()) {
+            this.espressoRootMatcher = espressoRootMatcher;
+        }
     }
 
     /**
@@ -55,7 +73,14 @@ public class EspressoAction extends Action implements CodeProducer {
         try {
             Matcher<View> viewMatcher = espressoViewMatcher.getViewMatcher();
             ViewAction viewAction = espressoViewAction.getViewAction();
-            onView(viewMatcher).perform(viewAction);
+
+            ViewInteraction viewInteraction = onView(viewMatcher);
+
+            if (espressoRootMatcher != null) {
+                viewInteraction.inRoot(espressoRootMatcher.getRootMatcher());
+            }
+
+            viewInteraction.perform(viewAction);
             return true;
         } catch (Exception e) {
             // do nothing
@@ -68,7 +93,15 @@ public class EspressoAction extends Action implements CodeProducer {
     public String getCode() {
         String viewMatcherCode = espressoViewMatcher.getCode();
         String viewActionCode = espressoViewAction.getCode();
-        String code = String.format("onView(%s).perform(%s)", viewMatcherCode, viewActionCode);
+
+        String rootMatcherCode = "";
+        if (espressoRootMatcher != null) {
+            rootMatcherCode = String.format(".inRoot(%s)", espressoRootMatcher.getCode());
+        }
+
+        String code = String.format("onView(%s)%s.perform(%s)",
+                viewMatcherCode,
+                rootMatcherCode, viewActionCode);
 
         return code;
     }
@@ -80,6 +113,10 @@ public class EspressoAction extends Action implements CodeProducer {
         imports.addAll(espressoViewMatcher.getNeededClassImports());
         imports.addAll(espressoViewAction.getNeededClassImports());
 
+        if (espressoRootMatcher != null) {
+            imports.addAll(espressoRootMatcher.getNeededClassImports());
+        }
+
         return imports;
     }
 
@@ -90,6 +127,10 @@ public class EspressoAction extends Action implements CodeProducer {
 
         imports.addAll(espressoViewMatcher.getNeededStaticImports());
         imports.addAll(espressoViewAction.getNeededStaticImports());
+
+        if (espressoRootMatcher != null) {
+            imports.addAll(espressoRootMatcher.getNeededStaticImports());
+        }
 
         return imports;
     }
@@ -109,7 +150,8 @@ public class EspressoAction extends Action implements CodeProducer {
             return false;
         } else {
             EspressoAction other = (EspressoAction) o;
-            return espressoViewAction == other.espressoViewAction && espressoViewMatcher.equals(other.espressoViewMatcher);
+            return espressoViewAction == other.espressoViewAction && espressoViewMatcher.equals(other.espressoViewMatcher)
+                    && Objects.equals(espressoRootMatcher, other.espressoRootMatcher);
         }
     }
 
@@ -120,7 +162,7 @@ public class EspressoAction extends Action implements CodeProducer {
      */
     @Override
     public int hashCode() {
-        return espressoViewAction.hashCode() + espressoViewMatcher.hashCode();
+        return Objects.hash(espressoViewAction, espressoViewMatcher, espressoRootMatcher);
     }
 
     /**
@@ -129,8 +171,7 @@ public class EspressoAction extends Action implements CodeProducer {
     @NonNull
     @Override
     public String toString() {
-        return String.format("onView(%s).perform(%s)",
-                espressoViewMatcher.toString(), espressoViewAction.toString());
+        return getCode();
     }
 
     @NonNull
@@ -154,12 +195,14 @@ public class EspressoAction extends Action implements CodeProducer {
         super.writeToParcel(dest, flags);
         dest.writeParcelable(this.espressoViewAction, flags);
         dest.writeParcelable(this.espressoViewMatcher, flags);
+        dest.writeParcelable(this.espressoRootMatcher, flags);
     }
 
     public EspressoAction(Parcel in) {
         super(in);
         this.espressoViewAction = in.readParcelable(EspressoViewAction.class.getClassLoader());
         this.espressoViewMatcher = in.readParcelable(EspressoViewMatcher.class.getClassLoader());
+        this.espressoRootMatcher = in.readParcelable(EspressoRootMatcher.class.getClassLoader());
     }
 
     public static final Creator<EspressoAction> CREATOR = new Creator<EspressoAction>() {

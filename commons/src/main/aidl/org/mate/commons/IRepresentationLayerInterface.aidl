@@ -5,6 +5,7 @@ import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 
 interface IRepresentationLayerInterface {
     // Representation Layer status & config
@@ -28,7 +29,6 @@ interface IRepresentationLayerInterface {
     void sendBroadcastToTracer();
 
     // Activities info
-    int getTopWindowType();
     String getCurrentPackageName();
     String getCurrentActivityName();
     List<String> getTargetPackageActivityNames();
@@ -42,8 +42,5 @@ interface IRepresentationLayerInterface {
 
     // Espresso support
     List<EspressoAction> getCurrentScreenEspressoActions();
-    Map getCurrentScreenEspressoMatchers(boolean includeAndroidViews);
-
-    // UI state
-    Map getUIAttributes();
+    EspressoScreenSummary getCurrentEspressoScreenSummary();
 }

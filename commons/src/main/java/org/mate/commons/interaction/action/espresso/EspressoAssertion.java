@@ -1,7 +1,10 @@
 package org.mate.commons.interaction.action.espresso;
 
+import androidx.annotation.Nullable;
+
 import org.mate.commons.interaction.action.espresso.assertions.EspressoViewAssertion;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.utils.CodeProducer;
 
 import java.util.HashSet;
@@ -29,17 +32,33 @@ public class EspressoAssertion implements CodeProducer {
      */
     private final EspressoViewAssertion espressoViewAssertion;
 
+    /**
+     * The root matcher to indicate Espresso on which Root to find the target view.
+     */
+    @Nullable
+    private EspressoRootMatcher espressoRootMatcher;
+
     public EspressoAssertion(EspressoViewMatcher espressoViewMatcher,
-                             EspressoViewAssertion espressoViewAssertion) {
+                             EspressoViewAssertion espressoViewAssertion,
+                             @Nullable EspressoRootMatcher espressoRootMatcher) {
         this.espressoViewMatcher = espressoViewMatcher;
         this.espressoViewAssertion = espressoViewAssertion;
+        this.espressoRootMatcher = espressoRootMatcher;
     }
 
     @Override
     public String getCode() {
         String viewMatcherCode = espressoViewMatcher.getCode();
         String viewAssertionCode = espressoViewAssertion.getCode();
-        String code = String.format("onView(%s).check(%s)", viewMatcherCode, viewAssertionCode);
+
+        String rootMatcherCode = "";
+        if (espressoRootMatcher != null) {
+            rootMatcherCode = String.format(".inRoot(%s)", espressoRootMatcher.getCode());
+        }
+
+        String code = String.format("onView(%s)%s.check(%s)",
+                viewMatcherCode,
+                rootMatcherCode, viewAssertionCode);
 
         return code;
     }
@@ -51,6 +70,10 @@ public class EspressoAssertion implements CodeProducer {
         imports.addAll(espressoViewMatcher.getNeededClassImports());
         imports.addAll(espressoViewAssertion.getNeededClassImports());
 
+        if (espressoRootMatcher != null) {
+            imports.addAll(espressoRootMatcher.getNeededClassImports());
+        }
+
         return imports;
     }
 
@@ -61,6 +84,10 @@ public class EspressoAssertion implements CodeProducer {
 
         imports.addAll(espressoViewMatcher.getNeededStaticImports());
         imports.addAll(espressoViewAssertion.getNeededStaticImports());
+
+        if (espressoRootMatcher != null) {
+            imports.addAll(espressoRootMatcher.getNeededStaticImports());
+        }
 
         return imports;
     }

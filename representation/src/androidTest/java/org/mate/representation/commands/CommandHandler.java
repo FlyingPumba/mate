@@ -9,8 +9,8 @@ import org.mate.commons.IMATEServiceInterface;
 import org.mate.commons.IRepresentationLayerInterface;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.Widget;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 import org.mate.commons.utils.MATELog;
 import org.mate.representation.DeviceInfo;
 import org.mate.representation.DynamicTest;
@@ -24,7 +24,6 @@ import org.mate.representation.test.BuildConfig;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handles commands requested by the MATE Service (e.g., fetch current available actions).
@@ -49,9 +48,11 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void waitForDebugger() throws RemoteException {
-        MATELog.log("MATE Representation Layer waiting for Debugger to be attached to Android " +
-                "Process");
-        Debug.waitForDebugger();
+        if (!Debug.isDebuggerConnected()) {
+            MATELog.log("MATE Representation Layer waiting for Debugger to be attached to Android " +
+                    "Process");
+            Debug.waitForDebugger();
+        }
     }
 
     @Override
@@ -134,20 +135,6 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
         try {
             ExplorationInfo.getInstance().sendBroadcastToTracer();
         } catch (Exception e){
-            logException(e);
-            throw e;
-        }
-    }
-
-    @Override
-    public int getTopWindowType() throws RemoteException {
-        try {
-            if (espressoScreenParser == null) {
-                espressoScreenParser = new EspressoScreenParser();
-            }
-
-            return espressoScreenParser.getTopWindowType();
-        } catch (Exception e) {
             logException(e);
             throw e;
         }
@@ -263,27 +250,14 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     }
 
     @Override
-    public @Nullable Map<String, EspressoViewMatcher> getCurrentScreenEspressoMatchers(boolean includeAndroidViews) throws RemoteException {
+    public @Nullable
+    EspressoScreenSummary getCurrentEspressoScreenSummary() throws RemoteException {
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
             }
 
-            return espressoScreenParser.getMatchers(includeAndroidViews);
-        } catch (Exception e) {
-            logException(e);
-            throw e;
-        }
-    }
-
-    @Override
-    public @Nullable Map<String, Map<String, String>> getUIAttributes() throws RemoteException {
-        try {
-            if (espressoScreenParser == null) {
-                espressoScreenParser = new EspressoScreenParser();
-            }
-
-            return espressoScreenParser.getUIAttributes();
+            return espressoScreenParser.getEspressoScreenSummary();
         } catch (Exception e) {
             logException(e);
             throw e;

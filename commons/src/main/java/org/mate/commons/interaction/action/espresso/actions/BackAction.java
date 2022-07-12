@@ -48,6 +48,12 @@ public class BackAction extends EspressoViewAction {
     }
 
     @Override
+    public boolean allowsRootMatcher() {
+        // This action is independent of the window on which it is performed.
+        return false;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

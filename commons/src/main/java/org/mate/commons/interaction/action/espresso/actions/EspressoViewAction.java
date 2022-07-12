@@ -49,6 +49,15 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
     }
 
     /**
+     * Returns a boolean indicating whether this EspressoViewAction allows the use of RootMatcher
+     * with it when available.
+     * @return a boolean.
+     */
+    public boolean allowsRootMatcher() {
+        return true;
+    }
+
+    /**
      * Returns a boolean indicating whether this EspressoViewAction can be performed on the given
      * (enabled) View.
      * Each implementation of this method should use the actual constraints provided by the

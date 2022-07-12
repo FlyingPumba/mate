@@ -1,14 +1,13 @@
 package org.mate.state;
 
 import org.mate.commons.interaction.action.espresso.EspressoAction;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.ui.MotifAction;
 import org.mate.commons.interaction.action.ui.UIAction;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.ui.WidgetAction;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Defines the interface for a screen state,
@@ -24,8 +23,7 @@ public interface IScreenState {
     List<WidgetAction> getWidgetActions();
     List<MotifAction> getMotifActions();
     List<EspressoAction> getEspressoActions();
-    Map<String, Map<String, String>> getUIAttributes();
-    Map<String, EspressoViewMatcher> getEspressoViewMatchers(boolean includeAndroidViews);
+    EspressoScreenSummary getEspressoScreenSummary();
     String getActivityName();
     String getPackageName();
     ScreenStateType getType();

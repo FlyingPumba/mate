@@ -1,12 +1,16 @@
 package org.mate.commons.interaction.action.espresso;
 
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.test.espresso.matcher.ViewMatchers;
 
 import org.mate.commons.interaction.action.espresso.layout_inspector.common.Resource;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.LayoutParamsTypeTree;
@@ -357,8 +361,8 @@ public class EspressoView {
     public Map<String, String> getAllAttributes() {
         Map<String, String> attributes = new HashMap<>();
 
-        attributes.putAll(getBasicViewAttributes());
         attributes.putAll(getLayoutInspectorAttributes());
+        attributes.putAll(getBasicViewAttributes());
 
         if (!attributes.containsKey("text")) {
             attributes.put("text", getText());
@@ -366,6 +370,20 @@ public class EspressoView {
 
         if (!attributes.containsKey("contentDescription")) {
             attributes.put("contentDescription", getContentDescription());
+        }
+
+        // Add a special "is_displayed" UI attribute.
+        // This can only be computed with certainty if we have the view and can access the
+        // "getGlobalVisibleRect" method.
+        // Attempts to determine if the view is displayed or not using the width and height
+        // properties may not work when the view has special values such as "wrap_content".
+        boolean isDisplayed =
+                withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE).matches(view) &&
+                        view.getGlobalVisibleRect(new Rect());
+        if (isDisplayed) {
+            attributes.put("is_displayed", "true");
+        } else {
+            attributes.put("is_displayed", "false");
         }
 
         return attributes;

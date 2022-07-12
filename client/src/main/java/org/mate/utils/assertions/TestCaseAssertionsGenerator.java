@@ -1,13 +1,19 @@
 package org.mate.utils.assertions;
 
+import android.os.RemoteException;
+
 import org.mate.Registry;
+import org.mate.commons.exceptions.AUTCrashException;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.assertions.EspressoAssertionsFactory;
-import org.mate.commons.interaction.action.espresso.matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.state.espresso.EspressoScreenSummary;
 import org.mate.commons.utils.MATELog;
 import org.mate.interaction.UIAbstractionLayer;
 import org.mate.model.TestCase;
+import org.mate.service.MATEService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +39,9 @@ public class TestCaseAssertionsGenerator {
     private final String targetPackageName;
 
     /**
-     * The last UI attributes fetched.
+     * The last Espresso Screen fetched.
      */
-    private Map<String, Map<String, String>> lastUIAttributes;
-
-    /**
-     * The last Espresso View matchers fetched.
-     */
-    private Map<String, EspressoViewMatcher> lastViewMatchers;
+    private EspressoScreenSummary lastEspressoScreen;
 
     public TestCaseAssertionsGenerator(TestCase testCase) {
         this.testCase = testCase;
@@ -105,22 +106,19 @@ public class TestCaseAssertionsGenerator {
      * @return a list of assertions.
      */
     private List<EspressoAssertion> generateAssertions() {
-        Map<String, Map<String, String>> uiAttributes =
-                uiAbstractionLayer.getLastScreenState().getUIAttributes();
-        Map<String, EspressoViewMatcher> viewMatchers =
-                uiAbstractionLayer.getLastScreenState().getEspressoViewMatchers(false);
+        EspressoScreenSummary espressoScreen =
+                uiAbstractionLayer.getLastScreenState().getEspressoScreenSummary();
 
-        if (uiAttributes == null || viewMatchers == null) {
+        if (espressoScreen == null) {
             // An error occurred while fetching the information from current screen, skip
             // assertions for this line.
             MATELog.log_debug("Skiping assertions for current screen state: missing information.");
             return new ArrayList<>();
         }
 
-        if (lastUIAttributes == null) {
+        if (lastEspressoScreen == null) {
             // save the first UI attributes
-            lastUIAttributes = uiAttributes;
-            lastViewMatchers = viewMatchers;
+            lastEspressoScreen = espressoScreen;
 
             // do not generate any assertion for the first UI attributes.
             return new ArrayList<>();
@@ -129,37 +127,44 @@ public class TestCaseAssertionsGenerator {
         List<EspressoAssertion> assertions = new ArrayList<>();
 
         // has any view in last UI disappeared?
-        for (String viewUniqueID : lastViewMatchers.keySet()) {
-            if (!viewMatchers.containsKey(viewUniqueID)) {
-                // a view from last UI is gone
-                EspressoViewMatcher viewMatcher = lastViewMatchers.get(viewUniqueID);
+        for (Map.Entry<String, EspressoViewMatcher> entry :
+                espressoScreen.getDisappearingViewMatchers(lastEspressoScreen).entrySet()) {
 
-                addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewUniqueID,
-                        lastUIAttributes.get(viewUniqueID), viewMatcher));
-            }
+            String viewUniqueId = entry.getKey();
+            EspressoViewMatcher viewMatcher = entry.getValue();
+            EspressoRootMatcher rootMatcher = lastEspressoScreen.getRootMatcher(viewUniqueId);
+
+            addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewMatcher, rootMatcher));
         }
 
         // has any view in new UI appeared?
-        for (String viewUniqueID : viewMatchers.keySet()) {
-            if (!lastViewMatchers.containsKey(viewUniqueID)) {
-                // a view has appeared on the new UI.
-                EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
+        for (Map.Entry<String, EspressoViewMatcher> entry :
+                espressoScreen.getAppearingViewMatchers(lastEspressoScreen).entrySet()) {
 
-                addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewUniqueID,
-                        uiAttributes.get(viewUniqueID), viewMatcher));
-            }
+            String viewUniqueId = entry.getKey();
+            EspressoViewMatcher viewMatcher = entry.getValue();
+            EspressoRootMatcher rootMatcher = espressoScreen.getRootMatcher(viewUniqueId);
+
+            addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewMatcher,
+                    rootMatcher, espressoScreen.getUiAttributes(viewUniqueId)));
         }
 
         // has any view appearing in both last and new UI changed an attribute's value?
-        for (String viewUniqueID : viewMatchers.keySet()) {
-            if (!lastViewMatchers.containsKey(viewUniqueID)) {
+        for (Map.Entry<String, EspressoViewMatcher> entry :
+                espressoScreen.getCommonViewMatchers(lastEspressoScreen).entrySet()) {
+
+            String viewUniqueId = entry.getKey();
+            EspressoViewMatcher viewMatcher = entry.getValue();
+            EspressoRootMatcher rootMatcher = espressoScreen.getRootMatcher(viewUniqueId);
+
+            Map<String, String> oldAttributes = lastEspressoScreen.getUiAttributes(viewUniqueId);
+            Map<String, String> newAttributes = espressoScreen.getUiAttributes(viewUniqueId);
+
+            if (oldAttributes == null || newAttributes == null) {
+                // weird, we found the same matcher in last and new screen, but they have
+                // different IDs
                 continue;
             }
-
-            EspressoViewMatcher viewMatcher = viewMatchers.get(viewUniqueID);
-
-            Map<String, String> oldAttributes = lastUIAttributes.get(viewUniqueID);
-            Map<String, String> newAttributes = uiAttributes.get(viewUniqueID);
 
             for (String attrKey : oldAttributes.keySet()) {
                 if (!newAttributes.containsKey(attrKey)) {
@@ -172,19 +177,22 @@ public class TestCaseAssertionsGenerator {
 
                 if (oldValue == null && newValue != null) {
                     // Null value became non-null
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatcher));
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                            rootMatcher, attrKey, oldValue, newValue));
                 } else if (oldValue != null && newValue == null) {
                     // Non-null value became null
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatcher));
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                            rootMatcher, attrKey, oldValue, newValue));
                 } else if (oldValue != null && newValue != null && !oldValue.equals(newValue)) {
                     // an attibute's value has changed
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewUniqueID, attrKey,
-                            oldValue, newValue, viewMatcher));
+                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                            rootMatcher, attrKey, oldValue, newValue));
                 }
             }
         }
+
+        // save new screen
+        lastEspressoScreen = espressoScreen;
 
         return assertions;
     }
