@@ -89,7 +89,7 @@ public class EspressoViewActionsParser {
             new TypeTextAction("")
         };
 
-        List<EspressoViewAction> result = Arrays.asList(possibleActions);
+        List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));
 
         if (DeviceInfo.getInstance().isKeyboardOpened()) {
             result.add(new CloseSoftKeyboardAction());
