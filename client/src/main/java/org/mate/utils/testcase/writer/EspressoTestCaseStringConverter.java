@@ -201,6 +201,8 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         if (convertingForAUTsCodeBase) {
             // Add AUT's resources as a default import
             classImports.add(String.format("%s.R", packageName));
+        } else {
+            classImports.add("android.os.SystemClock");
         }
     }
 
