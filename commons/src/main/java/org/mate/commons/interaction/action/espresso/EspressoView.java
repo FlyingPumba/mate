@@ -22,6 +22,7 @@ import org.mate.commons.interaction.action.espresso.layout_inspector.property.Vi
 import org.mate.commons.utils.MATELog;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,12 @@ import java.util.UUID;
  * It provides useful information for building Espresso ViewMatchers and ViewActions.
  */
 public class EspressoView {
+
+    private static String[] ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP = {
+        "insertion_handle",
+        "selection_end_handle",
+        "selection_start_handle",
+    };
 
     /**
      * An ad-hoc ID that is unique for this View in the current activity.
@@ -250,6 +257,8 @@ public class EspressoView {
      *   <li> If the view is an android view with resource name "insertion_handler". This means
      *   that the view will appear and disappear constantly over an EditText, causing flakiness
      *   in our tests. This view should always be skipped.
+     *   <li> The same as above happens with the resource names "selection_end_handle" and
+     *   "selection_start_handle".
      * </ul>
      *
      * @return a boolean
@@ -260,9 +269,12 @@ public class EspressoView {
         boolean isAndroidView = isAndroidView();
 
         String resourceName = getResourceEntryName();
-        if (isAndroidView && "insertion_handle".equals(resourceName)) {
+        if (isAndroidView &&
+                Arrays.asList(ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP).contains(resourceName)) {
             return true;
         }
+
+
 
         return isAndroidView && isViewGroup && noText;
     }
