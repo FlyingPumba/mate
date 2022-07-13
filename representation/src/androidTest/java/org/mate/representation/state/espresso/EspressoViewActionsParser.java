@@ -42,8 +42,7 @@ public class EspressoViewActionsParser {
     public List<EspressoViewAction> parse() {
         List<EspressoViewAction> parsedActions = new ArrayList<>();
 
-        if (espressoView.isAndroidView()) {
-            // we don't perform actions on Android views
+        if (espressoView.shouldBeSkipped()) {
             return parsedActions;
         }
 

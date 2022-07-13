@@ -78,7 +78,7 @@ public class EspressoWindowSummary implements Parcelable {
 
     private void buildViewMatchers(EspressoViewTree viewTree) {
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
-            if (node.getEspressoView().isAndroidView()) {
+            if (node.getEspressoView().shouldBeSkipped()) {
                 continue;
             }
 
@@ -100,7 +100,7 @@ public class EspressoWindowSummary implements Parcelable {
 
     private void parseUiAttributes(EspressoViewTree viewTree) {
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
-            if (node.getEspressoView().isAndroidView()) {
+            if (node.getEspressoView().shouldBeSkipped()) {
                 continue;
             }
 

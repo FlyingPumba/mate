@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -232,6 +233,25 @@ public class EspressoView {
         return resourceName.startsWith("android")
                 || resourceName.startsWith("com.google.android")
                 || resourceName.startsWith("com.android");
+    }
+
+    /**
+     * Returns a boolean indicating whether the wrapped view should be skipped when analyzing
+     * which actions or matchers are there in the screen.
+     *
+     * In particular, we only skip views that: are Android views, are a View Group, and do not
+     * have text. This is because there are some auto-generated Android Views for which we want
+     * to generate actions. For example, the items/entries inside a Spinner widget have an id
+     * "android:id/text1" and class "AppCompatTextView" (and thus have text), and we can clearly
+     * build a unequivocal matcher for them.
+     *
+     * @return a boolean
+     */
+    public boolean shouldBeSkipped() {
+        boolean noText = getText() == null || getText().isEmpty();
+        boolean isViewGroup = view instanceof ViewGroup;
+
+        return isAndroidView() && isViewGroup && noText;
     }
 
     /**
