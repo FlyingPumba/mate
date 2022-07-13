@@ -153,7 +153,7 @@ public class TestCaseAssertionsGenerator {
         }
 
         // has any view appearing in both last and new UI changed an attribute's value?
-        Map<String, EspressoViewMatcher> commonViews = espressoScreen.getCommonViewMatchers(lastEspressoScreen);
+        Map<String, EspressoViewMatcher> commonViews = espressoScreen.getCommonViewMatchersInTopWindow(lastEspressoScreen);
         for (Map.Entry<String, EspressoViewMatcher> entry : commonViews.entrySet()) {
 
             String viewUniqueId = entry.getKey();

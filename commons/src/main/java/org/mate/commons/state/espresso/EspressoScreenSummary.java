@@ -40,6 +40,10 @@ public class EspressoScreenSummary implements Parcelable {
         return result;
     }
 
+    public Map<String, EspressoViewMatcher> getMatchersInTopWindow(boolean includeAndroidViews) {
+        return espressoWindowSummaries.get(0).getViewMatchers(includeAndroidViews);
+    }
+
     /**
      * Get ViewMatchers from an old summary that not longer exist in this summary.
      * @param oldSummary The old summary.
@@ -85,15 +89,16 @@ public class EspressoScreenSummary implements Parcelable {
     }
 
     /**
-     * Get ViewMatchers from this summary that are also in an old summary.
+     * Get ViewMatchers from the top window of this summary that are also in the top window of an
+     * old summary.
      * @param oldSummary The old summary.
      * @return The ViewMatchers that are also in the old summary.
      */
-    public Map<String, EspressoViewMatcher> getCommonViewMatchers(EspressoScreenSummary oldSummary) {
+    public Map<String, EspressoViewMatcher> getCommonViewMatchersInTopWindow(EspressoScreenSummary oldSummary) {
         Map<String, EspressoViewMatcher> matchers = new HashMap<>();
 
-        Collection<EspressoViewMatcher> oldMatchers = oldSummary.getMatchersInScreen(false).values();
-        Map<String, EspressoViewMatcher> newMatchers = getMatchersInScreen(false);
+        Collection<EspressoViewMatcher> oldMatchers = oldSummary.getMatchersInTopWindow(false).values();
+        Map<String, EspressoViewMatcher> newMatchers = getMatchersInTopWindow(false);
 
         for (Map.Entry<String, EspressoViewMatcher> entry : newMatchers.entrySet()) {
             EspressoViewMatcher newMatcher = entry.getValue();
