@@ -31,11 +31,6 @@ public class EspressoWindowSummary implements Parcelable {
     private Map<String, EspressoViewMatcher> viewMatchers = new HashMap<>();
 
     /**
-     * A dictionary for storing which views are Android views.
-     */
-    private Map<String, Boolean> androidViews = new HashMap<>();
-
-    /**
      * A map of UI attributes for each view in this window.
      * The keys in the dictionary are the unique IDs of the views.
      */
@@ -54,7 +49,6 @@ public class EspressoWindowSummary implements Parcelable {
     public EspressoWindowSummary(EspressoViewTree viewTree) {
         buildViewMatchers(viewTree);
         parseUiAttributes(viewTree);
-        parseAndroidViews(viewTree);
         parseRootMatcherType(viewTree);
 
         windowType = viewTree.getWindowRoot().getWindowLayoutParams().get().type;
@@ -72,15 +66,10 @@ public class EspressoWindowSummary implements Parcelable {
         return uiAttributes.get(viewUniqueId);
     }
 
-    public Map<String, EspressoViewMatcher> getViewMatchers(boolean includeAndroidViews) {
+    public Map<String, EspressoViewMatcher> getViewMatchers() {
         Map<String, EspressoViewMatcher> result = new HashMap<>();
 
         for (Map.Entry<String, EspressoViewMatcher> entry : viewMatchers.entrySet()) {
-            if (!includeAndroidViews && Boolean.TRUE.equals(androidViews.get(entry.getKey()))) {
-                // Skip matcher for Android views.
-                continue;
-            }
-
             result.put(entry.getKey(), entry.getValue());
         }
 
@@ -89,6 +78,10 @@ public class EspressoWindowSummary implements Parcelable {
 
     private void buildViewMatchers(EspressoViewTree viewTree) {
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
+            if (node.getEspressoView().isAndroidView()) {
+                continue;
+            }
+
             String uniqueId = node.getEspressoView().getUniqueId();
 
             RelativeMatcherCombination matcherCombination = RelativeMatcherCombination.
@@ -107,19 +100,16 @@ public class EspressoWindowSummary implements Parcelable {
 
     private void parseUiAttributes(EspressoViewTree viewTree) {
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
+            if (node.getEspressoView().isAndroidView()) {
+                continue;
+            }
+
             String uniqueId = node.getEspressoView().getUniqueId();
             EspressoView espressoView = node.getEspressoView();
 
             Map<String, String> attributes = new HashMap<>(espressoView.getAllAttributes());
 
             uiAttributes.put(uniqueId, attributes);
-        }
-    }
-
-    private void parseAndroidViews(EspressoViewTree viewTree) {
-        for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
-            String uniqueId = node.getEspressoView().getUniqueId();
-            androidViews.put(uniqueId, node.getEspressoView().isAndroidView());
         }
     }
 
@@ -169,12 +159,6 @@ public class EspressoWindowSummary implements Parcelable {
             dest.writeParcelable(entry.getValue(), flags);
         }
 
-        dest.writeInt(this.androidViews.size());
-        for (Map.Entry<String, Boolean> entry : this.androidViews.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeValue(entry.getValue());
-        }
-
         dest.writeInt(this.uiAttributes.size());
         for (Map.Entry<String, Map<String, String>> entry : this.uiAttributes.entrySet()) {
             dest.writeString(entry.getKey());
@@ -199,14 +183,6 @@ public class EspressoWindowSummary implements Parcelable {
             String key = in.readString();
             EspressoViewMatcher value = in.readParcelable(EspressoViewMatcher.class.getClassLoader());
             this.viewMatchers.put(key, value);
-        }
-
-        int androidViewsSize = in.readInt();
-        this.androidViews = new HashMap<>(androidViewsSize);
-        for (int i = 0; i < androidViewsSize; i++) {
-            String key = in.readString();
-            Boolean value = (Boolean) in.readValue(Boolean.class.getClassLoader());
-            this.androidViews.put(key, value);
         }
 
         int uiAttributesSize = in.readInt();
