@@ -245,13 +245,26 @@ public class EspressoView {
      * "android:id/text1" and class "AppCompatTextView" (and thus have text), and we can clearly
      * build a unequivocal matcher for them.
      *
+     * Exceptions to the above rule:
+     * <ul>
+     *   <li> If the view is an android view with resource name "insertion_handler". This means
+     *   that the view will appear and disappear constantly over an EditText, causing flakiness
+     *   in our tests. This view should always be skipped.
+     * </ul>
+     *
      * @return a boolean
      */
     public boolean shouldBeSkipped() {
         boolean noText = getText() == null || getText().isEmpty();
         boolean isViewGroup = view instanceof ViewGroup;
+        boolean isAndroidView = isAndroidView();
 
-        return isAndroidView() && isViewGroup && noText;
+        String resourceName = getResourceEntryName();
+        if (isAndroidView && "insertion_handle".equals(resourceName)) {
+            return true;
+        }
+
+        return isAndroidView && isViewGroup && noText;
     }
 
     /**
