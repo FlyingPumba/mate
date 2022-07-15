@@ -5,9 +5,15 @@ import androidx.annotation.Nullable;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsEnabledMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsFocusedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsSelectedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithAlphaMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 
@@ -86,15 +92,34 @@ public class EspressoAssertionsFactory {
                                                              @Nullable String oldValue,
                                                              @Nullable String newValue) {
         switch (attrKey) {
-            case "visibility":
+            case "enabled":
                 return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new WithEffectiveVisibilityMatcher(newValue)), rootMatcher);
+                        new MatchesAssertion(new IsEnabledMatcher(newValue)), rootMatcher);
+            case "selected":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsSelectedMatcher(newValue)), rootMatcher);
             case "focused":
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new IsFocusedMatcher(newValue)), rootMatcher);
+            case "hasFocus":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new HasFocusMatcher(newValue)), rootMatcher);
+            case "clickable":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsClickableMatcher(newValue)), rootMatcher);
             case "text":
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithTextMatcher(newValue)), rootMatcher);
+            case "contentDescription":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithContentDescriptionMatcher(newValue)),
+                        rootMatcher);
+            case "visibility":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithEffectiveVisibilityMatcher(newValue)), rootMatcher);
+            case "alpha":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithAlphaMatcher(newValue)), rootMatcher);
             case "is_displayed":
                 if ("false".equals(oldValue) && "true".equals(newValue)) {
                     // view has appeared into screen

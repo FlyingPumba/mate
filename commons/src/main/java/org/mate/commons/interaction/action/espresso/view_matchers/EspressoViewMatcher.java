@@ -5,8 +5,14 @@ import android.os.Parcelable;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsEnabledMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsFocusedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsSelectedMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithAlphaMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithClassNameMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
@@ -91,6 +97,10 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
         EspressoViewMatcherType type = tmpType == -1 ? null :
                 EspressoViewMatcherType.values()[tmpType];
 
+        if (type == null) {
+            throw new IllegalStateException("Found null value for EspressoViewMatcher type.");
+        }
+
         switch (type) {
             case IS_ROOT:
                 return new IsRootViewMatcher(source);
@@ -108,8 +118,20 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new WithHintMatcher(source);
             case IS_DISPLAYED:
                 return new IsDisplayedMatcher(source);
+            case IS_FOCUSED:
+                return new IsFocusedMatcher(source);
+            case HAS_FOCUS:
+                return new HasFocusMatcher(source);
+            case IS_ENABLED:
+                return new IsEnabledMatcher(source);
+            case IS_SELECTED:
+                return new IsSelectedMatcher(source);
+            case IS_CLICKABLE:
+                return new IsClickableMatcher(source);
             case WITH_EFFECTIVE_VISIBILITY:
                 return new WithEffectiveVisibilityMatcher(source);
+            case WITH_ALPHA:
+                return new WithAlphaMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

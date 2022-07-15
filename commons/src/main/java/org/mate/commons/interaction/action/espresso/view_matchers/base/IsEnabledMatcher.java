@@ -1,7 +1,7 @@
 package org.mate.commons.interaction.action.espresso.view_matchers.base;
 
-import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
-import static androidx.test.espresso.matcher.ViewMatchers.isNotFocused;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 
 import android.os.Parcel;
 import android.view.View;
@@ -14,41 +14,39 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that are focused or not.
- * Note, do not confuse this with the hasFocus property.
- * https://stackoverflow.com/a/33022378/2271834
+ * Implements an Espresso Matcher for targeting the views that are enabled or not.
  */
-public class IsFocusedMatcher extends EspressoViewMatcher {
+public class IsEnabledMatcher extends EspressoViewMatcher {
 
     /**
-     * The focus state to match against.
+     * The enabled state to match against.
      */
-    private final boolean focused;
+    private final boolean enabled;
 
-    public IsFocusedMatcher(boolean focused) {
-        super(EspressoViewMatcherType.IS_FOCUSED);
-        this.focused = focused;
+    public IsEnabledMatcher(boolean enabled) {
+        super(EspressoViewMatcherType.IS_ENABLED);
+        this.enabled = enabled;
     }
 
-    public IsFocusedMatcher(String newValue) {
+    public IsEnabledMatcher(String newValue) {
         this("true".equals(newValue));
     }
 
     @Override
     public String getCode() {
-        if (focused) {
-            return "isFocused()";
+        if (enabled) {
+            return "isEnabled()";
         } else {
-            return "isNotFocused()";
+            return "isNotEnabled()";
         }
     }
 
     @Override
     public Matcher<View> getViewMatcher() {
-        if (focused) {
-            return isFocused();
+        if (enabled) {
+            return isEnabled();
         } else {
-            return isNotFocused();
+            return isNotEnabled();
         }
     }
 
@@ -61,10 +59,10 @@ public class IsFocusedMatcher extends EspressoViewMatcher {
     public Set<String> getNeededStaticImports() {
         HashSet<String> imports = new HashSet<>();
 
-        if (focused) {
-            imports.add("androidx.test.espresso.matcher.ViewMatchers.isFocused");
+        if (enabled) {
+            imports.add("androidx.test.espresso.matcher.ViewMatchers.isEnabled");
         } else {
-            imports.add("androidx.test.espresso.matcher.ViewMatchers.isNotFocused");
+            imports.add("androidx.test.espresso.matcher.ViewMatchers.isNotEnabled");
         }
 
         return imports;
@@ -78,26 +76,26 @@ public class IsFocusedMatcher extends EspressoViewMatcher {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeInt(this.focused? 1 : 0);
+        dest.writeInt(this.enabled? 1 : 0);
     }
 
-    public IsFocusedMatcher(Parcel source) {
+    public IsEnabledMatcher(Parcel source) {
         this(source.readInt() == 1);
     }
 
-    public static final Creator<IsFocusedMatcher> CREATOR = new Creator<IsFocusedMatcher>() {
+    public static final Creator<IsEnabledMatcher> CREATOR = new Creator<IsEnabledMatcher>() {
         @Override
-        public IsFocusedMatcher createFromParcel(Parcel source) {
+        public IsEnabledMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (IsFocusedMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (IsEnabledMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public IsFocusedMatcher[] newArray(int size) {
-            return new IsFocusedMatcher[size];
+        public IsEnabledMatcher[] newArray(int size) {
+            return new IsEnabledMatcher[size];
         }
     };
 }

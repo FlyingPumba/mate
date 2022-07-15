@@ -337,7 +337,7 @@ public class EspressoView {
     }
 
     /**
-     * Returns the attributes of the wrapped view that are found in the instance itself.
+     * Returns the basic attributes of the wrapped view that are obtained through its getters.
      * @return a map of attributes.
      */
     public Map<String, String> getBasicViewAttributes() {
@@ -345,8 +345,44 @@ public class EspressoView {
 
         attributes.put("x", String.valueOf(view.getX()));
         attributes.put("y", String.valueOf(view.getY()));
+
         attributes.put("width", String.valueOf(view.getWidth()));
         attributes.put("height", String.valueOf(view.getHeight()));
+
+        attributes.put("text", getText());
+        attributes.put("contentDescription", getContentDescription());
+
+        attributes.put("enabled", view.isEnabled() ? "true" : "false");
+        attributes.put("focused", view.isFocused() ? "true" : "false");
+        attributes.put("hasFocus", view.hasFocus() ? "true" : "false");
+        attributes.put("selected", view.isSelected() ? "true" : "false");
+        attributes.put("clickable", view.isClickable() ? "true" : "false");
+
+        attributes.put("alpha", String.valueOf(view.getAlpha()));
+
+        // Add a special "is_displayed" UI attribute.
+        // This can only be computed with certainty if we have the view and can access the
+        // "getGlobalVisibleRect" method.
+        // Attempts to determine if the view is displayed or not using the width and height
+        // properties may not work when the view has special values such as "wrap_content".
+        boolean isDisplayed =
+                withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE).matches(view) &&
+                        view.getGlobalVisibleRect(new Rect());
+        if (isDisplayed) {
+            attributes.put("is_displayed", "true");
+        } else {
+            attributes.put("is_displayed", "false");
+        }
+
+        return attributes;
+    }
+
+    /**
+     * Returns the attributes of the wrapped view that are found in the instance itself.
+     * @return a map of attributes.
+     */
+    public Map<String, String> getInternalViewAttributes() {
+        Map<String, String> attributes = new HashMap<>();
 
         // Get the "mAttributes" field of the wrapped view using reflection
         // If it fails, we just return an empty map.
@@ -406,31 +442,15 @@ public class EspressoView {
     }
 
     /**
-     * Returns a combined map with the basic attributes and the layout inspector attributes.
+     * Returns a combined map with the basic, internal and layout inspector attributes.
      * @return a map of attributes.
      */
     public Map<String, String> getAllAttributes() {
         Map<String, String> attributes = new HashMap<>();
 
         attributes.putAll(getLayoutInspectorAttributes());
+        attributes.putAll(getInternalViewAttributes());
         attributes.putAll(getBasicViewAttributes());
-
-        attributes.put("text", getText());
-        attributes.put("contentDescription", getContentDescription());
-
-        // Add a special "is_displayed" UI attribute.
-        // This can only be computed with certainty if we have the view and can access the
-        // "getGlobalVisibleRect" method.
-        // Attempts to determine if the view is displayed or not using the width and height
-        // properties may not work when the view has special values such as "wrap_content".
-        boolean isDisplayed =
-                withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE).matches(view) &&
-                        view.getGlobalVisibleRect(new Rect());
-        if (isDisplayed) {
-            attributes.put("is_displayed", "true");
-        } else {
-            attributes.put("is_displayed", "false");
-        }
 
         return attributes;
     }
