@@ -35,10 +35,21 @@ import java.util.UUID;
  */
 public class EspressoView {
 
-    private static String[] ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP = {
+    /**
+     * Android views that should be skipped if they have any of these resource names.
+     */
+    private static final String[] ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP = {
+        // The view that marks the cursor for editing an EditText. It will appear and disappear
+        // constantly over an EditText, causing flakiness in our tests
         "insertion_handle",
+        // Same as above, but for the selection handles.
         "selection_end_handle",
         "selection_start_handle",
+        // Any item in a contextual menu (e.g., "Paste", "Copy", "Autofill", etc.). They all
+        // cause flakiness.
+        "floating_toolbar_menu_item_text",
+        // The "three dots" button on a contextual menu.
+        "overflow"
     };
 
     /**
@@ -252,29 +263,24 @@ public class EspressoView {
      * "android:id/text1" and class "AppCompatTextView" (and thus have text), and we can clearly
      * build a unequivocal matcher for them.
      *
-     * Exceptions to the above rule:
-     * <ul>
-     *   <li> If the view is an android view with resource name "insertion_handler". This means
-     *   that the view will appear and disappear constantly over an EditText, causing flakiness
-     *   in our tests. This view should always be skipped.
-     *   <li> The same as above happens with the resource names "selection_end_handle" and
-     *   "selection_start_handle".
-     * </ul>
+     * Some exceptions to this rule are Android views with resource names mentioned in
+     * ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP. Those are Android views that tend to be problematic,
+     * so we skip them as well.
      *
      * @return a boolean
      */
     public boolean shouldBeSkipped() {
-        boolean noText = getText() == null || getText().isEmpty();
+        String viewText = getText();
+        boolean noText = viewText == null || viewText.isEmpty();
+
         boolean isViewGroup = view instanceof ViewGroup;
         boolean isAndroidView = isAndroidView();
-
         String resourceName = getResourceEntryName();
+
         if (isAndroidView &&
                 Arrays.asList(ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP).contains(resourceName)) {
             return true;
         }
-
-
 
         return isAndroidView && isViewGroup && noText;
     }
