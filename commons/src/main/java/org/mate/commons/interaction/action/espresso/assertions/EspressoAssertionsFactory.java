@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
@@ -19,6 +20,8 @@ import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffec
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithHintMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class EspressoAssertionsFactory {
@@ -30,8 +33,10 @@ public class EspressoAssertionsFactory {
      * @param viewMatcher the view matcher of the view that has disappeared.
      * @return the assertion.
      */
-    public static @Nullable EspressoAssertion viewIsGone(EspressoViewMatcher viewMatcher,
-                                                         @Nullable EspressoRootMatcher rootMatcher) {
+    public static List<EspressoAssertion> viewIsGone(EspressoViewMatcher viewMatcher,
+                                                     @Nullable EspressoRootMatcher rootMatcher) {
+        List<EspressoAssertion> assertions = new ArrayList<>();
+
         if (IS_ROOT_VIEW_MATCHER.getCode().equals(viewMatcher.getCode())) {
             // We don't want to assert that the root view is gone
             return null;
@@ -39,7 +44,9 @@ public class EspressoAssertionsFactory {
 
         // Never use a root matcher for the DoesNotExist assertion, since the window for that root
         // may be gone, and the assertion will fail when it tries to find the root.
-        return new EspressoAssertion(viewMatcher, new DoesNotExistAssertion(), null);
+        assertions.add(new EspressoAssertion(viewMatcher, new DoesNotExistAssertion(), null));
+
+        return assertions;
     }
 
     /**
@@ -48,36 +55,40 @@ public class EspressoAssertionsFactory {
      * @param viewMatcher the view matcher of the view that has appeared.
      * @return the assertion.
      */
-    public static @Nullable EspressoAssertion viewHasAppeared(
+    public static List<EspressoAssertion> viewHasAppeared(
             EspressoViewMatcher viewMatcher,
             @Nullable EspressoRootMatcher rootMatcher,
             Map<String, String> attributes) {
+        List<EspressoAssertion> assertions = new ArrayList<>();
 
         if (IS_ROOT_VIEW_MATCHER.getCode().equals(viewMatcher.getCode())) {
             // We don't want to assert that the root view has appeared
-            return null;
+            return assertions;
         }
 
         if (!attributes.containsKey("width") || !attributes.containsKey("height") ||
                 "0".equals(attributes.get("width")) || "0".equals(attributes.get("height"))) {
             // We don't want to assert that the view has appeared if it has no size
-            return null;
+            return assertions;
         }
 
         if (!attributes.containsKey("visibility")||
                 !"visible".equals(attributes.get("visibility"))) {
             // We don't want to assert that the view has appeared if it is not actually visible
-            return null;
+            return assertions;
         }
 
         if (!attributes.containsKey("is_displayed")||
                 "false".equals(attributes.get("is_displayed"))) {
             // We don't want to assert that the view has appeared if it is not actually displayed
-            return null;
+            return assertions;
         }
 
-        return new EspressoAssertion(viewMatcher, new MatchesAssertion(new IsDisplayedMatcher()),
-                rootMatcher);
+        assertions.add(new EspressoAssertion(viewMatcher,
+                new MatchesAssertion(new IsDisplayedMatcher()),
+                rootMatcher));
+
+        return assertions;
     }
 
     /**
@@ -88,55 +99,76 @@ public class EspressoAssertionsFactory {
      * @param viewMatcher the view matcher of the view that has changed the attribute.
      * @return the assertion.
      */
-    public static @Nullable EspressoAssertion viewHasChanged(EspressoViewMatcher viewMatcher,
+    public static List<EspressoAssertion> viewHasChanged(EspressoViewMatcher viewMatcher,
                                                              @Nullable EspressoRootMatcher rootMatcher,
                                                              String attrKey,
                                                              @Nullable String oldValue,
                                                              @Nullable String newValue) {
+        List<EspressoAssertion> assertions = new ArrayList<>();
+
         switch (attrKey) {
             case "enabled":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new IsEnabledMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsEnabledMatcher(newValue)), rootMatcher));
+                break;
             case "selected":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new IsSelectedMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsSelectedMatcher(newValue)), rootMatcher));
+                break;
             case "focused":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new IsFocusedMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsFocusedMatcher(newValue)), rootMatcher));
+                break;
             case "checked":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new IsCheckedMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsCheckedMatcher(newValue)), rootMatcher));
+                break;
             case "hasFocus":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new HasFocusMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new HasFocusMatcher(newValue)), rootMatcher));
+                break;
             case "clickable":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new IsClickableMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsClickableMatcher(newValue)), rootMatcher));
+                break;
             case "text":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new WithTextMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithTextMatcher(newValue)), rootMatcher));
+                break;
             case "contentDescription":
-                return new EspressoAssertion(viewMatcher,
+                assertions.add(new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithContentDescriptionMatcher(newValue)),
-                        rootMatcher);
+                        rootMatcher));
+
+                if (oldValue == null && newValue != null) {
+                    assertions.add(new EspressoAssertion(viewMatcher,
+                            new MatchesAssertion(new HasContentDescriptionMatcher()),
+                            rootMatcher));
+                }
+
+                break;
             case "hint":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new WithHintMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithHintMatcher(newValue)), rootMatcher));
+                break;
             case "visibility":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new WithEffectiveVisibilityMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithEffectiveVisibilityMatcher(newValue)),
+                        rootMatcher));
+                break;
             case "alpha":
-                return new EspressoAssertion(viewMatcher,
-                        new MatchesAssertion(new WithAlphaMatcher(newValue)), rootMatcher);
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithAlphaMatcher(newValue)), rootMatcher));
+                break;
             case "is_displayed":
                 if ("false".equals(oldValue) && "true".equals(newValue)) {
                     // view has appeared into screen
-                    return new EspressoAssertion(viewMatcher,
-                            new MatchesAssertion(new IsDisplayedMatcher()), rootMatcher);
+                    assertions.add(new EspressoAssertion(viewMatcher,
+                            new MatchesAssertion(new IsDisplayedMatcher()), rootMatcher));
                 }
-                return null;
-            default:
-                return null;
+                break;
         }
+
+        return assertions;
     }
 }

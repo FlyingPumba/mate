@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
@@ -135,6 +136,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new WithEffectiveVisibilityMatcher(source);
             case WITH_ALPHA:
                 return new WithAlphaMatcher(source);
+            case HAS_CONTENT_DESCRIPTION:
+                return new HasContentDescriptionMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

@@ -136,7 +136,8 @@ public class TestCaseAssertionsGenerator {
             EspressoViewMatcher viewMatcher = entry.getValue();
             EspressoRootMatcher rootMatcher = lastEspressoScreen.getRootMatcher(viewUniqueId);
 
-            addIfNonNull(assertions, EspressoAssertionsFactory.viewIsGone(viewMatcher, rootMatcher));
+            assertions.addAll(EspressoAssertionsFactory.viewIsGone(viewMatcher,
+                    rootMatcher));
         }
 
         // has any view in new UI appeared?
@@ -148,7 +149,7 @@ public class TestCaseAssertionsGenerator {
             EspressoViewMatcher viewMatcher = entry.getValue();
             EspressoRootMatcher rootMatcher = espressoScreen.getRootMatcher(viewUniqueId);
 
-            addIfNonNull(assertions, EspressoAssertionsFactory.viewHasAppeared(viewMatcher,
+            assertions.addAll(EspressoAssertionsFactory.viewHasAppeared(viewMatcher,
                     rootMatcher, espressoScreen.getUiAttributes(viewUniqueId)));
         }
 
@@ -180,15 +181,15 @@ public class TestCaseAssertionsGenerator {
 
                 if (oldValue == null && newValue != null) {
                     // Null value became non-null
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                    assertions.addAll(EspressoAssertionsFactory.viewHasChanged(viewMatcher,
                             rootMatcher, attrKey, oldValue, newValue));
                 } else if (oldValue != null && newValue == null) {
                     // Non-null value became null
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                    assertions.addAll(EspressoAssertionsFactory.viewHasChanged(viewMatcher,
                             rootMatcher, attrKey, oldValue, newValue));
                 } else if (oldValue != null && newValue != null && !oldValue.equals(newValue)) {
                     // an attibute's value has changed
-                    addIfNonNull(assertions, EspressoAssertionsFactory.viewHasChanged(viewMatcher,
+                    assertions.addAll(EspressoAssertionsFactory.viewHasChanged(viewMatcher,
                             rootMatcher, attrKey, oldValue, newValue));
                 }
             }
@@ -198,17 +199,5 @@ public class TestCaseAssertionsGenerator {
         lastEspressoScreen = espressoScreen;
 
         return assertions;
-    }
-
-    /**
-     * Add assertion if not null.
-     * @param assertions the list of assertions.
-     * @param assertion the assertion to add.
-     */
-    private void addIfNonNull(List<EspressoAssertion> assertions, @Nullable EspressoAssertion assertion) {
-        if (assertion != null) {
-            MATELog.log_debug("Added assertion: " + assertion.toString());
-            assertions.add(assertion);
-        }
     }
 }
