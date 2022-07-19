@@ -153,6 +153,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new HasChildCountMatcher(source);
             case WITH_INPUT_TYPE:
                 return new WithInputTypeMatcher(source);
+            case WITH_PARENT_INDEX:
+                return new WithInputTypeMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

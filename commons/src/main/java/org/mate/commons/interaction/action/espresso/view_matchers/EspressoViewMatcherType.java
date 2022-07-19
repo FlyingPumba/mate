@@ -30,6 +30,7 @@ public enum EspressoViewMatcherType {
     HAS_LINKS,
     HAS_CHILD_COUNT,
     WITH_INPUT_TYPE,
+    WITH_PARENT_INDEX,
 
     // Recursive matchers: they use another matchers inside, and can NOT be used by themselves.
     ALL_OF,

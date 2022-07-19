@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -250,6 +251,28 @@ public class EspressoView {
     }
 
     /**
+     * @return the number of index of this view in its parent's children. Returns null if the
+     * View does not have a parent or if the parent is not a ViewGroup.
+     */
+    public @Nullable Integer getParentIndex() {
+        ViewParent parent = view.getParent();
+
+        if (parent == null) {
+            return null;
+        }
+
+        if (!(parent instanceof ViewGroup)) {
+            return null;
+        }
+
+        ViewGroup parentGroup = (ViewGroup) parent;
+
+        int indexOfChild = parentGroup.indexOfChild(view);
+
+        return indexOfChild != -1 ? indexOfChild : null;
+    }
+
+    /**
      * This method's implementation was taken from of Espresso's WithResourceNameMatcher class.
      * @return the View's resource name if it has one, null otherwise.
      */
@@ -448,6 +471,9 @@ public class EspressoView {
 
         Integer inputType = getInputType();
         attributes.put("inputType", inputType != null ? inputType.toString() : null);
+
+        Integer parentIndex = getParentIndex();
+        attributes.put("parentIndex", parentIndex != null ? parentIndex.toString() : null);
 
         attributes.put("alpha", String.valueOf(view.getAlpha()));
 

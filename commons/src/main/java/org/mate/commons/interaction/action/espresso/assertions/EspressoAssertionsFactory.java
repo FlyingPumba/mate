@@ -23,6 +23,7 @@ import org.mate.commons.interaction.action.espresso.view_matchers.base.WithConte
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithHintMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithInputTypeMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithParentIndexMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 
 import java.util.ArrayList;
@@ -184,6 +185,10 @@ public class EspressoAssertionsFactory {
             case "inputType":
                 assertions.add(new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithInputTypeMatcher(newValue)), rootMatcher));
+                break;
+            case "parentIndex":
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithParentIndexMatcher(newValue)), rootMatcher));
                 break;
             case "is_displayed":
                 if ("false".equals(oldValue) && "true".equals(newValue)) {
