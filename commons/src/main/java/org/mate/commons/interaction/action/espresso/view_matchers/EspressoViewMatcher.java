@@ -11,6 +11,7 @@ import org.mate.commons.interaction.action.espresso.view_matchers.base.IsChecked
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsEnabledMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsFocusableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsFocusedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsSelectedMatcher;
@@ -138,6 +139,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new WithAlphaMatcher(source);
             case HAS_CONTENT_DESCRIPTION:
                 return new HasContentDescriptionMatcher(source);
+            case IS_FOCUSABLE:
+                return new IsFocusableMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

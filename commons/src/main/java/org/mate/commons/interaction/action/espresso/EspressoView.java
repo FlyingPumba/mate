@@ -382,6 +382,7 @@ public class EspressoView {
         attributes.put("hasFocus", view.hasFocus() ? "true" : "false");
         attributes.put("selected", view.isSelected() ? "true" : "false");
         attributes.put("clickable", view.isClickable() ? "true" : "false");
+        attributes.put("focusable", view.isFocusable() ? "true" : "false");
 
         Boolean checked = isChecked();
         attributes.put("checked", checked != null ? checked.toString() : null);
