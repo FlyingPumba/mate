@@ -6,6 +6,7 @@ import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasErrorTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
@@ -139,6 +140,10 @@ public class EspressoAssertionsFactory {
             case "text":
                 assertions.add(new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithTextMatcher(newValue)), rootMatcher));
+                break;
+            case "errorText":
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new HasErrorTextMatcher(newValue)), rootMatcher));
                 break;
             case "contentDescription":
                 assertions.add(new EspressoAssertion(viewMatcher,

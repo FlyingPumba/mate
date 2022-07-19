@@ -26,6 +26,7 @@ public enum EspressoViewMatcherType {
     WITH_ALPHA,
     HAS_CONTENT_DESCRIPTION,
     IS_FOCUSABLE,
+    HAS_ERROR_TEXT,
 
     // Recursive matchers: they use another matchers inside, and can NOT be used by themselves.
     ALL_OF,

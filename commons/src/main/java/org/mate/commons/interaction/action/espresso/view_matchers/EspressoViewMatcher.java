@@ -6,6 +6,7 @@ import android.view.View;
 
 import org.hamcrest.Matcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasErrorTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
@@ -141,6 +142,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new HasContentDescriptionMatcher(source);
             case IS_FOCUSABLE:
                 return new IsFocusableMatcher(source);
+            case HAS_ERROR_TEXT:
+                return new HasErrorTextMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

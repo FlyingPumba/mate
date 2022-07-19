@@ -9,6 +9,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -183,6 +184,21 @@ public class EspressoView {
             CharSequence hint = ((TextView) view).getHint();
             if (hint != null) {
                 return hint.toString();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return the View's Error text if it has one, null otherwise.
+     */
+    public @Nullable
+    String getErrorText() {
+        if (view instanceof EditText) {
+            CharSequence error = ((EditText) view).getError();
+            if (error != null) {
+                return error.toString();
             }
         }
 
@@ -376,6 +392,7 @@ public class EspressoView {
         attributes.put("text", getText());
         attributes.put("contentDescription", getContentDescription());
         attributes.put("hint", getHint());
+        attributes.put("errorText", getErrorText());
 
         attributes.put("enabled", view.isEnabled() ? "true" : "false");
         attributes.put("focused", view.isFocused() ? "true" : "false");
