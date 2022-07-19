@@ -24,6 +24,7 @@ import org.mate.commons.interaction.action.espresso.view_matchers.base.WithConte
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithHintMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithIdMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithInputTypeMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithResourceNameMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.recursive.AllOfMatcher;
@@ -150,6 +151,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new HasLinksMatcher(source);
             case HAS_CHILD_COUNT:
                 return new HasChildCountMatcher(source);
+            case WITH_INPUT_TYPE:
+                return new WithInputTypeMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

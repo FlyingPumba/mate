@@ -239,6 +239,17 @@ public class EspressoView {
     }
 
     /**
+     * @return the input type of the View. Returns null if the View is not a EditText.
+     */
+    public @Nullable Integer getInputType() {
+        if (view instanceof EditText) {
+            return ((EditText) view).getInputType();
+        }
+
+        return null;
+    }
+
+    /**
      * This method's implementation was taken from of Espresso's WithResourceNameMatcher class.
      * @return the View's resource name if it has one, null otherwise.
      */
@@ -434,6 +445,9 @@ public class EspressoView {
 
         Integer childCount = getChildCount();
         attributes.put("childCount", childCount != null ? childCount.toString() : null);
+
+        Integer inputType = getInputType();
+        attributes.put("inputType", inputType != null ? inputType.toString() : null);
 
         attributes.put("alpha", String.valueOf(view.getAlpha()));
 
