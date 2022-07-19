@@ -6,6 +6,7 @@ import android.view.View;
 
 import org.hamcrest.Matcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsEnabledMatcher;
@@ -126,6 +127,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new IsEnabledMatcher(source);
             case IS_SELECTED:
                 return new IsSelectedMatcher(source);
+            case IS_CHECKED:
+                return new IsCheckedMatcher(source);
             case IS_CLICKABLE:
                 return new IsClickableMatcher(source);
             case WITH_EFFECTIVE_VISIBILITY:

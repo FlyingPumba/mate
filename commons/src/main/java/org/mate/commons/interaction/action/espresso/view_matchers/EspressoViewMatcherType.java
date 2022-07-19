@@ -20,6 +20,7 @@ public enum EspressoViewMatcherType {
     IS_FOCUSED,
     IS_ENABLED,
     IS_SELECTED,
+    IS_CHECKED,
     HAS_FOCUS,
     IS_CLICKABLE,
     WITH_ALPHA,

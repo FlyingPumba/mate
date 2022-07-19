@@ -6,6 +6,7 @@ import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsEnabledMatcher;
@@ -102,6 +103,9 @@ public class EspressoAssertionsFactory {
             case "focused":
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new IsFocusedMatcher(newValue)), rootMatcher);
+            case "checked":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new IsCheckedMatcher(newValue)), rootMatcher);
             case "hasFocus":
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new HasFocusMatcher(newValue)), rootMatcher);

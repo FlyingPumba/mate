@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Checkable;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -183,6 +184,14 @@ public class EspressoView {
             if (hint != null) {
                 return hint.toString();
             }
+        }
+
+        return null;
+    }
+
+    public @Nullable Boolean isChecked() {
+        if (view instanceof Checkable) {
+            return ((Checkable) view).isChecked();
         }
 
         return null;
@@ -373,6 +382,9 @@ public class EspressoView {
         attributes.put("hasFocus", view.hasFocus() ? "true" : "false");
         attributes.put("selected", view.isSelected() ? "true" : "false");
         attributes.put("clickable", view.isClickable() ? "true" : "false");
+
+        Boolean checked = isChecked();
+        attributes.put("checked", checked != null ? checked.toString() : null);
 
         attributes.put("alpha", String.valueOf(view.getAlpha()));
 
