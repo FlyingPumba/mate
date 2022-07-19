@@ -174,6 +174,21 @@ public class EspressoView {
     }
 
     /**
+     * @return the View's hint if it has one, null otherwise.
+     */
+    public @Nullable
+    String getHint() {
+        if (view instanceof TextView) {
+            CharSequence hint = ((TextView) view).getHint();
+            if (hint != null) {
+                return hint.toString();
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * This method's implementation was taken from of Espresso's WithResourceNameMatcher class.
      * @return the View's resource name if it has one, null otherwise.
      */
@@ -351,6 +366,7 @@ public class EspressoView {
 
         attributes.put("text", getText());
         attributes.put("contentDescription", getContentDescription());
+        attributes.put("hint", getHint());
 
         attributes.put("enabled", view.isEnabled() ? "true" : "false");
         attributes.put("focused", view.isFocused() ? "true" : "false");

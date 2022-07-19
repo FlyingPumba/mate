@@ -15,6 +15,7 @@ import org.mate.commons.interaction.action.espresso.view_matchers.base.IsSelecte
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithAlphaMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithEffectiveVisibilityMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.WithHintMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.WithTextMatcher;
 
 import java.util.Map;
@@ -114,6 +115,9 @@ public class EspressoAssertionsFactory {
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithContentDescriptionMatcher(newValue)),
                         rootMatcher);
+            case "hint":
+                return new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new WithHintMatcher(newValue)), rootMatcher);
             case "visibility":
                 return new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithEffectiveVisibilityMatcher(newValue)), rootMatcher);
