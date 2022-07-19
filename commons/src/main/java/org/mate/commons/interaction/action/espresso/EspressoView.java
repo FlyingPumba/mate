@@ -219,9 +219,20 @@ public class EspressoView {
     /**
      * @return whether this View has links or not. Returns null if the View is not a TextView.
      */
-    public Boolean hasLinks() {
+    public @Nullable Boolean hasLinks() {
         if (view instanceof TextView) {
             return ((TextView) view).getUrls().length > 0;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return the number of children this View has. Returns null if the View is not a ViewGroup.
+     */
+    public @Nullable Integer getChildCount() {
+        if (view instanceof ViewGroup) {
+            return ((ViewGroup) view).getChildCount();
         }
 
         return null;
@@ -414,10 +425,15 @@ public class EspressoView {
         attributes.put("selected", view.isSelected() ? "true" : "false");
         attributes.put("clickable", view.isClickable() ? "true" : "false");
         attributes.put("focusable", view.isFocusable() ? "true" : "false");
-        attributes.put("hasLinks", hasLinks() ? "true" : "false");
+
+        Boolean hasLinks = hasLinks();
+        attributes.put("hasLinks", hasLinks != null ? hasLinks.toString() : null);
 
         Boolean checked = isChecked();
         attributes.put("checked", checked != null ? checked.toString() : null);
+
+        Integer childCount = getChildCount();
+        attributes.put("childCount", childCount != null ? childCount.toString() : null);
 
         attributes.put("alpha", String.valueOf(view.getAlpha()));
 

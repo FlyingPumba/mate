@@ -1,6 +1,6 @@
 package org.mate.commons.interaction.action.espresso.view_matchers.base;
 
-import static androidx.test.espresso.matcher.ViewMatchers.withAlpha;
+import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 
 import android.os.Parcel;
 import android.view.View;
@@ -13,32 +13,32 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implements an Espresso Matcher for targeting the views that have a certain alpha value.
+ * Implements an Espresso Matcher for targeting the views that have a certain number of children.
  */
-public class WithAlphaMatcher extends EspressoViewMatcher {
+public class HasChildCountMatcher extends EspressoViewMatcher {
 
     /**
-     * The alpha value to match against.
+     * The number of children to match against.
      */
-    private final float alpha;
+    private final int childCount;
 
-    public WithAlphaMatcher(float alpha) {
-        super(EspressoViewMatcherType.WITH_ALPHA);
-        this.alpha = alpha;
+    public HasChildCountMatcher(int childCount) {
+        super(EspressoViewMatcherType.HAS_CHILD_COUNT);
+        this.childCount = childCount;
     }
 
-    public WithAlphaMatcher(String newValue) {
-        this(Float.parseFloat(newValue));
+    public HasChildCountMatcher(String newValue) {
+        this(Integer.parseInt(newValue));
     }
 
     @Override
     public String getCode() {
-        return String.format("withAlpha(%f)", alpha);
+        return String.format("hasChildCount(%d)", childCount);
     }
 
     @Override
     public Matcher<View> getViewMatcher() {
-        return withAlpha(alpha);
+        return hasChildCount(childCount);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class WithAlphaMatcher extends EspressoViewMatcher {
     @Override
     public Set<String> getNeededStaticImports() {
         HashSet<String> imports = new HashSet<>();
-        imports.add("androidx.test.espresso.matcher.ViewMatchers.withAlpha");
+        imports.add("androidx.test.espresso.matcher.ViewMatchers.hasChildCount");
         return imports;
     }
 
@@ -61,26 +61,26 @@ public class WithAlphaMatcher extends EspressoViewMatcher {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeFloat(this.alpha);
+        dest.writeInt(this.childCount);
     }
 
-    public WithAlphaMatcher(Parcel source) {
-        this(source.readFloat());
+    public HasChildCountMatcher(Parcel source) {
+        this(source.readInt());
     }
 
-    public static final Creator<WithAlphaMatcher> CREATOR = new Creator<WithAlphaMatcher>() {
+    public static final Creator<HasChildCountMatcher> CREATOR = new Creator<HasChildCountMatcher>() {
         @Override
-        public WithAlphaMatcher createFromParcel(Parcel source) {
+        public HasChildCountMatcher createFromParcel(Parcel source) {
             // We need to use the EspressoViewMatcher.CREATOR here, because we want to make sure
             // to remove the EspressoViewMatcher's type integer from the beginning of Parcel and
             // call the appropriate constructor for this action.
             // Otherwise, the first integer will be read as data for an instance variable.
-            return (WithAlphaMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
+            return (HasChildCountMatcher) EspressoViewMatcher.CREATOR.createFromParcel(source);
         }
 
         @Override
-        public WithAlphaMatcher[] newArray(int size) {
-            return new WithAlphaMatcher[size];
+        public HasChildCountMatcher[] newArray(int size) {
+            return new HasChildCountMatcher[size];
         }
     };
 }

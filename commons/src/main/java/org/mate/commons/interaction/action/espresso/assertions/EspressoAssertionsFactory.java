@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasChildCountMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasErrorTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
@@ -174,6 +175,10 @@ public class EspressoAssertionsFactory {
             case "alpha":
                 assertions.add(new EspressoAssertion(viewMatcher,
                         new MatchesAssertion(new WithAlphaMatcher(newValue)), rootMatcher));
+                break;
+            case "childCount":
+                assertions.add(new EspressoAssertion(viewMatcher,
+                        new MatchesAssertion(new HasChildCountMatcher(newValue)), rootMatcher));
                 break;
             case "is_displayed":
                 if ("false".equals(oldValue) && "true".equals(newValue)) {

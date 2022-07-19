@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasChildCountMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasErrorTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
@@ -147,6 +148,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new HasErrorTextMatcher(source);
             case HAS_LINKS:
                 return new HasLinksMatcher(source);
+            case HAS_CHILD_COUNT:
+                return new HasChildCountMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:
