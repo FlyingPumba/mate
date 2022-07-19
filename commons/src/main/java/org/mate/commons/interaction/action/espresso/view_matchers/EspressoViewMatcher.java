@@ -8,6 +8,7 @@ import org.hamcrest.Matcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasContentDescriptionMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasErrorTextMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.HasFocusMatcher;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.HasLinksMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsCheckedMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsClickableMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsDisplayedMatcher;
@@ -144,6 +145,8 @@ public abstract class EspressoViewMatcher extends AbstractCodeProducer implement
                 return new IsFocusableMatcher(source);
             case HAS_ERROR_TEXT:
                 return new HasErrorTextMatcher(source);
+            case HAS_LINKS:
+                return new HasLinksMatcher(source);
             case ALL_OF:
                 return new AllOfMatcher(source);
             case ANY_OF:

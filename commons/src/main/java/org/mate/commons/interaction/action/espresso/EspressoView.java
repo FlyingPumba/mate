@@ -205,9 +205,23 @@ public class EspressoView {
         return null;
     }
 
+    /**
+     * @return whether this View is checked or not. Returns null if the View is not a Checkable.
+     */
     public @Nullable Boolean isChecked() {
         if (view instanceof Checkable) {
             return ((Checkable) view).isChecked();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return whether this View has links or not. Returns null if the View is not a TextView.
+     */
+    public Boolean hasLinks() {
+        if (view instanceof TextView) {
+            return ((TextView) view).getUrls().length > 0;
         }
 
         return null;
@@ -400,6 +414,7 @@ public class EspressoView {
         attributes.put("selected", view.isSelected() ? "true" : "false");
         attributes.put("clickable", view.isClickable() ? "true" : "false");
         attributes.put("focusable", view.isFocusable() ? "true" : "false");
+        attributes.put("hasLinks", hasLinks() ? "true" : "false");
 
         Boolean checked = isChecked();
         attributes.put("checked", checked != null ? checked.toString() : null);
