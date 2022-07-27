@@ -36,18 +36,17 @@ public class EspressoAction extends Action implements CodeProducer {
     /**
      * The actual action to perform on the target view (e.g., click, long click, etc.)
      */
-    private EspressoViewAction espressoViewAction;
+    private final EspressoViewAction espressoViewAction;
 
     /**
      * The selector to indicate Espresso the target view.
      */
-    private EspressoViewMatcher espressoViewMatcher;
+    private final EspressoViewMatcher espressoViewMatcher;
 
     /**
      * The root matcher to indicate Espresso on which Root to find the target view.
      */
-    private @Nullable
-    EspressoRootMatcher espressoRootMatcher;
+    private @Nullable final EspressoRootMatcher espressoRootMatcher;
 
     public EspressoAction(EspressoViewAction espressoViewAction,
                           EspressoViewMatcher espressoViewMatcher,
@@ -55,11 +54,11 @@ public class EspressoAction extends Action implements CodeProducer {
         this.espressoViewAction = espressoViewAction;
         this.espressoViewMatcher = espressoViewMatcher;
 
-        this.espressoRootMatcher = null;
-
         // Use a root matcher only if the ViewAction allows it.
         if (espressoViewAction.allowsRootMatcher()) {
             this.espressoRootMatcher = espressoRootMatcher;
+        } else {
+            this.espressoRootMatcher = null;
         }
     }
 
