@@ -89,7 +89,7 @@ public class RelativeMatcherCombination {
 
     private RelativeMatcherCombination(EspressoViewTreeNode targetNode,
                                        EspressoViewTree viewTree,
-                                       Set<RelativeMatcher> initialMatchers) {
+                                       List<RelativeMatcher> initialMatchers) {
         this(targetNode, viewTree);
         for (RelativeMatcher matcher : initialMatchers) {
             this.addMatcher(matcher);
@@ -235,10 +235,9 @@ public class RelativeMatcherCombination {
         if (!targetNode.hasParent()) {
             // A node without parent in a tree is, by definition, the root node.
             // Use a special matcher for that case
-            Set<RelativeMatcher> matchers = new HashSet<>(Collections.singletonList(
+            return new RelativeMatcherCombination(targetNode, viewTree, Collections.singletonList(
                     new RelativeMatcher(new PathInTree(),
                             EspressoViewMatcherType.IS_ROOT)));
-            return new RelativeMatcherCombination(targetNode, viewTree, matchers);
         }
 
         long startTime = System.nanoTime();
@@ -267,6 +266,10 @@ public class RelativeMatcherCombination {
             if (uniqueMatcherFound) {
                 break;
             }
+        }
+
+        if (matcherCombination.isUnequivocal()) {
+            matcherCombination = matcherCombination.getMinimalCombination();
         }
 
         long endTime = System.nanoTime();
@@ -338,7 +341,7 @@ public class RelativeMatcherCombination {
             for (int i = 0; i < deltas.size(); i++) {
                 RelativeMatcherCombination m = new RelativeMatcherCombination(targetNode,
                         viewTree,
-                        new HashSet<>(deltas.get(i)));
+                        deltas.get(i));
                 if (m.isUnequivocal()) {
                     uniqueSublistIndex = i;
                     break;
@@ -357,7 +360,7 @@ public class RelativeMatcherCombination {
             for (int i = 0; i < complements.size(); i++) {
                 RelativeMatcherCombination m = new RelativeMatcherCombination(targetNode,
                         viewTree,
-                        new HashSet<>(complements.get(i)));
+                        complements.get(i));
                 if (m.isUnequivocal()) {
                     uniqueComplementIndex = i;
                     break;
@@ -378,7 +381,7 @@ public class RelativeMatcherCombination {
         }
 
 
-        return new RelativeMatcherCombination(targetNode, viewTree, new HashSet<>(newMatchers));
+        return new RelativeMatcherCombination(targetNode, viewTree, newMatchers);
     }
 
     /**
