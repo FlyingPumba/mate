@@ -5,6 +5,7 @@ import android.app.Instrumentation;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.base.ActiveRootLister;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -94,6 +95,7 @@ public class EspressoScreenParser {
         EspressoWindow topWindow = this.espressoScreen.getTopWindow();
 
         for (EspressoViewTreeNode node : topWindow.getViewTree().getAllNodes()) {
+
             EspressoViewActionsParser viewActionsParser =
                     new EspressoViewActionsParser(node.getEspressoView());
             List<EspressoViewAction> espressoViewActions = viewActionsParser.parse();

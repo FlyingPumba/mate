@@ -19,4 +19,6 @@ public enum EspressoViewActionType {
     ENTER,
     PRESS_IME,
     CLOSE_SOFT_KEYBOARD,
+    RECYCLER_SCROLL_TO_POSITION,
+    RECYCLER_CLICK_ON_POSITION
 }

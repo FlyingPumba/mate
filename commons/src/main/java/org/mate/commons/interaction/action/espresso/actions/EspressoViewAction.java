@@ -7,6 +7,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.test.espresso.ViewAction;
 
+import org.mate.commons.interaction.action.espresso.actions.recyclerview.ClickOnPositionAction;
+import org.mate.commons.interaction.action.espresso.actions.recyclerview.ScrollToPositionAction;
 import org.mate.commons.utils.AbstractCodeProducer;
 
 /**
@@ -139,6 +141,10 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 return new PressIMEAction(source);
             case CLOSE_SOFT_KEYBOARD:
                 return new CloseSoftKeyboardAction(source);
+            case RECYCLER_SCROLL_TO_POSITION:
+                return new ScrollToPositionAction(source);
+            case RECYCLER_CLICK_ON_POSITION:
+                return new ClickOnPositionAction(source);
             default:
                 throw new IllegalStateException("Invalid int for EspressoViewAction type found: " +
                         type);
