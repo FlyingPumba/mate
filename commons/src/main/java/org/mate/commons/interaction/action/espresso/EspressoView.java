@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.matcher.ViewMatchers;
 
 import org.mate.commons.interaction.action.espresso.layout_inspector.common.Resource;
@@ -385,7 +384,7 @@ public class EspressoView {
         boolean noText = viewText == null || viewText.isEmpty();
 
         boolean isViewGroup = view instanceof ViewGroup;
-        boolean isRecyclerView = view instanceof RecyclerView;
+        boolean isRecyclerView = getClassName().contains("RecyclerView");
 
         return isViewGroup && !isRecyclerView && noText;
     }
