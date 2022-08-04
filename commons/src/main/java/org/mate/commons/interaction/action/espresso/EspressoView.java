@@ -14,14 +14,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.matcher.ViewMatchers;
 
 import org.mate.commons.interaction.action.espresso.layout_inspector.common.Resource;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.LayoutParamsTypeTree;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.Property;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.ViewNode;
-import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.ViewTypeTree;
+import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 import org.mate.commons.utils.MATELog;
 
 import java.lang.reflect.Field;
@@ -356,23 +357,22 @@ public class EspressoView {
      * Returns a boolean indicating whether the wrapped view should be skipped when analyzing
      * which actions or matchers are there in the screen.
      *
-     * In particular, we only skip views that: are Android views, are a View Group, and do not
-     * have text. This is because there are some auto-generated Android Views for which we want
-     * to generate actions. For example, the items/entries inside a Spinner widget have an id
-     * "android:id/text1" and class "AppCompatTextView" (and thus have text), and we can clearly
-     * build a unequivocal matcher for them.
-     *
-     * Some exceptions to this rule are Android views with resource names mentioned in
+     * In particular, we skip Android views with resource names mentioned in
      * ANDROID_VIEW_RESOURCE_NAMES_TO_SKIP. Those are Android views that tend to be problematic,
      * so we skip them as well.
+     * We do not skip all Android views because there are some auto-generated
+     * Android Views for which we want to generate actions. For example, the items/entries inside
+     * a Spinner widget have an id "android:id/text1" and class "AppCompatTextView" (and thus
+     * have text), and we can clearly build a unequivocal matcher for them.
+     *
+     * We also skip most of the View Groups that do not have text. E.g., an intermediate
+     * LinearLayout in the UI Hierarchy.
+     * An exception to this rule is a RecyclerView, which is a ViewGroup but we will generate
+     * specific actions for it.
      *
      * @return a boolean
      */
     public boolean shouldBeSkipped() {
-        String viewText = getText();
-        boolean noText = viewText == null || viewText.isEmpty();
-
-        boolean isViewGroup = view instanceof ViewGroup;
         boolean isAndroidView = isAndroidView();
         String resourceName = getResourceEntryName();
 
@@ -381,7 +381,13 @@ public class EspressoView {
             return true;
         }
 
-        return isAndroidView && isViewGroup && noText;
+        String viewText = getText();
+        boolean noText = viewText == null || viewText.isEmpty();
+
+        boolean isViewGroup = view instanceof ViewGroup;
+        boolean isRecyclerView = view instanceof RecyclerView;
+
+        return isViewGroup && !isRecyclerView && noText;
     }
 
     /**
