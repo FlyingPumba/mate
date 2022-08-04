@@ -3,6 +3,8 @@ package org.mate.utils.testcase.writer;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
+import org.mate.commons.interaction.action.espresso.actions.CloseSoftKeyboardAction;
+import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.commons.utils.AbstractCodeProducer;
 import org.mate.model.TestCase;
 import org.mate.utils.assertions.TestCaseWithAssertions;
@@ -51,6 +53,7 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
      * The Espresso actions to write into the final String.
      */
     private final List<EspressoAction> actions;
+    private final EspressoAction closeSoftKeyboardAction;
 
     /**
      * The Espresso assertions to write before each action into the final String.
@@ -107,6 +110,11 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         // https://mvnrepository.com/artifact/androidx.test.espresso/espresso-core
         espressoDependencyGroup = "androidx.test.espresso";
         espressoDependencyVersion = "3.4.0";
+
+        closeSoftKeyboardAction = new EspressoAction(
+                new CloseSoftKeyboardAction(),
+                new IsRootViewMatcher(),
+                null);
 
         addDefaultImports();
     }
@@ -192,6 +200,7 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         classImports.add("androidx.test.rule.ActivityTestRule");
         classImports.add("androidx.test.runner.AndroidJUnit4");
         classImports.add("androidx.test.filters.LargeTest");
+        classImports.addAll(closeSoftKeyboardAction.getNeededClassImports());
 
         // JUnit stuff
         classImports.add("org.junit.Rule");
@@ -204,6 +213,8 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         } else {
             classImports.add("android.os.SystemClock");
         }
+
+        staticImports.addAll(closeSoftKeyboardAction.getNeededStaticImports());
     }
 
     /**
@@ -322,6 +333,10 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
 
             EspressoAction action = espressoActions.get(i);
             writeExpressionLine(action.getCode());
+
+            // Close soft keyboard is added after all actions, since this is the way it was also
+            // executed. See EspressoActionExecutor#executeAciton for more details.
+            writeExpressionLine(closeSoftKeyboardAction.getCode());
 
             writeEmptyLine();
         }
