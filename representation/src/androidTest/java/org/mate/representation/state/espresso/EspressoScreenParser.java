@@ -14,7 +14,6 @@ import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.state.espresso.EspressoScreen;
 import org.mate.commons.state.espresso.EspressoScreenSummary;

@@ -4,6 +4,8 @@ import org.mate.commons.exceptions.AUTCrashException;
 import org.mate.commons.input_generation.Mutation;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.actions.ToggleRotationAction;
+import org.mate.representation.DeviceInfo;
 import org.mate.representation.ExplorationInfo;
 
 /**
@@ -35,6 +37,13 @@ public class EspressoActionExecutor extends ActionExecutor {
      * @throws AUTCrashException Thrown when the action causes a crash of the application.
      */
     private boolean executeAction(EspressoAction action) throws AUTCrashException {
-        return action.execute();
+        boolean success = action.execute();
+
+        if (success && action.getEspressoViewAction() instanceof ToggleRotationAction) {
+            // Rotation changed, update our internal status
+            DeviceInfo.getInstance().toggleInPortraitMode();
+        }
+
+        return success;
     }
 }

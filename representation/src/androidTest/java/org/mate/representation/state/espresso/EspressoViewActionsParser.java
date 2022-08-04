@@ -17,6 +17,7 @@ import org.mate.commons.interaction.action.espresso.actions.SwipeDownAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeLeftAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeRightAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeUpAction;
+import org.mate.commons.interaction.action.espresso.actions.ToggleRotationAction;
 import org.mate.commons.interaction.action.espresso.actions.TypeTextAction;
 import org.mate.representation.DeviceInfo;
 import org.mate.representation.input_generation.TextDataGenerator;
@@ -85,7 +86,8 @@ public class EspressoViewActionsParser {
             new SwipeRightAction(),
             new SwipeUpAction(),
             // We use empty text for the TypeTextAction until we know if we can use it for this view
-            new TypeTextAction("")
+            new TypeTextAction(""),
+            new ToggleRotationAction(),
         };
 
         List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));

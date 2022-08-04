@@ -139,6 +139,8 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 return new PressIMEAction(source);
             case CLOSE_SOFT_KEYBOARD:
                 return new CloseSoftKeyboardAction(source);
+            case TOGGLE_ROTATION:
+                return new ToggleRotationAction(source);
             default:
                 throw new IllegalStateException("Invalid int for EspressoViewAction type found: " +
                         type);
