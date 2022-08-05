@@ -135,6 +135,10 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 return new MenuAction(source);
             case ENTER:
                 return new EnterAction(source);
+            case HOME:
+                return new HomeAction(source);
+            case SEARCH:
+                return new SearchAction(source);
             case PRESS_IME:
                 return new PressIMEAction(source);
             case CLOSE_SOFT_KEYBOARD:

@@ -20,4 +20,6 @@ public enum EspressoViewActionType {
     PRESS_IME,
     CLOSE_SOFT_KEYBOARD,
     TOGGLE_ROTATION,
+    HOME,
+    SEARCH,
 }
