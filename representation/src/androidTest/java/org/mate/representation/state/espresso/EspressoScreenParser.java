@@ -90,35 +90,39 @@ public class EspressoScreenParser {
             espressoActions = new ArrayList<>();
         }
 
-        EspressoWindow topWindow = this.espressoScreen.getTopWindow();
+        if (this.espressoScreen == null) {
+            throw new RuntimeException("Espresso screen is null in parseEspressoActions method");
+        }
 
-        for (EspressoViewTreeNode node : topWindow.getViewTree().getAllNodes()) {
-            EspressoViewActionsParser viewActionsParser =
-                    new EspressoViewActionsParser(node.getEspressoView());
-            List<EspressoViewAction> espressoViewActions = viewActionsParser.parse();
+        for (EspressoWindow window : this.espressoScreen.getWindows()) {
+            for (EspressoViewTreeNode node : window.getViewTree().getAllNodes()) {
+                EspressoViewActionsParser viewActionsParser =
+                        new EspressoViewActionsParser(node.getEspressoView());
+                List<EspressoViewAction> espressoViewActions = viewActionsParser.parse();
 
-            if (espressoViewActions.size() == 0) {
-                // nothing to do on this view, skip View Matcher generation
-                continue;
-            }
+                if (espressoViewActions.size() == 0) {
+                    // nothing to do on this view, skip View Matcher generation
+                    continue;
+                }
 
-            EspressoViewMatcher espressoViewMatcher =
-                    this.espressoScreen.getViewMatcherInScreenForUniqueId(node.getEspressoView().getUniqueId());
-            if (espressoViewMatcher == null) {
-                // we weren't able to generate a unequivocal matcher combination for this view, skip
-                // it.
-                continue;
-            }
+                EspressoViewMatcher espressoViewMatcher =
+                        this.espressoScreen.getViewMatcherInScreenForUniqueId(node.getEspressoView().getUniqueId());
+                if (espressoViewMatcher == null) {
+                    // we weren't able to generate a unequivocal matcher combination for this view, skip
+                    // it.
+                    continue;
+                }
 
-            EspressoRootMatcher rootMatcher = espressoScreen.getSummary().getRootMatcher(node.getEspressoView().getUniqueId());
+                EspressoRootMatcher rootMatcher = espressoScreen.getSummary().getRootMatcher(node.getEspressoView().getUniqueId());
 
-            // Create and save the EspressoAction instances
-            for (EspressoViewAction espressoViewAction : espressoViewActions) {
-                EspressoAction espressoAction = new EspressoAction(
-                        espressoViewAction,
-                        espressoViewMatcher,
-                        rootMatcher);
-                espressoActions.add(espressoAction);
+                // Create and save the EspressoAction instances
+                for (EspressoViewAction espressoViewAction : espressoViewActions) {
+                    EspressoAction espressoAction = new EspressoAction(
+                            espressoViewAction,
+                            espressoViewMatcher,
+                            rootMatcher);
+                    espressoActions.add(espressoAction);
+                }
             }
         }
 
