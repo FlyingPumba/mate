@@ -353,6 +353,20 @@ public class EspressoView {
     }
 
     /**
+     * @return a boolean indicating whether the wrapped view is a root view or not.
+     */
+    public boolean isRoot() {
+        ViewParent parent = this.view.getParent();
+
+        if (parent == null) {
+            return true;
+        }
+
+        String parentClassName = parent.getClass().getName();
+        return parentClassName.equals("android.view.ViewRootImpl");
+    }
+
+    /**
      * Returns a boolean indicating whether the wrapped view should be skipped when analyzing
      * which actions or matchers are there in the screen.
      *
@@ -384,7 +398,7 @@ public class EspressoView {
         String viewText = getText();
         boolean noText = viewText == null || viewText.isEmpty();
 
-        boolean isRoot = view.getParent() == null;
+        boolean isRoot = isRoot();
 
         boolean isViewGroup = view instanceof ViewGroup;
         boolean isRecyclerView = getClassName().contains("RecyclerView");
