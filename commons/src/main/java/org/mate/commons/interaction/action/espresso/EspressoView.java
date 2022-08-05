@@ -368,6 +368,7 @@ public class EspressoView {
      * LinearLayout in the UI Hierarchy.
      * An exception to this rule is a RecyclerView, which is a ViewGroup but we will generate
      * specific actions for it.
+     * Also an exception: the root view.
      *
      * @return a boolean
      */
@@ -383,10 +384,12 @@ public class EspressoView {
         String viewText = getText();
         boolean noText = viewText == null || viewText.isEmpty();
 
+        boolean isRoot = view.getParent() == null;
+
         boolean isViewGroup = view instanceof ViewGroup;
         boolean isRecyclerView = getClassName().contains("RecyclerView");
 
-        return isViewGroup && !isRecyclerView && noText;
+        return isViewGroup && noText && !(isRoot || isRecyclerView);
     }
 
     /**
