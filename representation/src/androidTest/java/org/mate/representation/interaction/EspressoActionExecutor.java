@@ -46,12 +46,16 @@ public class EspressoActionExecutor extends ActionExecutor {
             DeviceInfo.getInstance().toggleInPortraitMode();
         }
 
-        // Always try to close soft keyboard after the executed Espresso action
-        EspressoAction closeSoftKeyboardAction = new EspressoAction(
-                new CloseSoftKeyboardAction(),
-                new IsRootViewMatcher(),
-                null);
-        closeSoftKeyboardAction.execute();
+        // Always try to close soft keyboard after the executed Espresso action.
+        // The only exception if we have exited the AUT. In that case, we don't care about the
+        // soft keyboard since the Test case will finish at this point anyway.
+        if (ExplorationInfo.getInstance().getCurrentPackageName().equals(ExplorationInfo.getInstance().getTargetPackageName())) {
+            EspressoAction closeSoftKeyboardAction = new EspressoAction(
+                    new CloseSoftKeyboardAction(),
+                    new IsRootViewMatcher(),
+                    null);
+            closeSoftKeyboardAction.execute();
+        }
 
         return success;
     }

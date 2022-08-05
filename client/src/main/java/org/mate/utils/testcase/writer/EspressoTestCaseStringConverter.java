@@ -336,7 +336,12 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
 
             // Close soft keyboard is added after all actions, since this is the way it was also
             // executed. See EspressoActionExecutor#executeAciton for more details.
-            writeExpressionLine(closeSoftKeyboardAction.getCode());
+            // The only exception to this is the last action in the test case, since we may have
+            // exited the AUT, and we don't want to break the test case by trying to execute an
+            // action outside it.
+            if (i != espressoActions.size() - 1) {
+                writeExpressionLine(closeSoftKeyboardAction.getCode());
+            }
 
             writeEmptyLine();
         }
