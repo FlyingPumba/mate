@@ -115,7 +115,7 @@ public class ToggleRotationAction extends EspressoViewAction {
                     device.setOrientationNatural();
                 }
 
-                uiController.loopMainThreadUntilIdle();
+                uiController.loopMainThreadForAtLeast(250);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
