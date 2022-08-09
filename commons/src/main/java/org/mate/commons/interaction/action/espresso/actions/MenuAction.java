@@ -1,16 +1,12 @@
 package org.mate.commons.interaction.action.espresso.actions;
 
+import static androidx.test.espresso.action.ViewActions.pressMenuKey;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 import android.os.Parcel;
 import android.view.View;
 
-import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.uiautomator.UiDevice;
-
-import org.hamcrest.Matcher;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +21,7 @@ public class MenuAction extends EspressoViewAction {
 
     @Override
     public ViewAction getViewAction() {
-        return pressMenu();
+        return pressMenuKey();
     }
 
     @Override
@@ -36,7 +32,7 @@ public class MenuAction extends EspressoViewAction {
 
     @Override
     public String getCode() {
-        return "pressMenu()";
+        return "pressMenuKey()";
     }
 
     @Override
@@ -47,7 +43,7 @@ public class MenuAction extends EspressoViewAction {
     @Override
     public Set<String> getNeededStaticImports() {
         Set<String> imports = new HashSet<>();
-        imports.add("org.mate.espresso.tests.TestUtils.pressMenu");
+        imports.add("androidx.test.espresso.action.ViewActions.pressMenuKey");
         return imports;
     }
 
@@ -86,26 +82,4 @@ public class MenuAction extends EspressoViewAction {
             return new MenuAction[size];
         }
     };
-
-    public static ViewAction pressMenu() {
-        return new PressMenuViewAction();
-    }
-
-    static final class PressMenuViewAction implements ViewAction {
-
-        @Override
-        public Matcher<View> getConstraints() {
-            return isRoot();
-        }
-
-        @Override
-        public String getDescription() {
-            return "press menu";
-        }
-
-        @Override
-        public void perform(UiController uiController, View view) {
-            UiDevice.getInstance(getInstrumentation()).pressMenu();
-        }
-    }
 }
