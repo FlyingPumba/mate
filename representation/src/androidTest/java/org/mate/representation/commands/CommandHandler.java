@@ -36,7 +36,8 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void ping() throws RemoteException {
-        // Do nothing. This method is used to test the connection between the MATE Service and
+        DynamicTest.updateLastCommandTimestamp();
+        // Do nothing else. This method is used to test the connection between the MATE Service and
         // the Representation Layer.
     }
 
@@ -48,6 +49,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void waitForDebugger() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         if (!Debug.isDebuggerConnected()) {
             MATELog.log("MATE Representation Layer waiting for Debugger to be attached to Android " +
                     "Process");
@@ -57,11 +59,13 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public String getTargetPackageName() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         return BuildConfig.TARGET_PACKAGE_NAME;
     }
 
     @Override
     public void setRandomSeed(long seed) throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             ExplorationInfo.getInstance().setRandomSeed(seed);
         } catch (Exception e){
@@ -72,6 +76,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public int getDisplayWidth() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().getDisplayWidth();
         } catch (Exception e){
@@ -82,6 +87,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public int getDisplayHeight() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().getDisplayHeight();
         } catch (Exception e){
@@ -92,6 +98,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public boolean grantRuntimePermission(String permission) throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().grantRuntimePermission(permission);
         } catch (Exception e){
@@ -102,6 +109,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void disableAnimations() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             DeviceInfo.getInstance().disableAnimations();
         } catch (Exception e){
@@ -112,6 +120,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public boolean isCrashDialogPresent() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().isCrashDialogPresent();
         } catch (Exception e){
@@ -122,6 +131,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public String getTargetPackageFilesDir() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().getTargetPackageFilesDir();
         } catch (Exception e){
@@ -132,6 +142,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void sendBroadcastToTracer() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             ExplorationInfo.getInstance().sendBroadcastToTracer();
         } catch (Exception e){
@@ -142,6 +153,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public String getCurrentPackageName() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return ExplorationInfo.getInstance().getCurrentPackageName();
         } catch (Exception e){
@@ -152,6 +164,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public String getCurrentActivityName() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return ExplorationInfo.getInstance().getCurrentActivityName();
         } catch (Exception e){
@@ -162,6 +175,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public List<String> getTargetPackageActivityNames() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return ExplorationInfo.getInstance().getTargetPackageActivityNames();
         } catch (Exception e){
@@ -172,6 +186,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public String executeShellCommand(String command) throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return DeviceInfo.getInstance().executeShellCommand(command);
         } catch (Exception e){
@@ -182,6 +197,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public boolean executeAction(Action action) throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             if (action == null) {
                 MATELog.log_error("Trying to execute null action");
@@ -227,6 +243,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public List<Widget> getCurrentScreenWidgets() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             return new WidgetScreenParser().getWidgets();
         } catch (Exception e) {
@@ -237,6 +254,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public @Nullable List<EspressoAction> getCurrentScreenEspressoActions() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
@@ -252,6 +270,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
     @Override
     public @Nullable
     EspressoScreenSummary getCurrentEspressoScreenSummary() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             if (espressoScreenParser == null) {
                 espressoScreenParser = new EspressoScreenParser();
@@ -266,6 +285,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void setReplayMode() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             ExplorationInfo.getInstance().setReplayMode();
         } catch (Exception e) {
@@ -276,6 +296,7 @@ public class CommandHandler extends IRepresentationLayerInterface.Stub {
 
     @Override
     public void setWidgetBasedActions() throws RemoteException {
+        DynamicTest.updateLastCommandTimestamp();
         try {
             ExplorationInfo.getInstance().setWidgetBasedActions();
         } catch (Exception e) {

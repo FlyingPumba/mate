@@ -467,6 +467,10 @@ public class MATEService extends Service implements IBinder.DeathRecipient {
         log("Client just died");
         representationLayer = null;
         representationLayerBinder.unlinkToDeath(this,0);
+
+        if (!mateClientRunning) {
+            this.stopService();
+        }
     }
 
     /**
