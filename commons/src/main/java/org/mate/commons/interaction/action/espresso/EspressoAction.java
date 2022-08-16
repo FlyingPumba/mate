@@ -63,6 +63,13 @@ public class EspressoAction extends Action implements CodeProducer {
     }
 
     /**
+     * @return The EspressoViewAction that will be executed on the target view.
+     */
+    public EspressoViewAction getEspressoViewAction() {
+        return espressoViewAction;
+    }
+
+    /**
      * Executes this Espresso action using the Espresso testing framework.
      * Exceptions are cached so that they do not bubble up and crash the Representation Layer
      * module.

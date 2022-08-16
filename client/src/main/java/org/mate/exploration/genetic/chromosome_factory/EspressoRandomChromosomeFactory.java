@@ -7,6 +7,8 @@ import org.mate.commons.utils.Randomness;
 import org.mate.interaction.DeviceMgr;
 import org.mate.model.TestCase;
 
+import java.util.List;
+
 /**
  * Provides a chromosome factory that generates {@link TestCase}s consisting of random
  * {@link EspressoAction}s.
@@ -38,6 +40,7 @@ public class EspressoRandomChromosomeFactory extends AndroidRandomChromosomeFact
 
     @Override
     protected Action selectAction() {
-        return Randomness.randomElement(uiAbstractionLayer.getExecutableEspressoActions());
+        List<EspressoAction> availableActions = uiAbstractionLayer.getExecutableEspressoActions();
+        return Randomness.randomElement(availableActions);
     }
 }

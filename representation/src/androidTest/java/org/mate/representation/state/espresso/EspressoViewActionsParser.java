@@ -9,14 +9,17 @@ import org.mate.commons.interaction.action.espresso.actions.ClickAction;
 import org.mate.commons.interaction.action.espresso.actions.CloseSoftKeyboardAction;
 import org.mate.commons.interaction.action.espresso.actions.EnterAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
+import org.mate.commons.interaction.action.espresso.actions.HomeAction;
 import org.mate.commons.interaction.action.espresso.actions.LongClickAction;
 import org.mate.commons.interaction.action.espresso.actions.MenuAction;
 import org.mate.commons.interaction.action.espresso.actions.PressIMEAction;
 import org.mate.commons.interaction.action.espresso.actions.ScrollToAction;
+import org.mate.commons.interaction.action.espresso.actions.SearchAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeDownAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeLeftAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeRightAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeUpAction;
+import org.mate.commons.interaction.action.espresso.actions.ToggleRotationAction;
 import org.mate.commons.interaction.action.espresso.actions.TypeTextAction;
 import org.mate.commons.interaction.action.espresso.actions.recyclerview.ClickOnPositionAction;
 import org.mate.commons.interaction.action.espresso.actions.recyclerview.ScrollToPositionAction;
@@ -91,7 +94,10 @@ public class EspressoViewActionsParser {
             // We use empty text for the TypeTextAction until we know if we can use it for this view
             new TypeTextAction(""),
             new ScrollToPositionAction(),
-            new ClickOnPositionAction()
+            new ClickOnPositionAction(),
+            new ToggleRotationAction(),
+            new HomeAction(),
+            new SearchAction()
         };
 
         List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));

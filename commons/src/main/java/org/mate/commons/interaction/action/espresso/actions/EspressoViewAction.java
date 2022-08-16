@@ -138,6 +138,10 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 return new MenuAction(source);
             case ENTER:
                 return new EnterAction(source);
+            case HOME:
+                return new HomeAction(source);
+            case SEARCH:
+                return new SearchAction(source);
             case PRESS_IME:
                 return new PressIMEAction(source);
             case CLOSE_SOFT_KEYBOARD:
@@ -146,6 +150,8 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 return new ScrollToPositionAction(source);
             case RECYCLER_CLICK_ON_POSITION:
                 return new ClickOnPositionAction(source);
+            case TOGGLE_ROTATION:
+                return new ToggleRotationAction(source);
             default:
                 throw new IllegalStateException("Invalid int for EspressoViewAction type found: " +
                         type);

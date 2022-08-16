@@ -12,7 +12,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mate.commons.utils.MATELog;
 import org.mate.representation.mateservice.MATEServiceConnection;
+
+import java.util.Date;
 
 /**
  * DynamicTest is a special Espresso test.
@@ -31,6 +34,16 @@ public class DynamicTest {
      * Service.
      */
     public static volatile boolean keepRunning = true;
+
+    /**
+     * The timestamp of the last command we received from the MATE Service.
+     */
+    private static volatile long lastCommandTimestamp = -1;
+
+    /**
+     * The max time to wait between commands before quiting the DynamicTest.
+     */
+    private static final long MAX_TIME_BETWEEN_COMMANDS = 3 * 60 * 1000;
 
     /**
      * Launches Main activity of the target package.
@@ -77,8 +90,10 @@ public class DynamicTest {
     public void run() throws Exception {
         MATEServiceConnection.establish();
 
+        updateLastCommandTimestamp();
+
         // stay here forever
-        while (keepRunning) {
+        while (keepRunning && !connectionIsStale()) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -87,5 +102,27 @@ public class DynamicTest {
         }
 
         MATEServiceConnection.tearDownIfConnected();
+    }
+
+    /**
+     * @return a boolean indicating whether the connection has become stale or not. This happens
+     * when the MATE Service has not sent any command for a while.
+     */
+    private boolean connectionIsStale() {
+        boolean stale = lastCommandTimestamp + MAX_TIME_BETWEEN_COMMANDS < getCurrentTime();
+
+        if (stale) {
+            MATELog.log("MATE Service connection is stale");
+        }
+
+        return stale;
+    }
+
+    public static void updateLastCommandTimestamp() {
+        lastCommandTimestamp = getCurrentTime();
+    }
+
+    private static long getCurrentTime() {
+        return new Date().getTime();
     }
 }
