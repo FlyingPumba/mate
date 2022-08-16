@@ -10,7 +10,6 @@ import androidx.test.espresso.ViewAction;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  * Implements a Type text Espresso action.
  */

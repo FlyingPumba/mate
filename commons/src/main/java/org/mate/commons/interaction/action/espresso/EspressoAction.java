@@ -98,10 +98,7 @@ public class EspressoAction extends Action implements CodeProducer {
             rootMatcherCode = String.format(".inRoot(%s)", espressoRootMatcher.getCode());
         }
 
-        String queryMethod = "onView";
-
-        String code = String.format("%s(%s)%s.perform(%s)",
-                queryMethod,
+        String code = String.format("onView(%s)%s.perform(%s)",
                 viewMatcherCode,
                 rootMatcherCode, viewActionCode);
 

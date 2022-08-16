@@ -90,8 +90,8 @@ public class EspressoViewActionsParser {
             new SwipeUpAction(),
             // We use empty text for the TypeTextAction until we know if we can use it for this view
             new TypeTextAction(""),
-            new ScrollToPositionAction(0),
-            new ClickOnPositionAction(0)
+            new ScrollToPositionAction(),
+            new ClickOnPositionAction()
         };
 
         List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));

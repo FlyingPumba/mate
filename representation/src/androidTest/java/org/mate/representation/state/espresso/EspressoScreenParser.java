@@ -5,7 +5,6 @@ import android.app.Instrumentation;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.base.ActiveRootLister;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -15,7 +14,6 @@ import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
-import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.state.espresso.EspressoScreen;
 import org.mate.commons.state.espresso.EspressoScreenSummary;
@@ -95,7 +93,6 @@ public class EspressoScreenParser {
         EspressoWindow topWindow = this.espressoScreen.getTopWindow();
 
         for (EspressoViewTreeNode node : topWindow.getViewTree().getAllNodes()) {
-
             EspressoViewActionsParser viewActionsParser =
                     new EspressoViewActionsParser(node.getEspressoView());
             List<EspressoViewAction> espressoViewActions = viewActionsParser.parse();
