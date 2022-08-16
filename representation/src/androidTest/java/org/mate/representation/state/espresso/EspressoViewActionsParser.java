@@ -21,6 +21,8 @@ import org.mate.commons.interaction.action.espresso.actions.SwipeRightAction;
 import org.mate.commons.interaction.action.espresso.actions.SwipeUpAction;
 import org.mate.commons.interaction.action.espresso.actions.ToggleRotationAction;
 import org.mate.commons.interaction.action.espresso.actions.TypeTextAction;
+import org.mate.commons.interaction.action.espresso.actions.recyclerview.ClickOnPositionAction;
+import org.mate.commons.interaction.action.espresso.actions.recyclerview.ScrollToPositionAction;
 import org.mate.representation.DeviceInfo;
 import org.mate.representation.input_generation.TextDataGenerator;
 
@@ -57,6 +59,8 @@ public class EspressoViewActionsParser {
         for (EspressoViewAction action : possibleActions) {
             if (action.isValidForView(espressoView.getView())) {
 
+                action.setParametersForView(espressoView);
+
                 if (action instanceof TypeTextAction) {
                     // change empty text for a more interesting one
                     ((TypeTextAction) action).setText(TextDataGenerator.getInstance().
@@ -89,9 +93,11 @@ public class EspressoViewActionsParser {
             new SwipeUpAction(),
             // We use empty text for the TypeTextAction until we know if we can use it for this view
             new TypeTextAction(""),
+            new ScrollToPositionAction(),
+            new ClickOnPositionAction(),
             new ToggleRotationAction(),
             new HomeAction(),
-            new SearchAction(),
+            new SearchAction()
         };
 
         List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));
