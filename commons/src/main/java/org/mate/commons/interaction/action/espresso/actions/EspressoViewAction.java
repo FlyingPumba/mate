@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.test.espresso.ViewAction;
 
+import org.mate.commons.interaction.action.espresso.EspressoView;
 import org.mate.commons.interaction.action.espresso.actions.recyclerview.ClickOnPositionAction;
 import org.mate.commons.interaction.action.espresso.actions.recyclerview.ScrollToPositionAction;
 import org.mate.commons.utils.AbstractCodeProducer;
@@ -149,5 +150,14 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 throw new IllegalStateException("Invalid int for EspressoViewAction type found: " +
                         type);
         }
+    }
+
+    /**
+     * @param espressoView
+     * Some actions may need to setup internal parameters based
+     * on the specific view they are interacting with
+     */
+    public void setParametersForView(EspressoView espressoView) {
+        // most actions don't need to do anything
     }
 }

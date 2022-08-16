@@ -56,6 +56,8 @@ public class EspressoViewActionsParser {
         for (EspressoViewAction action : possibleActions) {
             if (action.isValidForView(espressoView.getView())) {
 
+                action.setParametersForView(espressoView);
+
                 if (action instanceof TypeTextAction) {
                     // change empty text for a more interesting one
                     ((TypeTextAction) action).setText(TextDataGenerator.getInstance().
@@ -88,8 +90,8 @@ public class EspressoViewActionsParser {
             new SwipeUpAction(),
             // We use empty text for the TypeTextAction until we know if we can use it for this view
             new TypeTextAction(""),
-            new ScrollToPositionAction(),
-            new ClickOnPositionAction()
+            new ScrollToPositionAction(0),
+            new ClickOnPositionAction(0)
         };
 
         List<EspressoViewAction> result = new ArrayList<>(Arrays.asList(possibleActions));

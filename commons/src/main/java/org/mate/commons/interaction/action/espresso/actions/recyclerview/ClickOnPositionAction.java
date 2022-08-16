@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 
+import org.mate.commons.interaction.action.espresso.EspressoView;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewActionType;
 import org.mate.commons.utils.MATELog;
@@ -16,14 +17,18 @@ import org.mate.commons.utils.MATELog;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ *
+ */
 public class ClickOnPositionAction extends EspressoViewAction {
 
     private int index;
 
-    public ClickOnPositionAction() {
+    public ClickOnPositionAction(int position) {
         super(EspressoViewActionType.RECYCLER_CLICK_ON_POSITION);
-        index = 1;
+        index = position;
     }
+
 
     @Override
     public ViewAction getViewAction() {
@@ -38,17 +43,16 @@ public class ClickOnPositionAction extends EspressoViewAction {
 
     @Override
     public boolean isValidForEnabledView(View view) {
-        boolean isValid = false;
-        if (view instanceof RecyclerView) {
-            RecyclerView rv = (RecyclerView) view;
-            int max = rv.getAdapter().getItemCount();
-            if (max > 0) {
-                this.setIndex((int) ((Math.random() * (max - 1)) + 1));
-                isValid = true;
+        return view instanceof RecyclerView;
+    }
 
-            }
+    @Override
+    public void setParametersForView(EspressoView view) {
+        RecyclerView rv = (RecyclerView) view.getView();
+        int max = rv.getAdapter().getItemCount();
+        if (max > 0) {
+            this.setIndex((int) ((Math.random() * (max - 1)) + 1));
         }
-        return isValid;
     }
 
     @Override
@@ -70,8 +74,7 @@ public class ClickOnPositionAction extends EspressoViewAction {
     }
 
     public ClickOnPositionAction(Parcel in) {
-        this();
-        this.setIndex(in.readInt());
+        this(in.readInt());
     }
 
     private void setIndex(int newIndex) {

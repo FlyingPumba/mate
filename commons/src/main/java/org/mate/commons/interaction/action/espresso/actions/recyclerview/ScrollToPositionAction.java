@@ -9,6 +9,7 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 
 import org.mate.commons.exceptions.AUTCrashException;
+import org.mate.commons.interaction.action.espresso.EspressoView;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewActionType;
 import org.mate.commons.utils.MATELog;
@@ -21,10 +22,11 @@ public class ScrollToPositionAction extends EspressoViewAction {
 
     private int index;
 
-    public ScrollToPositionAction() {
+    public ScrollToPositionAction(int anIndex) {
         super(EspressoViewActionType.RECYCLER_SCROLL_TO_POSITION);
-        index = 1;
+        index = anIndex;
     }
+
 
     @Override
     public ViewAction getViewAction() {
@@ -40,17 +42,16 @@ public class ScrollToPositionAction extends EspressoViewAction {
 
     @Override
     public boolean isValidForEnabledView(View view) {
-        boolean isValid = false;
-        if (view instanceof RecyclerView) {
-            RecyclerView rv = (RecyclerView) view;
-            int max = rv.getAdapter().getItemCount();
-            if (max > 0) {
-                this.setIndex((int) ((Math.random() * (max - 1)) + 1));
-                isValid = true;
+        return view instanceof RecyclerView;
+    }
 
-            }
+    @Override
+    public void setParametersForView(EspressoView view) {
+        RecyclerView rv = (RecyclerView) view.getView();
+        int max = rv.getAdapter().getItemCount();
+        if (max > 0) {
+            this.setIndex((int) ((Math.random() * (max - 1)) + 1));
         }
-        return isValid;
     }
 
     @Override
@@ -72,8 +73,7 @@ public class ScrollToPositionAction extends EspressoViewAction {
     }
 
     public ScrollToPositionAction(Parcel in) {
-        this();
-        this.setIndex(in.readInt());
+        this(in.readInt());
     }
 
     private void setIndex(int newIndex) {
