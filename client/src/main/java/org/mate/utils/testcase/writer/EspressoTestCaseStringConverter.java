@@ -207,6 +207,10 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
         classImports.add("org.junit.Test");
         classImports.add("org.junit.runner.RunWith");
 
+        // UiDevice stuff
+        classImports.add("androidx.test.uiautomator.UiDevice");
+        staticImports.add("androidx.test.platform.app.InstrumentationRegistry.getInstrumentation");
+
         if (convertingForAUTsCodeBase) {
             // Add AUT's resources as a default import
             classImports.add(String.format("%s.R", packageName));
@@ -309,6 +313,7 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
             writeLine("static {");
             writeExpressionLine(String.format("PACKAGE_NAME = \"%s\"", packageName));
             writeExpressionLine(String.format("START_ACTIVITY_NAME = \"%s\"", startingActivityName));
+            writeExpressionLine(String.format("UI_DEVICE = UiDevice.getInstance(getInstrumentation())"));
             writeLine("}");
         }
         writeEmptyLine();
