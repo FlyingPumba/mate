@@ -33,7 +33,7 @@ public class WithAlphaMatcher extends EspressoViewMatcher {
 
     @Override
     public String getCode() {
-        return String.format("withAlpha(%f)", alpha);
+        return String.format("withAlpha(%ff)", alpha);
     }
 
     @Override
