@@ -9,6 +9,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AdapterView;
 import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.test.espresso.matcher.ViewMatchers;
 
+import org.mate.commons.interaction.action.espresso.interactions.EspressoDataInteraction;
 import org.mate.commons.interaction.action.espresso.layout_inspector.common.Resource;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.LayoutParamsTypeTree;
 import org.mate.commons.interaction.action.espresso.layout_inspector.property.Property;
@@ -367,6 +369,13 @@ public class EspressoView {
     }
 
     /**
+     * @return Whether this view is an instance of AdapterView or not.
+     */
+    public boolean isAdapterView() {
+        return AdapterView.class.isAssignableFrom(view.getClass());
+    }
+
+    /**
      * Returns a boolean indicating whether the wrapped view should be skipped when analyzing
      * which actions or matchers are there in the screen.
      *
@@ -402,8 +411,9 @@ public class EspressoView {
 
         boolean isViewGroup = view instanceof ViewGroup;
         boolean isRecyclerView = getClassName().contains("RecyclerView");
+        boolean isAdapterView = this.isAdapterView();
 
-        return isViewGroup && noText && !(isRoot || isRecyclerView);
+        return isViewGroup && noText && !(isRoot || isRecyclerView || isAdapterView);
     }
 
     /**

@@ -4,7 +4,6 @@ package org.mate.commons;
 import org.mate.commons.interaction.action.ui.Widget;
 import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.state.espresso.EspressoScreenSummary;
 
 interface IRepresentationLayerInterface {

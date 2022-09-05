@@ -22,17 +22,17 @@ public class ScrollToPositionAction extends RecyclerViewAction {
 
     public ScrollToPositionAction(int index) {
         super(EspressoViewActionType.RECYCLER_SCROLL_TO_POSITION);
-        this.index = index;
+        this.position = index;
     }
 
     @Override
     public ViewAction getViewAction() {
-        return scrollToPosition(index);
+        return scrollToPosition(position);
     }
 
     @Override
     public String getCode() {
-        return String.format("scrollToPosition(%d)", index);
+        return String.format("scrollToPosition(%d)", position);
     }
 
     @Override

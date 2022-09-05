@@ -15,7 +15,10 @@ import org.mate.commons.utils.Randomness;
  */
 public abstract class RecyclerViewAction extends EspressoViewAction {
 
-    protected int index = -1;
+    /**
+     * The position of the item to perform the action on.
+     */
+    protected int position = -1;
 
     RecyclerViewAction(EspressoViewActionType type) {
         super(type);
@@ -37,12 +40,12 @@ public abstract class RecyclerViewAction extends EspressoViewAction {
     public void setParametersForView(EspressoView view) {
         RecyclerView rv = (RecyclerView) view.getView();
         int itemCount = rv.getAdapter().getItemCount();
-        this.index = Randomness.getRnd().nextInt(itemCount + 1);
+        this.position = Randomness.getRnd().nextInt(itemCount + 1);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeInt(this.index);
+        dest.writeInt(this.position);
     }
 }

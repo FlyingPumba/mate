@@ -6,6 +6,8 @@ import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.actions.CloseSoftKeyboardAction;
 import org.mate.commons.interaction.action.espresso.actions.ToggleRotationAction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoViewInteraction;
+import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.representation.DeviceInfo;
 import org.mate.representation.ExplorationInfo;
@@ -52,7 +54,7 @@ public class EspressoActionExecutor extends ActionExecutor {
         if (ExplorationInfo.getInstance().getCurrentPackageName().equals(ExplorationInfo.getInstance().getTargetPackageName())) {
             EspressoAction closeSoftKeyboardAction = new EspressoAction(
                     new CloseSoftKeyboardAction(),
-                    new IsRootViewMatcher(),
+                    new EspressoViewInteraction(new IsRootViewMatcher()),
                     null);
             closeSoftKeyboardAction.execute();
         }

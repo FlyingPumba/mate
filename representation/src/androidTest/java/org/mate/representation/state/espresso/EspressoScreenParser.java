@@ -11,9 +11,11 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
 import org.mate.commons.interaction.action.espresso.EspressoAction;
+import org.mate.commons.interaction.action.espresso.actions.ClickAction;
 import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteractionType;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTreeNode;
 import org.mate.commons.state.espresso.EspressoScreen;
 import org.mate.commons.state.espresso.EspressoScreenSummary;
@@ -105,9 +107,10 @@ public class EspressoScreenParser {
                     continue;
                 }
 
-                EspressoViewMatcher espressoViewMatcher =
-                        this.espressoScreen.getViewMatcherInScreenForUniqueId(node.getEspressoView().getUniqueId());
-                if (espressoViewMatcher == null) {
+                EspressoInteraction espressoInteraction =
+                        this.espressoScreen.getInteractionInScreenForUniqueId(node.getEspressoView().getUniqueId());
+
+                if (espressoInteraction == null) {
                     // we weren't able to generate a unequivocal matcher combination for this view, skip
                     // it.
                     continue;
@@ -119,7 +122,16 @@ public class EspressoScreenParser {
                 for (EspressoViewAction espressoViewAction : espressoViewActions) {
                     EspressoAction espressoAction = new EspressoAction(
                             espressoViewAction,
-                            espressoViewMatcher,
+                            espressoInteraction,
+                            rootMatcher);
+                    espressoActions.add(espressoAction);
+                }
+
+                if (node.getEspressoView().isAdapterView() &&
+                        espressoInteraction.getType() == EspressoInteractionType.DATA_INTERACTION) {
+                    EspressoAction espressoAction = new EspressoAction(
+                            new ClickAction(),
+                            espressoInteraction,
                             rootMatcher);
                     espressoActions.add(espressoAction);
                 }

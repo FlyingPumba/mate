@@ -5,8 +5,8 @@ import android.app.Activity;
 import androidx.annotation.Nullable;
 import androidx.test.espresso.Root;
 
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.interaction.action.espresso.view_tree.EspressoViewTree;
 
 public class EspressoWindow {
@@ -24,8 +24,9 @@ public class EspressoWindow {
         return this.windowSummary;
     }
 
-    public @Nullable EspressoViewMatcher getViewMatcher(String uniqueId) {
-        return this.windowSummary.getViewMatcher(uniqueId);
+    public @Nullable
+    EspressoInteraction getInteraction(String uniqueId) {
+        return this.windowSummary.getInteraction(uniqueId);
     }
 
     public EspressoViewTree getViewTree() {

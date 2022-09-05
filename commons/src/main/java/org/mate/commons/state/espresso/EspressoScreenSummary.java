@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcherType;
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,86 +29,88 @@ public class EspressoScreenSummary implements Parcelable {
         return this.espressoWindowSummaries.get(0).getWindowType();
     }
 
-    public Map<String, EspressoViewMatcher> getMatchersInScreen() {
-        Map<String, EspressoViewMatcher> result = new HashMap<>();
+    public Map<String, EspressoInteraction> getInteractionsInScreen() {
+        Map<String, EspressoInteraction> result = new HashMap<>();
 
         for (EspressoWindowSummary espressoWindow : espressoWindowSummaries) {
-            Map<String, EspressoViewMatcher> viewMatchers = espressoWindow.getViewMatchers();
-            result.putAll(viewMatchers);
+            Map<String, EspressoInteraction> viewInteractions = espressoWindow.getInteractions();
+            result.putAll(viewInteractions);
         }
 
         return result;
     }
 
-    public Map<String, EspressoViewMatcher> getMatchersInTopWindow() {
-        return espressoWindowSummaries.get(0).getViewMatchers();
+    public Map<String, EspressoInteraction> getInteractionsInTopWindow() {
+        return espressoWindowSummaries.get(0).getInteractions();
     }
 
     /**
-     * Get ViewMatchers from an old summary that not longer exist in this summary.
+     * Get Interactions from an old summary that not longer exist in this summary.
      * @param oldSummary The old summary.
-     * @return The ViewMatchers that are not in this summary.
+     * @return The Interactions that are not in this summary.
      */
-    public Map<String, EspressoViewMatcher> getDisappearingViewMatchers(EspressoScreenSummary oldSummary) {
-        Map<String, EspressoViewMatcher> matchers = new HashMap<>();
+    public Map<String, EspressoInteraction> getDisappearingInteractions(EspressoScreenSummary oldSummary) {
+        Map<String, EspressoInteraction> interactions = new HashMap<>();
 
-        Map<String, EspressoViewMatcher> oldMatchers = oldSummary.getMatchersInScreen();
-        Collection<EspressoViewMatcher> newMatchers = getMatchersInScreen().values();
+        Map<String, EspressoInteraction> oldInteractions = oldSummary.getInteractionsInScreen();
+        Collection<EspressoInteraction> newInteractions = getInteractionsInScreen().values();
 
-        for (Map.Entry<String, EspressoViewMatcher> entry : oldMatchers.entrySet()) {
-            EspressoViewMatcher oldMatcher = entry.getValue();
+        for (Map.Entry<String, EspressoInteraction> entry : oldInteractions.entrySet()) {
+            EspressoInteraction oldMatcher = entry.getValue();
 
-            if (!containsMatcher(newMatchers, oldMatcher)) {
-                matchers.put(entry.getKey(), entry.getValue());
+            if (!containsInteraction(newInteractions, oldMatcher)) {
+                interactions.put(entry.getKey(), entry.getValue());
             }
         }
 
-        return matchers;
+        return interactions;
     }
 
     /**
-     * Get ViewMatchers from this summary that are not in an old summary.
+     * Get Interactions from this summary that are not in an old summary.
      * @param oldSummary The old summary.
-     * @return The ViewMatchers that are not in the old summary.
+     * @return The Interactions that are not in the old summary.
      */
-    public Map<String, EspressoViewMatcher> getAppearingViewMatchers(EspressoScreenSummary oldSummary) {
-        Map<String, EspressoViewMatcher> matchers = new HashMap<>();
+    public Map<String, EspressoInteraction> getAppearingInteractions(EspressoScreenSummary oldSummary) {
+        Map<String, EspressoInteraction> interactions = new HashMap<>();
 
-        Collection<EspressoViewMatcher> oldMatchers = oldSummary.getMatchersInScreen().values();
-        Map<String, EspressoViewMatcher> newMatchers = getMatchersInScreen();
+        Collection<EspressoInteraction> oldInteractions =
+                oldSummary.getInteractionsInScreen().values();
+        Map<String, EspressoInteraction> newInteractions = getInteractionsInScreen();
 
-        for (Map.Entry<String, EspressoViewMatcher> entry : newMatchers.entrySet()) {
-            EspressoViewMatcher newMatcher = entry.getValue();
+        for (Map.Entry<String, EspressoInteraction> entry : newInteractions.entrySet()) {
+            EspressoInteraction newMatcher = entry.getValue();
 
-            if (!containsMatcher(oldMatchers, newMatcher)) {
-                matchers.put(entry.getKey(), entry.getValue());
+            if (!containsInteraction(oldInteractions, newMatcher)) {
+                interactions.put(entry.getKey(), entry.getValue());
             }
         }
 
-        return matchers;
+        return interactions;
     }
 
     /**
-     * Get ViewMatchers from the top window of this summary that are also in the top window of an
+     * Get Interactions from the top window of this summary that are also in the top window of an
      * old summary.
      * @param oldSummary The old summary.
-     * @return The ViewMatchers that are also in the old summary.
+     * @return The Interactions that are also in the old summary.
      */
-    public Map<String, EspressoViewMatcher> getCommonViewMatchersInTopWindow(EspressoScreenSummary oldSummary) {
-        Map<String, EspressoViewMatcher> matchers = new HashMap<>();
+    public Map<String, EspressoInteraction> getCommonInteractionsInTopWindow(EspressoScreenSummary oldSummary) {
+        Map<String, EspressoInteraction> interactions = new HashMap<>();
 
-        Collection<EspressoViewMatcher> oldMatchers = oldSummary.getMatchersInTopWindow().values();
-        Map<String, EspressoViewMatcher> newMatchers = getMatchersInTopWindow();
+        Collection<EspressoInteraction> oldInteractions =
+                oldSummary.getInteractionsInTopWindow().values();
+        Map<String, EspressoInteraction> newInteractions = getInteractionsInTopWindow();
 
-        for (Map.Entry<String, EspressoViewMatcher> entry : newMatchers.entrySet()) {
-            EspressoViewMatcher newMatcher = entry.getValue();
+        for (Map.Entry<String, EspressoInteraction> entry : newInteractions.entrySet()) {
+            EspressoInteraction newMatcher = entry.getValue();
 
-            if (containsMatcher(oldMatchers, newMatcher)) {
-                matchers.put(entry.getKey(), entry.getValue());
+            if (containsInteraction(oldInteractions, newMatcher)) {
+                interactions.put(entry.getKey(), entry.getValue());
             }
         }
 
-        return matchers;
+        return interactions;
     }
 
     public Map<String, String> getUiAttributes(String viewUniqueId) {
@@ -126,17 +128,17 @@ public class EspressoScreenSummary implements Parcelable {
     }
 
     /**
-     * Returns true if a matcher with the same code is present in a collection.
-     * @param matchers The collection of matchers.
-     * @param matcher The matcher to check.
-     * @return True if the matcher is present in the collection.
+     * Returns true if a interaction with the same code is present in a collection.
+     * @param interactions The collection of interactions.
+     * @param interaction The interaction to check.
+     * @return True if the interaction is present in the collection.
      */
-    private boolean containsMatcher(Collection<EspressoViewMatcher> matchers,
-                                    EspressoViewMatcher matcher) {
-        String matcherCode = matcher.getCode();
+    private boolean containsInteraction(Collection<EspressoInteraction> interactions,
+                                        EspressoInteraction interaction) {
+        String interactionCode = interaction.getCode();
 
-        for (EspressoViewMatcher m : matchers) {
-            if (m.getCode().equals(matcherCode)) {
+        for (EspressoInteraction m : interactions) {
+            if (m.getCode().equals(interactionCode)) {
                 return true;
             }
         }
@@ -176,14 +178,15 @@ public class EspressoScreenSummary implements Parcelable {
      * @param viewUniqueId The view unique id
      * @return A root matcher or null.
      */
-    public @Nullable EspressoRootMatcher getRootMatcher(String viewUniqueId) {
+    public @Nullable
+    EspressoRootMatcher getRootMatcher(String viewUniqueId) {
         EspressoRootMatcher rootMatcher = null;
 
         for (int i = 0, espressoWindowSummariesSize = espressoWindowSummaries.size(); i < espressoWindowSummariesSize; i++) {
             EspressoWindowSummary espressoWindow = espressoWindowSummaries.get(i);
-            EspressoViewMatcher viewMatcher = espressoWindow.getViewMatcher(viewUniqueId);
+            EspressoInteraction interaction = espressoWindow.getInteraction(viewUniqueId);
 
-            if (viewMatcher != null) {
+            if (interaction != null) {
                 rootMatcher = espressoWindow.getRootMatcher();
 
                 if (i == 0) {
@@ -196,7 +199,6 @@ public class EspressoScreenSummary implements Parcelable {
 
                     break;
                 }
-
 
                 break;
             }
