@@ -3,8 +3,8 @@ package org.mate.commons.interaction.action.espresso;
 import androidx.annotation.Nullable;
 
 import org.mate.commons.interaction.action.espresso.assertions.EspressoViewAssertion;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
 import org.mate.commons.utils.CodeProducer;
 
 import java.util.HashSet;
@@ -23,12 +23,12 @@ import java.util.Set;
 public class EspressoAssertion implements CodeProducer {
 
     /**
-     * The actual assertion to check on the target view (e.g., isDisplayed, isClickable, etc.)
+     * The selector to indicate Espresso the target view.
      */
-    private final EspressoViewMatcher espressoViewMatcher;
+    private final EspressoInteraction espressoInteraction;
 
     /**
-     * The selector to indicate Espresso the target view.
+     * The actual assertion to check on the target view (e.g., isDisplayed, isClickable, etc.)
      */
     private final EspressoViewAssertion espressoViewAssertion;
 
@@ -36,19 +36,19 @@ public class EspressoAssertion implements CodeProducer {
      * The root matcher to indicate Espresso on which Root to find the target view.
      */
     @Nullable
-    private EspressoRootMatcher espressoRootMatcher;
+    private final EspressoRootMatcher espressoRootMatcher;
 
-    public EspressoAssertion(EspressoViewMatcher espressoViewMatcher,
+    public EspressoAssertion(EspressoInteraction espressoInteraction,
                              EspressoViewAssertion espressoViewAssertion,
                              @Nullable EspressoRootMatcher espressoRootMatcher) {
-        this.espressoViewMatcher = espressoViewMatcher;
+        this.espressoInteraction = espressoInteraction;
         this.espressoViewAssertion = espressoViewAssertion;
         this.espressoRootMatcher = espressoRootMatcher;
     }
 
     @Override
     public String getCode() {
-        String viewMatcherCode = espressoViewMatcher.getCode();
+        String interactionCode = espressoInteraction.getCode();
         String viewAssertionCode = espressoViewAssertion.getCode();
 
         String rootMatcherCode = "";
@@ -56,8 +56,8 @@ public class EspressoAssertion implements CodeProducer {
             rootMatcherCode = String.format(".inRoot(%s)", espressoRootMatcher.getCode());
         }
 
-        String code = String.format("onView(%s)%s.check(%s)",
-                viewMatcherCode,
+        String code = String.format("%s%s.check(%s)",
+                interactionCode,
                 rootMatcherCode, viewAssertionCode);
 
         return code;
@@ -67,7 +67,7 @@ public class EspressoAssertion implements CodeProducer {
     public Set<String> getNeededClassImports() {
         Set<String> imports = new HashSet<>();
 
-        imports.addAll(espressoViewMatcher.getNeededClassImports());
+        imports.addAll(espressoInteraction.getNeededClassImports());
         imports.addAll(espressoViewAssertion.getNeededClassImports());
 
         if (espressoRootMatcher != null) {
@@ -82,7 +82,7 @@ public class EspressoAssertion implements CodeProducer {
         Set<String> imports = new HashSet<>();
         imports.add("androidx.test.espresso.Espresso.onView");
 
-        imports.addAll(espressoViewMatcher.getNeededStaticImports());
+        imports.addAll(espressoInteraction.getNeededStaticImports());
         imports.addAll(espressoViewAssertion.getNeededStaticImports());
 
         if (espressoRootMatcher != null) {

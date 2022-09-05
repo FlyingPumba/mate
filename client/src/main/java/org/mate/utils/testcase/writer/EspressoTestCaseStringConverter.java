@@ -4,6 +4,8 @@ import org.mate.commons.interaction.action.Action;
 import org.mate.commons.interaction.action.espresso.EspressoAction;
 import org.mate.commons.interaction.action.espresso.EspressoAssertion;
 import org.mate.commons.interaction.action.espresso.actions.CloseSoftKeyboardAction;
+import org.mate.commons.interaction.action.espresso.actions.EspressoViewAction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoViewInteraction;
 import org.mate.commons.interaction.action.espresso.view_matchers.base.IsRootViewMatcher;
 import org.mate.commons.utils.AbstractCodeProducer;
 import org.mate.model.TestCase;
@@ -113,7 +115,7 @@ public class EspressoTestCaseStringConverter extends AbstractCodeProducer {
 
         closeSoftKeyboardAction = new EspressoAction(
                 new CloseSoftKeyboardAction(),
-                new IsRootViewMatcher(),
+                new EspressoViewInteraction(new IsRootViewMatcher()),
                 null);
 
         addDefaultImports();

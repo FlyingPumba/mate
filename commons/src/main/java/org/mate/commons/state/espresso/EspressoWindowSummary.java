@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.test.espresso.Root;
 
 import org.mate.commons.interaction.action.espresso.EspressoView;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoDataInteraction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoViewInteraction;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcher;
 import org.mate.commons.interaction.action.espresso.root_matchers.EspressoRootMatcherType;
 import org.mate.commons.interaction.action.espresso.root_matchers.IsDialogMatcher;
@@ -25,10 +28,11 @@ import java.util.Map;
 public class EspressoWindowSummary implements Parcelable {
 
     /**
-     * A list of discovered EspressoMatchers on this window.
+     * A list of discovered EspressoInteractions on this window.
      * The keys in the dictionary are the unique IDs of the views.
      */
-    private Map<String, EspressoViewMatcher> viewMatchers = new HashMap<>();
+    private Map<String, EspressoInteraction> interactions = new HashMap<>();
+
 
     /**
      * A map of UI attributes for each view in this window.
@@ -47,7 +51,7 @@ public class EspressoWindowSummary implements Parcelable {
     private EspressoRootMatcherType rootMatcherType;
 
     public EspressoWindowSummary(EspressoViewTree viewTree) {
-        buildViewMatchers(viewTree);
+        buildInteractions(viewTree);
         parseUiAttributes(viewTree);
         parseRootMatcherType(viewTree);
 
@@ -58,31 +62,32 @@ public class EspressoWindowSummary implements Parcelable {
         return this.windowType;
     }
 
-    public @Nullable EspressoViewMatcher getViewMatcher(String uniqueId) {
-        return viewMatchers.get(uniqueId);
+    public @Nullable EspressoInteraction getInteraction(String uniqueId) {
+        return interactions.get(uniqueId);
     }
 
     public @Nullable Map<String, String> getUIAttributes(String viewUniqueId) {
         return uiAttributes.get(viewUniqueId);
     }
 
-    public Map<String, EspressoViewMatcher> getViewMatchers() {
-        Map<String, EspressoViewMatcher> result = new HashMap<>();
+    public Map<String, EspressoInteraction> getInteractions() {
+        Map<String, EspressoInteraction> result = new HashMap<>();
 
-        for (Map.Entry<String, EspressoViewMatcher> entry : viewMatchers.entrySet()) {
+        for (Map.Entry<String, EspressoInteraction> entry : interactions.entrySet()) {
             result.put(entry.getKey(), entry.getValue());
         }
 
         return result;
     }
 
-    private void buildViewMatchers(EspressoViewTree viewTree) {
+    private void buildInteractions(EspressoViewTree viewTree) {
         for (EspressoViewTreeNode node : viewTree.getAllNodes()) {
-            if (node.getEspressoView().shouldBeSkipped()) {
+            EspressoView espressoView = node.getEspressoView();
+            if (espressoView.shouldBeSkipped()) {
                 continue;
             }
 
-            String uniqueId = node.getEspressoView().getUniqueId();
+            String uniqueId = espressoView.getUniqueId();
 
             RelativeMatcherCombination matcherCombination = RelativeMatcherCombination.
                     buildUnequivocalCombination(node, viewTree);
@@ -94,7 +99,17 @@ public class EspressoWindowSummary implements Parcelable {
             }
 
             EspressoViewMatcher viewMatcher = matcherCombination.getEspressoViewMatcher();
-            viewMatchers.put(uniqueId, viewMatcher);
+
+            EspressoInteraction interaction;
+            if (espressoView.isAdapterView()) {
+                interaction = new EspressoDataInteraction(viewMatcher);
+            } else {
+                interaction = new EspressoViewInteraction(viewMatcher);
+            }
+
+            interaction.setParametersForView(espressoView);
+
+            interactions.put(uniqueId, interaction);
         }
     }
 
@@ -153,8 +168,8 @@ public class EspressoWindowSummary implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.viewMatchers.size());
-        for (Map.Entry<String, EspressoViewMatcher> entry : this.viewMatchers.entrySet()) {
+        dest.writeInt(this.interactions.size());
+        for (Map.Entry<String, EspressoInteraction> entry : this.interactions.entrySet()) {
             dest.writeString(entry.getKey());
             dest.writeParcelable(entry.getValue(), flags);
         }
@@ -177,12 +192,12 @@ public class EspressoWindowSummary implements Parcelable {
     }
 
     protected EspressoWindowSummary(Parcel in) {
-        int viewMatchersSize = in.readInt();
-        this.viewMatchers = new HashMap<>(viewMatchersSize);
-        for (int i = 0; i < viewMatchersSize; i++) {
+        int interactionsSize = in.readInt();
+        this.interactions = new HashMap<>(interactionsSize);
+        for (int i = 0; i < interactionsSize; i++) {
             String key = in.readString();
-            EspressoViewMatcher value = in.readParcelable(EspressoViewMatcher.class.getClassLoader());
-            this.viewMatchers.put(key, value);
+            EspressoInteraction value = in.readParcelable(EspressoInteraction.class.getClassLoader());
+            this.interactions.put(key, value);
         }
 
         int uiAttributesSize = in.readInt();

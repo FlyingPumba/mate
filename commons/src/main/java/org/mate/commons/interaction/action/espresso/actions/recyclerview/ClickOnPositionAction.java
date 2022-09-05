@@ -23,17 +23,17 @@ public class ClickOnPositionAction extends RecyclerViewAction {
 
     public ClickOnPositionAction(int position) {
         super(EspressoViewActionType.RECYCLER_CLICK_ON_POSITION);
-        this.index = position;
+        this.position = position;
     }
 
     @Override
     public ViewAction getViewAction() {
-        return actionOnItemAtPosition(this.index, click());
+        return actionOnItemAtPosition(this.position, click());
     }
 
     @Override
     public String getCode() {
-        return String.format("actionOnItemAtPosition(%d, click())", index);
+        return String.format("actionOnItemAtPosition(%d, click())", position);
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.app.Activity;
 import androidx.annotation.Nullable;
 import androidx.test.espresso.Root;
 
-import org.mate.commons.interaction.action.espresso.view_matchers.EspressoViewMatcher;
+import org.mate.commons.interaction.action.espresso.interactions.EspressoInteraction;
 import org.mate.commons.utils.MATELog;
 
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ public class EspressoScreen {
         return new EspressoScreenSummary(this);
     }
 
-    public @Nullable EspressoViewMatcher getViewMatcherInScreenForUniqueId(String uniqueId) {
+    public @Nullable EspressoInteraction getInteractionInScreenForUniqueId(String uniqueId) {
         for (EspressoWindow espressoWindow : espressoWindows) {
-            EspressoViewMatcher viewMatcher = espressoWindow.getViewMatcher(uniqueId);
+            EspressoInteraction viewMatcher = espressoWindow.getInteraction(uniqueId);
             if (viewMatcher != null) {
                 return viewMatcher;
             }

@@ -68,6 +68,15 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
      */
     public abstract boolean isValidForEnabledView(View view);
 
+    /**
+     * Some actions may need to setup internal parameters based
+     * on the specific view they are interacting with
+     * @param espressoView
+     */
+    public void setParametersForView(EspressoView espressoView) {
+        // most actions don't need to do anything
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -156,14 +165,5 @@ public abstract class EspressoViewAction extends AbstractCodeProducer implements
                 throw new IllegalStateException("Invalid int for EspressoViewAction type found: " +
                         type);
         }
-    }
-
-    /**
-     * @param espressoView
-     * Some actions may need to setup internal parameters based
-     * on the specific view they are interacting with
-     */
-    public void setParametersForView(EspressoView espressoView) {
-        // most actions don't need to do anything
     }
 }
